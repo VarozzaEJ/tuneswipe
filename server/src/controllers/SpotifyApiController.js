@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 import BaseController from '../utils/BaseController.js';
 
 const SpotifyWebApi = require('spotify-web-api-node')
@@ -14,9 +16,9 @@ export class SpotifyApiController extends BaseController {
         try {
             const code = request.body.code
             const spotifyApi = new SpotifyWebApi({
-                redirectUri: "http://localhost:5173",
-                clientId: "c4f463066209462aa6798856d58701d9",
-                clientSecret: "bfe5ce4a8a654e36ab51e253dc564a9c"
+                redirectUri: process.env.REDIRECT_URI,
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET
             })
             spotifyApi.authorizationCodeGrant(code).then(data => {
                 response.json({
@@ -36,9 +38,9 @@ export class SpotifyApiController extends BaseController {
             const refreshToken = request.body.refreshToken
             console.log("hi")
             const spotifyApi = new SpotifyWebApi({
-                redirectUri: "http://localhost:8080",
-                clientId: "c4f463066209462aa6798856d58701d9",
-                clientSecret: "bfe5ce4a8a654e36ab51e253dc564a9c",
+                redirectUri: process.env.REDIRECT_URI,
+                clientId: process.env.CLIENT_ID,
+                clientSecret: process.env.CLIENT_SECRET,
                 refreshToken: ""
             })
             spotifyApi.refreshAccessToken().then(

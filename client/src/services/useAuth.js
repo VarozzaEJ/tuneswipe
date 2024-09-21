@@ -26,13 +26,13 @@ export default function useAuth(code) {
                 setAccessToken(res.data.accessToken)
                 setRefreshToken(res.data.refreshToken)
                 setExpiresIn(res.data.expiresIn)
+                localStorage.setItem("accessToken", res.data.accessToken)
                 window.history.pushState({}, null, '/')
             })
             .catch(() => {
                 window.location = "/"
             })
     }
-    return accessToken
 
     async function refresh() {
         await axios.post('http://localhost:3000/login/refresh', { refreshToken })
@@ -45,4 +45,5 @@ export default function useAuth(code) {
                 window.location = "/"
             })
     }
+    return accessToken
 }
