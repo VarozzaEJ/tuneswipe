@@ -16,7 +16,7 @@ export default function Login() {
         <a
           href={`https://accounts.spotify.com/authorize?client_id=${
             import.meta.env.VITE_CLIENT_ID
-          }&response_type=code&redirect_uri=http://localhost:5173`}
+          }&response_type=code&redirect_uri=http://localhost:5173&scope=streaming%20user-read-email%20user-read-private%20user-library-read%20user-library-modify%20user-read-playback-state%20user-modify-playback-state`}
         >
           <Button variant={"secondary"} size={"lg"}>
             Login To Spotify
