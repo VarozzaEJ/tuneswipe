@@ -8,12 +8,11 @@ const spotifyApi = new SpotifyWebApi({
   clientId: `${import.meta.env.VITE_CLIENT_ID}`,
 });
 
-const Playback = ({ accessToken, trackUri, chosenDeviceId }) => {
-  const [player, setPlayer] = useState(null);
+const Playback = ({ accessToken, chosenDeviceId, recommendedTracks }) => {
   const [isReady, setIsReady] = useState(false);
   const [play, setPlay] = useState(false);
-  const getOAuthToken = useCallback((callback) => callback(accessToken), []);
 
+  console.log(recommendedTracks);
   useEffect(() => {
     if (!accessToken) return;
     spotifyApi.setAccessToken(accessToken);
@@ -43,11 +42,14 @@ const Playback = ({ accessToken, trackUri, chosenDeviceId }) => {
     }
   };
 
-  const clearQueue = async () => {};
+  const extractedAddSongToQueue = () => {
+    recommendedTracks.forEach((track) => {
+      addSongToQueue(track.uri);
+    });
+  };
 
-  const addSongToQueue = async () => {
-    if (!accessToken || !trackUri) return;
-
+  const addSongToQueue = async (trackUri) => {
+    if (!accessToken || recommendedTracks.length == 0) return;
     try {
       const response = await fetch(
         `https://api.spotify.com/v1/me/player/queue?uri=` + trackUri,
@@ -76,7 +78,7 @@ const Playback = ({ accessToken, trackUri, chosenDeviceId }) => {
   }
 
   useEffect(() => {
-    if (!accessToken || !trackUri || !chosenDeviceId) return;
+    if (!accessToken || !chosenDeviceId || !recommendedTracks) return;
     const runRequiredFunctions = async () => {
       // const script = document.createElement("script");
       // script.src = "https://sdk.scdn.co/spotify-player.js";
@@ -111,19 +113,18 @@ const Playback = ({ accessToken, trackUri, chosenDeviceId }) => {
       //   });
 
       //   setPlayer(player);
-      //   player.connect();
-      //TODO call the get devices function in a higher component using a form, then, using the response from the api with all of the devices, save the id that the user chooses, send that down to this component, and interpolate that id in the line below.
+      //   player.connect()
       //TODO When a user goes to the next song, I should simultaneously send the next song in the tracks array to the queue, and then skip the song. I might have to do some weird fannagling to get the timing right, but I think it will work.
-
-      transferPlayback();
-      await addSongToQueue();
+      //TODO UPDATE: Spotify API does not accept more than one call per few seconds, so this will turn out to be a big problem. Maybe, I set an interval and call the addSongToQueue() function after the interval with each URI gotten from the GetRecommendations() function in the ListenPage
+      await transferPlayback();
+      await extractedAddSongToQueue();
       playSong();
       sleep(8000);
       await skipToNext();
       setIsReady(true);
     };
     runRequiredFunctions();
-  }, [trackUri, accessToken, chosenDeviceId]);
+  }, [recommendedTracks, accessToken, chosenDeviceId]);
 
   const skipToNext = async () => {
     await spotifyApi.skipToNext().then(

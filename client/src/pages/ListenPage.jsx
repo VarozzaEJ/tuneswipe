@@ -16,6 +16,7 @@ const spotifyApi = new SpotifyWebApi({
 });
 export default function ListenPage() {
   const [playingTrack, setPlayingTrack] = useState("");
+  const [recommendedTracks, setRecommendedTracks] = useState([]);
   const [accessToken, setAccessToken] = useState("");
   const [recommendations, setRecommendations] = useState({});
   const [chosenDeviceId, setChosenDeviceId] = useState("");
@@ -107,7 +108,7 @@ export default function ListenPage() {
           let recommendations = data.body;
           console.log(recommendations);
           setRecommendations(data.body);
-          setPlayingTrack(data.body.tracks[0].uri);
+          setRecommendedTracks(data.body.tracks);
         },
         function (err) {
           console.log("Something went wrong!", err);
@@ -171,8 +172,8 @@ export default function ListenPage() {
       <div className="flex sticky bottom-12 justify-center items-center mt-10">
         <Player
           accessToken={accessToken}
-          trackUri={playingTrack}
           chosenDeviceId={chosenDeviceId}
+          recommendedTracks={recommendedTracks}
         />
       </div>
     </>
