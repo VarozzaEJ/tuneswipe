@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import SpotifyWebApi from "spotify-web-api-node";
 import useAuth from "../services/useAuth.js";
@@ -9,6 +9,7 @@ import Icon from "@mdi/react";
 import Player from "../components/Player.jsx";
 import axios from "axios";
 import PreBuiltPlayer from "../components/PreBuiltPlayer.jsx";
+import TinderCard from "react-tinder-card";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: `${import.meta.env.VITE_CLIENT_ID}`,
@@ -20,6 +21,59 @@ export default function ListenPage() {
   const [chosenDeviceId, setChosenDeviceId] = useState("");
   const [artistIds, setArtistIds] = useState([]);
   const searchParams = useParams();
+  //NOTE this grabbing an array that could not exist possibly could mess things up
+  const [currentIndex, setCurrentIndex] = useState(
+    recommendations.tracks?.length - 1
+  );
+  const [lastDirection, setLastDirection] = useState();
+
+  const currentIndexRef = useRef(currentIndex);
+
+  const childRefs = useMemo(
+    () =>
+      Array(recommendations.tracks?.length)
+        .fill(0)
+        .map((i) => React.createRef()),
+    []
+  );
+
+  const updateCurrentIndex = (val) => {
+    setCurrentIndex(val);
+    currentIndexRef.current = val;
+  };
+
+  const canGoBack = currentIndex < recommendations.tracks?.length - 1;
+
+  const canSwipe = currentIndex >= 0;
+
+  // set last direction and decrease current index
+  const swiped = (direction, nameToDelete, index) => {
+    setLastDirection(direction);
+    updateCurrentIndex(index - 1);
+  };
+
+  const outOfFrame = (name, idx) => {
+    console.log(`${name} (${idx}) left the screen!`, currentIndexRef.current);
+    // handle the case in which go back is pressed before card goes outOfFrame
+    currentIndexRef.current >= idx && childRefs[idx].current.restoreCard();
+    // TODO: when quickly swipe and restore multiple times the same card,
+    // it happens multiple outOfFrame events are queued and the card disappear
+    // during latest swipes. Only the last outOfFrame event should be considered valid
+  };
+
+  const swipe = async (dir) => {
+    if (canSwipe && currentIndex < recommendations.tracks?.length) {
+      await childRefs[currentIndex].current.swipe(dir); // Swipe the card!
+    }
+  };
+
+  // increase current index and show card
+  const goBack = async () => {
+    if (!canGoBack) return;
+    const newIndex = currentIndex + 1;
+    updateCurrentIndex(newIndex);
+    await childRefs[newIndex].current.restoreCard();
+  };
 
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
@@ -96,40 +150,30 @@ export default function ListenPage() {
 
   return (
     <>
-      <div className="container h-screen flex-col flex justify-center items-center">
-        {recommendations.tracks && (
-          <TrackCard
-            trackTitle={recommendations.tracks[0].name}
-            trackArtist={recommendations.tracks[0].artists[0].name}
-            image={recommendations.tracks[0].album.images[0].url}
-          />
-        )}
-        <div className="flex justify-center items-center mt-10">
-          {/* <div
-            role="button"
-            className="hover:bg-slate-600 rounded-full me-4 bg-slate-500 w-11 h-11 flex items-center justify-center"
-          >
-            <Icon size={1} path={mdiReplay} color="white" />
-          </div>
-          <div
-            role="button"
-            className="hover:bg-purple-500 rounded-full bg-purple-400 w-16 h-16 flex items-center justify-center"
-          >
-            <Icon path={mdiPlay} color="white" size={1.8} />
-          </div>
-          <div
-            role="button"
-            className="hover:bg-slate-600 rounded-full ms-4 bg-slate-500 w-11 h-11 flex items-center justify-center"
-          >
-            <Icon path={mdiSync} size={1} color="white" />
-          </div> */}
-          <Player
-            accessToken={accessToken}
-            trackUri={playingTrack}
-            chosenDeviceId={chosenDeviceId}
-          />
-          {/* <PreBuiltPlayer accessToken={accessToken} trackUri={playingTrack} /> */}
-        </div>
+      <div className="container h-screen  flex-col flex justify-center items-center">
+        {recommendations.tracks &&
+          recommendations.tracks.map((track, index) => (
+            <TinderCard
+              ref={childRefs[index]}
+              className="absolute w-[350]"
+              key={track.name}
+              onSwipe={(dir) => swiped(dir, track.name, index)}
+              onCardLeftScreen={() => outOfFrame(track.name, index)}
+            >
+              <TrackCard
+                trackTitle={track?.name}
+                trackArtist={track.artists[0]?.name}
+                image={track.album.images[0]?.url}
+              />
+            </TinderCard>
+          ))}
+      </div>
+      <div className="flex sticky bottom-12 justify-center items-center mt-10">
+        <Player
+          accessToken={accessToken}
+          trackUri={playingTrack}
+          chosenDeviceId={chosenDeviceId}
+        />
       </div>
     </>
   );

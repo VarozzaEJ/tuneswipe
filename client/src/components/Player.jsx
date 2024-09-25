@@ -1,13 +1,23 @@
-import { mdiPlay, mdiReplay, mdiSync } from "@mdi/js";
+import { mdiPause, mdiPlay, mdiReplay, mdiSync } from "@mdi/js";
 import Icon from "@mdi/react";
 import React, { useCallback, useEffect, useState } from "react";
 import { WebPlaybackSDK } from "react-spotify-web-playback-sdk";
-import TogglePlay from "./TogglePlay.jsx";
+import SpotifyWebApi from "spotify-web-api-node";
+
+const spotifyApi = new SpotifyWebApi({
+  clientId: `${import.meta.env.VITE_CLIENT_ID}`,
+});
 
 const Playback = ({ accessToken, trackUri, chosenDeviceId }) => {
   const [player, setPlayer] = useState(null);
   const [isReady, setIsReady] = useState(false);
+  const [play, setPlay] = useState(false);
   const getOAuthToken = useCallback((callback) => callback(accessToken), []);
+
+  useEffect(() => {
+    if (!accessToken) return;
+    spotifyApi.setAccessToken(accessToken);
+  }, [accessToken]);
 
   const transferPlayback = async () => {
     if (!accessToken || !chosenDeviceId) return;
@@ -33,8 +43,9 @@ const Playback = ({ accessToken, trackUri, chosenDeviceId }) => {
     }
   };
 
+  const clearQueue = async () => {};
+
   const addSongToQueue = async () => {
-    console.log(trackUri);
     if (!accessToken || !trackUri) return;
 
     try {
@@ -60,101 +71,151 @@ const Playback = ({ accessToken, trackUri, chosenDeviceId }) => {
     }
   };
 
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
   useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://sdk.scdn.co/spotify-player.js";
-    script.async = true;
+    if (!accessToken || !trackUri || !chosenDeviceId) return;
+    const runRequiredFunctions = async () => {
+      // const script = document.createElement("script");
+      // script.src = "https://sdk.scdn.co/spotify-player.js";
+      // script.async = true;
 
-    document.body.appendChild(script);
+      // document.body.appendChild(script);
 
-    window.onSpotifyWebPlaybackSDKReady = () => {
-      const player = new window.Spotify.Player({
-        name: "Working SDK",
-        getOAuthToken: (cb) => {
-          cb(accessToken);
-        },
-        volume: 0.5,
-      });
+      // window.onSpotifyWebPlaybackSDKReady = () => {
+      //   const player = new window.Spotify.Player({
+      //     name: "Working SDK",
+      //     getOAuthToken: (cb) => {
+      //       cb(accessToken);
+      //     },
+      //     volume: 0.5,
+      //   });
 
-      player.addListener("ready", ({ device_id }) => {
-        console.log("Ready with Device ID", device_id);
-      });
+      //   player.addListener("ready", ({ device_id }) => {
+      //     console.log("Ready with Device ID", device_id);
+      //   });
 
-      player.addListener("not_ready", ({ device_id }) => {
-        console.log("Device ID has gone offline", device_id);
-      });
+      //   player.addListener("not_ready", ({ device_id }) => {
+      //     console.log("Device ID has gone offline", device_id);
+      //   });
 
-      player.addListener("player_state_changed", (state) => {
-        if (!state) {
-          return;
-        }
+      //   player.addListener("player_state_changed", (state) => {
+      //     if (!state) {
+      //       return;
+      //     }
 
-        // setTrack(state.track_window.current_track);
-        // setPaused(state.paused);
-      });
-      player.getCurrentState().then((state) => {
-        !state ? setIsReady(false) : setIsReady(true);
-        console.log("🌞", state);
-      });
+      //     // setTrack(state.track_window.current_track);
+      //     // setPaused(state.paused);
+      //   });
 
-      setPlayer(player);
-      player.connect();
+      //   setPlayer(player);
+      //   player.connect();
       //TODO call the get devices function in a higher component using a form, then, using the response from the api with all of the devices, save the id that the user chooses, send that down to this component, and interpolate that id in the line below.
       //TODO When a user goes to the next song, I should simultaneously send the next song in the tracks array to the queue, and then skip the song. I might have to do some weird fannagling to get the timing right, but I think it will work.
-      transferPlayback();
-      addSongToQueue();
-    };
-  }, [accessToken]);
 
-  const play = (uri) => {
-    if (!isReady || !player || !accessToken) return;
-    player
-      .resume()
-      .then(() => {
-        player.togglePlay({
-          uris: [uri],
-        });
-      })
-      .then(() => {
-        console.log("Playing track:", uri);
-      })
-      .catch((error) => {
-        console.error("Error playing track:", error);
-      });
+      transferPlayback();
+      await addSongToQueue();
+      playSong();
+      sleep(8000);
+      await skipToNext();
+      setIsReady(true);
+    };
+    runRequiredFunctions();
+  }, [trackUri, accessToken, chosenDeviceId]);
+
+  const skipToNext = async () => {
+    await spotifyApi.skipToNext().then(
+      function () {
+        sleep(2000);
+        console.log("Skip to next");
+      },
+      function (err) {
+        //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
+        console.log("Something went wrong!", err);
+      }
+    );
+  };
+
+  const playSong = () => {
+    spotifyApi.play().then(
+      function () {
+        console.log("Playback started");
+        setPlay(true);
+      },
+      function (err) {
+        //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
+        console.log("Something went wrong!", err);
+      }
+    );
   };
 
   const pause = () => {
-    if (player) {
-      player.pause();
-    }
+    spotifyApi.pause().then(
+      function () {
+        console.log("Playback paused");
+        setPlay(false);
+      },
+      function (err) {
+        //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
+        console.log("Something went wrong!", err);
+      }
+    );
+  };
+
+  const previous = () => {
+    spotifyApi.skipToPrevious().then(
+      function () {
+        console.log("Skip to previous");
+      },
+      function (err) {
+        //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
+        console.log("Something went wrong!", err);
+      }
+    );
   };
 
   return (
     <div className="flex items-center justify-center">
-      {player && isReady ? (
+      {isReady ? (
         <>
           <div
             role="button"
+            title="Previous"
+            onClick={() => previous()}
             className="hover:bg-slate-600 rounded-full me-4 bg-slate-500 w-11 h-11 flex items-center justify-center"
           >
             <Icon size={1} path={mdiReplay} color="white" />
           </div>
+          {play ? (
+            <div
+              title="Pause"
+              // onClick={() => play(`${trackUri}`)}
+              onClick={() => pause()}
+              role="button"
+              className="hover:bg-purple-500 rounded-full bg-purple-400 w-16 h-16 flex items-center justify-center"
+            >
+              <Icon path={mdiPause} color="white" size={1.8} />
+            </div>
+          ) : (
+            <div
+              // onClick={() => play(`${trackUri}`)}
+              onClick={() => playSong()}
+              title="Play"
+              role="button"
+              className="hover:bg-purple-500 rounded-full bg-purple-400 w-16 h-16 flex items-center justify-center"
+            >
+              <Icon path={mdiPlay} color="white" size={1.8} />
+            </div>
+          )}
           <div
-            // onClick={() => play(`${trackUri}`)}
-            onClick={() => pause()}
             role="button"
-            className="hover:bg-purple-500 rounded-full bg-purple-400 w-16 h-16 flex items-center justify-center"
-          >
-            <Icon path={mdiPlay} color="white" size={1.8} />
-          </div>
-          <div
-            role="button"
+            title="replay"
             className="hover:bg-slate-600 rounded-full ms-4 bg-slate-500 w-11 h-11 flex items-center justify-center"
           >
             <Icon path={mdiSync} size={1} color="white" />
           </div>
-          Example:{" "}
-          <button onClick={() => play("spotify:track:TRACK_ID")}>Play</button>
         </>
       ) : null}
     </div>

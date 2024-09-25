@@ -156,8 +156,8 @@ export default function Dashboard({ code }) {
           </div>
         </div>
       ) : (
-        <div className="w-screen h-screen flex flex-col items-center justify-center">
-          <div>
+        <div className="w-screen h-screen flex flex-col items-center md:justify-center justify-end ">
+          <div className="mb-10 md:mb-0">
             {availableDevices.devices && (
               <Select onValueChange={handleChange}>
                 <SelectTrigger className={"text-black"}>
