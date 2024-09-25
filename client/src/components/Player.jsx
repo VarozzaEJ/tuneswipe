@@ -4,38 +4,16 @@ import React, { useCallback, useEffect, useState } from "react";
 import { WebPlaybackSDK } from "react-spotify-web-playback-sdk";
 import TogglePlay from "./TogglePlay.jsx";
 
-const Playback = ({ accessToken, trackUri }) => {
+const Playback = ({ accessToken, trackUri, chosenDeviceId }) => {
   const [player, setPlayer] = useState(null);
   const [isReady, setIsReady] = useState(false);
   const getOAuthToken = useCallback((callback) => callback(accessToken), []);
 
-  const getAvailableDevices = async () => {
-    if (!accessToken) return;
-
+  const transferPlayback = async () => {
+    if (!accessToken || !chosenDeviceId) return;
+    const deviceId = `${chosenDeviceId}`;
     try {
-      const response = await fetch(
-        "https://api.spotify.com/v1/me/player/devices",
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      const data = await response.json();
-      console.log("Available devices:", data.devices);
-      return data.devices;
-    } catch (error) {
-      console.error("Error fetching devices:", error);
-    }
-  };
-
-  const transferPlayback = async (deviceId) => {
-    if (!accessToken) return;
-
-    try {
+      //NOTE If the chosenDeviceId is what the player is already set to, you will get an error. Figure out a way to stop this function from calling if you're chosen device is already what spotify is playing through.
       const response = await fetch(`https://api.spotify.com/v1/me/player`, {
         method: "PUT",
         headers: {
@@ -46,9 +24,9 @@ const Playback = ({ accessToken, trackUri }) => {
       });
 
       if (response.ok) {
-        console.log(`Playback transferred to device ID: ${deviceId}`);
+        console.log(`Playback transferred to device ID: ${chosenDeviceId}`);
       } else {
-        console.error("Error transferring playback:", response.status);
+        console.error("Error transferring playback:", response);
       }
     } catch (error) {
       console.error("Error transferring playback:", error);
@@ -60,7 +38,6 @@ const Playback = ({ accessToken, trackUri }) => {
     if (!accessToken || !trackUri) return;
 
     try {
-      debugger;
       const response = await fetch(
         `https://api.spotify.com/v1/me/player/queue?uri=` + trackUri,
         {
@@ -89,7 +66,6 @@ const Playback = ({ accessToken, trackUri }) => {
     script.async = true;
 
     document.body.appendChild(script);
-    getAvailableDevices();
 
     window.onSpotifyWebPlaybackSDKReady = () => {
       const player = new window.Spotify.Player({
@@ -125,10 +101,10 @@ const Playback = ({ accessToken, trackUri }) => {
       player.connect();
       //TODO call the get devices function in a higher component using a form, then, using the response from the api with all of the devices, save the id that the user chooses, send that down to this component, and interpolate that id in the line below.
       //TODO When a user goes to the next song, I should simultaneously send the next song in the tracks array to the queue, and then skip the song. I might have to do some weird fannagling to get the timing right, but I think it will work.
-      transferPlayback("47775e88f5ecfb27b129faab422a73f0247aa7be");
+      transferPlayback();
       addSongToQueue();
     };
-  }, [accessToken, trackUri]);
+  }, [accessToken]);
 
   const play = (uri) => {
     if (!isReady || !player || !accessToken) return;

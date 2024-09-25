@@ -15,9 +15,9 @@ const spotifyApi = new SpotifyWebApi({
 });
 export default function ListenPage() {
   const [playingTrack, setPlayingTrack] = useState("");
-  const navigate = useNavigate();
   const [accessToken, setAccessToken] = useState("");
   const [recommendations, setRecommendations] = useState({});
+  const [chosenDeviceId, setChosenDeviceId] = useState("");
   const [artistIds, setArtistIds] = useState([]);
   const searchParams = useParams();
 
@@ -25,6 +25,7 @@ export default function ListenPage() {
     const accessToken = localStorage.getItem("accessToken");
     setAccessToken(accessToken);
     setIds();
+    setDeviceId();
   }, []);
 
   useEffect(() => {
@@ -88,6 +89,11 @@ export default function ListenPage() {
     setArtistIds(ids);
   }
 
+  function setDeviceId() {
+    const deviceId = searchParams.deviceId;
+    setChosenDeviceId(deviceId);
+  }
+
   return (
     <>
       <div className="container h-screen flex-col flex justify-center items-center">
@@ -117,7 +123,11 @@ export default function ListenPage() {
           >
             <Icon path={mdiSync} size={1} color="white" />
           </div> */}
-          <Player accessToken={accessToken} trackUri={playingTrack} />
+          <Player
+            accessToken={accessToken}
+            trackUri={playingTrack}
+            chosenDeviceId={chosenDeviceId}
+          />
           {/* <PreBuiltPlayer accessToken={accessToken} trackUri={playingTrack} /> */}
         </div>
       </div>
