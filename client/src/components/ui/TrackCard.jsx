@@ -48,10 +48,26 @@ export default function TrackCard({ image, trackArtist, trackTitle }) {
           />
         </CardHeader>
         <CardContent>
-          <div className="flex justify-between">
+          <div className="grid gap-4 grid-cols-12">
+            <div className="col-span-8">
+              <div className="grid grid-cols-12">
+                <div className="col-span-12">
+                  <p>{trackTitle}</p>
+                </div>
+                <div className="col-span-12">
+                  <span className="flex text-slate-500">
+                    <Icon path={mdiSpotify} size={1} />
+                    {trackArtist}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="col-span-4"></div>
+          </div>
+          {/* <div className="flex flex-wrap md:flex-nowrap justify-between">
             <div className=" block">
-              <div>
-                <span>{trackTitle}</span>
+              <div className="">
+                <p className=" overflow-x-hidden">{trackTitle}</p>
               </div>
               <div>
                 <span className="flex text-slate-500">
@@ -106,7 +122,7 @@ export default function TrackCard({ image, trackArtist, trackTitle }) {
                 </DrawerContent>
               </Drawer>
             </div>
-          </div>
+          </div> */}
         </CardContent>
       </Card>
     </>

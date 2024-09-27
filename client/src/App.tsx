@@ -7,8 +7,8 @@ function App() {
 
   return (
     <>
-     <div className="App" id="app">
-      <main>
+     <div className="App h-screen" id="app">
+      <main className="h-screen">
         <Outlet />
       </main>
       <Toaster />

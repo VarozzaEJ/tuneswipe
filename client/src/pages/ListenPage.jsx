@@ -18,7 +18,7 @@ export default function ListenPage() {
   const [playingTrack, setPlayingTrack] = useState("");
   const [recommendedTracks, setRecommendedTracks] = useState([]);
   const [accessToken, setAccessToken] = useState("");
-  const [recommendations, setRecommendations] = useState({});
+  const [recommendations, setRecommendations] = useState([]);
   const [chosenDeviceId, setChosenDeviceId] = useState("");
   const [artistIds, setArtistIds] = useState([]);
   const searchParams = useParams();
@@ -32,7 +32,7 @@ export default function ListenPage() {
 
   const childRefs = useMemo(
     () =>
-      Array(recommendations.tracks?.length)
+      Array(recommendations.length)
         .fill(0)
         .map((i) => React.createRef()),
     []
@@ -43,13 +43,17 @@ export default function ListenPage() {
     currentIndexRef.current = val;
   };
 
-  const canGoBack = currentIndex < recommendations.tracks?.length - 1;
+  const canGoBack = currentIndex < recommendations.length - 1;
 
   const canSwipe = currentIndex >= 0;
 
   // set last direction and decrease current index
-  const swiped = (direction, nameToDelete, index) => {
+  const swiped = async (direction, nameToDelete, index) => {
     setLastDirection(direction);
+    console.log(index);
+    if (direction == "left") {
+      await skipToNext();
+    }
     updateCurrentIndex(index - 1);
   };
 
@@ -63,7 +67,7 @@ export default function ListenPage() {
   };
 
   const swipe = async (dir) => {
-    if (canSwipe && currentIndex < recommendations.tracks?.length) {
+    if (canSwipe && currentIndex < recommendations.length) {
       await childRefs[currentIndex].current.swipe(dir); // Swipe the card!
     }
   };
@@ -74,6 +78,18 @@ export default function ListenPage() {
     const newIndex = currentIndex + 1;
     updateCurrentIndex(newIndex);
     await childRefs[newIndex].current.restoreCard();
+  };
+
+  const skipToNext = async () => {
+    await spotifyApi.skipToNext().then(
+      function () {
+        console.log("Skip to next");
+      },
+      function (err) {
+        //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
+        console.log("Something went wrong!", err);
+      }
+    );
   };
 
   useEffect(() => {
@@ -89,10 +105,6 @@ export default function ListenPage() {
     spotifyApi.setAccessToken(accessToken);
   }, [accessToken]);
 
-  function chooseTrack(track) {
-    setPlayingTrack(track);
-  }
-
   useEffect(() => {
     if (accessToken.length == 0) return;
 
@@ -106,9 +118,11 @@ export default function ListenPage() {
       .then(
         function (data) {
           let recommendations = data.body;
-          console.log(recommendations);
-          setRecommendations(data.body);
-          setRecommendedTracks(data.body.tracks);
+          const flippedArray = [...data.body.tracks].reverse();
+          console.log("👺", recommendations);
+          console.log("🧍‍♂️", flippedArray);
+          setRecommendations(data.body.tracks);
+          setRecommendedTracks(flippedArray);
         },
         function (err) {
           console.log("Something went wrong!", err);
@@ -151,13 +165,14 @@ export default function ListenPage() {
 
   return (
     <>
-      <div className="container h-screen  flex-col flex justify-center items-center">
-        {recommendations.tracks &&
-          recommendations.tracks.map((track, index) => (
+      <div className="container overflow-y-hidden h-screen  flex-col flex justify-center items-center">
+        {recommendations &&
+          recommendations.map((track, index) => (
             <TinderCard
               ref={childRefs[index]}
-              className="absolute w-[350]"
+              className="absolute w-[350px] h-[375px]"
               key={track.name}
+              flickOnSwipe
               onSwipe={(dir) => swiped(dir, track.name, index)}
               onCardLeftScreen={() => outOfFrame(track.name, index)}
             >
@@ -169,7 +184,7 @@ export default function ListenPage() {
             </TinderCard>
           ))}
       </div>
-      <div className="flex sticky bottom-12 justify-center items-center mt-10">
+      <div className="flex sticky bottom-12 justify-center items-center">
         <Player
           accessToken={accessToken}
           chosenDeviceId={chosenDeviceId}

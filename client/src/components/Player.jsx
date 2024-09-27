@@ -44,7 +44,10 @@ const Playback = ({ accessToken, chosenDeviceId, recommendedTracks }) => {
 
   const extractedAddSongToQueue = () => {
     recommendedTracks.forEach((track) => {
-      addSongToQueue(track.uri);
+      debugger;
+      setTimeout(() => {
+        addSongToQueue(track.uri);
+      }, 10000);
     });
   };
 
@@ -62,9 +65,7 @@ const Playback = ({ accessToken, chosenDeviceId, recommendedTracks }) => {
         }
       );
       if (response.ok) {
-        console.log(
-          `successfully added the song with the uri of ${trackUri} to your queue`
-        );
+        console.log();
       } else {
         console.error("Error adding song to queue", response.status);
       }
@@ -117,10 +118,11 @@ const Playback = ({ accessToken, chosenDeviceId, recommendedTracks }) => {
       //TODO When a user goes to the next song, I should simultaneously send the next song in the tracks array to the queue, and then skip the song. I might have to do some weird fannagling to get the timing right, but I think it will work.
       //TODO UPDATE: Spotify API does not accept more than one call per few seconds, so this will turn out to be a big problem. Maybe, I set an interval and call the addSongToQueue() function after the interval with each URI gotten from the GetRecommendations() function in the ListenPage
       await transferPlayback();
-      await extractedAddSongToQueue();
+      await addSongToQueue(recommendedTracks[0].uri);
       playSong();
-      sleep(8000);
+      setPlay(true);
       await skipToNext();
+      await addSongToQueue(recommendedTracks[1].uri);
       setIsReady(true);
     };
     runRequiredFunctions();
@@ -129,7 +131,6 @@ const Playback = ({ accessToken, chosenDeviceId, recommendedTracks }) => {
   const skipToNext = async () => {
     await spotifyApi.skipToNext().then(
       function () {
-        sleep(2000);
         console.log("Skip to next");
       },
       function (err) {
