@@ -17,6 +17,8 @@ const spotifyApi = new SpotifyWebApi({
 export default function ListenPage() {
   const [playingTrack, setPlayingTrack] = useState("");
   const [recommendedTracks, setRecommendedTracks] = useState([]);
+  const [currentSongIndex, setCurrentSongIndex] = useState(2);
+  const [likeSongIndex, setLikeSongIndex] = useState(0);
   const [accessToken, setAccessToken] = useState("");
   const [recommendations, setRecommendations] = useState([]);
   const [chosenDeviceId, setChosenDeviceId] = useState("");
@@ -50,9 +52,20 @@ export default function ListenPage() {
   // set last direction and decrease current index
   const swiped = async (direction, nameToDelete, index) => {
     setLastDirection(direction);
+    setCurrentSongIndex(currentSongIndex + 1);
+    setLikeSongIndex(likeSongIndex + 1);
     console.log(index);
     if (direction == "left") {
       await skipToNext();
+    }
+    if (direction == "right") {
+      console.log(likeSongIndex);
+      await addSongToYourMusic(recommendedTracks[likeSongIndex].id);
+      await skipToNext();
+    }
+    if (currentSongIndex <= recommendedTracks.length) {
+      console.log(currentSongIndex + "=" + recommendedTracks.length);
+      addSongToQueue(recommendedTracks[currentSongIndex].uri);
     }
     updateCurrentIndex(index - 1);
   };
@@ -90,6 +103,44 @@ export default function ListenPage() {
         console.log("Something went wrong!", err);
       }
     );
+  };
+
+  const addSongToQueue = async (trackUri) => {
+    if (!accessToken || recommendedTracks.length == 0) return;
+    try {
+      const response = await fetch(
+        `https://api.spotify.com/v1/me/player/queue?uri=` + trackUri,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.ok) {
+        console.log();
+      } else {
+        console.error("Error adding song to queue", response.status);
+      }
+    } catch (error) {
+      console.error("Error adding song to queue", error);
+    }
+  };
+
+  const addSongToYourMusic = async (songId) => {
+    try {
+      spotifyApi.addToMySavedTracks([`${songId}`]).then(
+        function (data) {
+          console.log("Added track!");
+        },
+        function (err) {
+          console.log("Something went wrong!", err);
+        }
+      );
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
