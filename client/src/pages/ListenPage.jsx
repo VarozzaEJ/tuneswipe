@@ -15,7 +15,6 @@ const spotifyApi = new SpotifyWebApi({
   clientId: `${import.meta.env.VITE_CLIENT_ID}`,
 });
 export default function ListenPage() {
-  const [playingTrack, setPlayingTrack] = useState("");
   const [recommendedTracks, setRecommendedTracks] = useState([]);
   const [currentSongIndex, setCurrentSongIndex] = useState(2);
   const [likeSongIndex, setLikeSongIndex] = useState(0);
@@ -54,17 +53,14 @@ export default function ListenPage() {
     setLastDirection(direction);
     setCurrentSongIndex(currentSongIndex + 1);
     setLikeSongIndex(likeSongIndex + 1);
-    console.log(index);
     if (direction == "left") {
       await skipToNext();
     }
     if (direction == "right") {
-      console.log(likeSongIndex);
       await addSongToYourMusic(recommendedTracks[likeSongIndex].id);
       await skipToNext();
     }
     if (currentSongIndex <= recommendedTracks.length) {
-      console.log(currentSongIndex + "=" + recommendedTracks.length);
       addSongToQueue(recommendedTracks[currentSongIndex].uri);
     }
     updateCurrentIndex(index - 1);
@@ -181,26 +177,6 @@ export default function ListenPage() {
       );
   }, [artistIds, accessToken]);
 
-  const getTrackDetails = async () => {
-    const response = await fetch(
-      `https://api.spotify.com/v1/tracks/0wI7QkCcs8FUQE1OkXUIqd`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(),
-      }
-    );
-    console.log("🌞", response);
-  };
-
-  useEffect(() => {
-    if (!accessToken) return;
-    getTrackDetails;
-  }, [accessToken]);
-
   function setIds() {
     const ids = searchParams.artistIds
       .split(",")
@@ -216,31 +192,38 @@ export default function ListenPage() {
 
   return (
     <>
-      <div className="container overflow-y-hidden h-screen  flex-col flex justify-center items-center">
-        {recommendations &&
-          recommendations.map((track, index) => (
-            <TinderCard
-              ref={childRefs[index]}
-              className="absolute w-[350px] h-[375px]"
-              key={track.name}
-              flickOnSwipe
-              onSwipe={(dir) => swiped(dir, track.name, index)}
-              onCardLeftScreen={() => outOfFrame(track.name, index)}
-            >
-              <TrackCard
-                trackTitle={track?.name}
-                trackArtist={track.artists[0]?.name}
-                image={track.album.images[0]?.url}
-              />
-            </TinderCard>
-          ))}
-      </div>
-      <div className="flex sticky bottom-12 justify-center items-center">
-        <Player
-          accessToken={accessToken}
-          chosenDeviceId={chosenDeviceId}
-          recommendedTracks={recommendedTracks}
-        />
+      <div className="container overflow-y-hidden h-screen  flex-col flex justify-center">
+        <div className="h-3/4 flex items-center justify-center">
+          {recommendations &&
+            recommendations.map((track, index) => (
+              <TinderCard
+                ref={childRefs[index]}
+                className="absolute w-[350px] h-[375px]"
+                key={track.name}
+                flickOnSwipe
+                preventSwipe={["down", "up"]}
+                onSwipe={(dir) => swiped(dir, track.name, index)}
+                onCardLeftScreen={() => outOfFrame(track.name, index)}
+              >
+                <TrackCard
+                  trackId={track.id}
+                  accessToken={accessToken}
+                  trackTitle={track?.name}
+                  trackArtist={track.artists[0]?.name}
+                  image={track.album.images[0]?.url}
+                  artistLink={track.artists[0]?.external_urls.spotify}
+                />
+              </TinderCard>
+            ))}
+        </div>
+        <div className="flex sticky bottom-12 justify-center items-center">
+          <Player
+            accessToken={accessToken}
+            chosenDeviceId={chosenDeviceId}
+            recommendedTracks={recommendedTracks}
+            likeSongIndex={likeSongIndex}
+          />
+        </div>
       </div>
     </>
   );

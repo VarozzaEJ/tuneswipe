@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -35,7 +35,57 @@ import {
   mdiPlusCircleOutline,
   mdiSpotify,
 } from "@mdi/js";
-export default function TrackCard({ image, trackArtist, trackTitle }) {
+import SpotifyWebApi from "spotify-web-api-node";
+import { toast } from "sonner";
+
+const spotifyApi = new SpotifyWebApi({
+  clientId: `${import.meta.env.VITE_CLIENT_ID}`,
+});
+export default function TrackCard({
+  image,
+  trackArtist,
+  trackTitle,
+  accessToken,
+  trackId,
+  artistLink,
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (!accessToken) return;
+    spotifyApi.setAccessToken(accessToken);
+  }, [accessToken]);
+
+  const skipToNext = async () => {
+    await spotifyApi.skipToNext().then(
+      function () {
+        console.log("Skip to next");
+        setIsOpen(false);
+      },
+      function (err) {
+        //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
+        console.log("Something went wrong!", err);
+      }
+    );
+  };
+
+  const addSongToYourMusic = async () => {
+    try {
+      spotifyApi.addToMySavedTracks([`${trackId}`]).then(
+        function (data) {
+          console.log("Added track!");
+          toast.success("Added Track!");
+          setIsOpen(false);
+        },
+        function (err) {
+          toast.error("An error occured");
+          console.log("Something went wrong!", err);
+        }
+      );
+    } catch (error) {
+      console.log();
+    }
+  };
   return (
     <>
       <Card className="w-full max-w-md bg-slate-800 text-white">
@@ -48,21 +98,90 @@ export default function TrackCard({ image, trackArtist, trackTitle }) {
           />
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 grid-cols-12">
-            <div className="col-span-8">
+          <div className="grid gap-4 grid-cols-12 ">
+            <div className="sm:col-span-8 col-span-12 prevent-select">
               <div className="grid grid-cols-12">
                 <div className="col-span-12">
-                  <p>{trackTitle}</p>
+                  <p className="truncate">{trackTitle}</p>
                 </div>
                 <div className="col-span-12">
-                  <span className="flex text-slate-500">
-                    <Icon path={mdiSpotify} size={1} />
-                    {trackArtist}
-                  </span>
+                  <a href={artistLink}>
+                    <span className="flex text-slate-500 cursor-pointer hover:text-slate-200 delay-75 transition-all ease-in-out">
+                      <Icon path={mdiSpotify} size={1} />
+                      <span className="truncate">{trackArtist}</span>
+                    </span>
+                  </a>
                 </div>
               </div>
             </div>
-            <div className="col-span-4"></div>
+            <div className="sm:col-span-4 col-span-12 flex justify-end  items-center">
+              <Drawer open={isOpen} onOpenChange={setIsOpen}>
+                <DrawerTrigger>
+                  <span aria-label="Open drawer to see more actions">
+                    <Icon
+                      title="Open Options Menu"
+                      path={mdiDotsHorizontal}
+                      size={1.4}
+                      color="white"
+                      className="cursor-pointer"
+                    />
+                  </span>
+                </DrawerTrigger>
+                <DrawerContent
+                  aria-label="Options for this song"
+                  className="bg-slate-800"
+                >
+                  <DrawerTitle></DrawerTitle>
+                  <DrawerDescription></DrawerDescription>
+                  <div
+                    aria-describedby="Options for this song"
+                    className="w-full mx-auto flex flex-col "
+                  >
+                    <div className="flex flex-col justify-center items-center mt-3">
+                      <img
+                        style={{ height: 150, width: 150 }}
+                        src={image}
+                        alt={`${trackArtist}'s image'`}
+                      />
+                      <span>{trackTitle}</span>
+                      <a href={artistLink}>
+                        <span className="text-slate-500 cursor-pointer hover:text-slate-200 delay-75 transition-all ease-in-out">
+                          {trackArtist}
+                        </span>
+                      </a>
+                    </div>
+                    <span
+                      onClick={() => {
+                        addSongToYourMusic();
+                      }}
+                      className="flex my-4 text-lg ms-2 cursor-pointer hover:text-slate-600 delay-75 transition-all ease-in-out"
+                    >
+                      <Icon
+                        path={mdiPlusCircleOutline}
+                        color="white"
+                        className="me-4"
+                        size={1}
+                      />
+                      Save Song
+                    </span>
+                    {/* <span
+                      onClick={() => {
+                        skipToNext();
+                      }}
+                      className="flex mb-4 text-lg cursor-pointer hover:text-slate-600 ms-2 delay-75 transition-all ease-in-out"
+                    >
+                      <Icon
+                        path={mdiDiameterVariant}
+                        color="red"
+                        className="me-4"
+                        size={1}
+                      />
+                      Skip this Song
+                    </span> */}
+                  </div>
+                </DrawerContent>
+              </Drawer>
+            </div>
           </div>
           {/* <div className="flex flex-wrap md:flex-nowrap justify-between">
             <div className=" block">
@@ -77,50 +196,6 @@ export default function TrackCard({ image, trackArtist, trackTitle }) {
               </div>
             </div>
             <div className="flex items-center">
-              <Drawer>
-                <DrawerTrigger>
-                  <span aria-label="Open drawer to see more actions">
-                    <Icon
-                      title="Open Options Menu"
-                      path={mdiDotsHorizontal}
-                      size={1.4}
-                      color="white"
-                      className="cursor-pointer"
-                    />
-                  </span>
-                </DrawerTrigger>
-                <DrawerContent className="bg-slate-800">
-                  <div className="w-full mx-auto flex flex-col ">
-                    <div className="flex flex-col justify-center items-center mt-3">
-                      <img
-                        style={{ height: 150, width: 150 }}
-                        src={image}
-                        alt={`${trackArtist}'s image'`}
-                      />
-                      <span>{trackTitle}</span>
-                      <span className="text-slate-500">{trackArtist}</span>
-                    </div>
-                    <span className="flex mb-4 text-lg">
-                      <Icon
-                        path={mdiPlusCircleOutline}
-                        color="white"
-                        className="me-4"
-                        size={1}
-                      />
-                      Save Song
-                    </span>
-                    <span className="flex mb-4 text-lg">
-                      <Icon
-                        path={mdiDiameterVariant}
-                        color="red"
-                        className="me-4"
-                        size={1}
-                      />
-                      Skip this Song
-                    </span>
-                  </div>
-                </DrawerContent>
-              </Drawer>
             </div>
           </div> */}
         </CardContent>

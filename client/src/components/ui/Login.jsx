@@ -1,11 +1,14 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
+import AnimatedTitle from "../AnimatedTitle.jsx";
 export default function Login() {
   return (
     <>
       <div className="container  flex flex-col justify-around items-center min-h-screen h-screen">
         <div>
-          <h1 className="text-3xl">Tune Swipe</h1>
+          <h1>
+            <AnimatedTitle text={"Tune Swipe"} />
+          </h1>
         </div>
         {/* <a
         href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}

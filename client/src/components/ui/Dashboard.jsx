@@ -81,6 +81,9 @@ export default function Dashboard({ code }) {
 
   function addArtistId(artistId) {
     const isAdded = artistIds.find((id) => id == artistId);
+    if (isAdded) toast.error("This artist is already added");
+    if (artistIds.length >= 10)
+      toast.error("A maximum of 10 artists is allowed");
     if (isAdded || artistIds.length >= 10) return;
     //NOTE maybe throw a pop error of some sort here
     setArtistIds((artistIds) => [...artistIds, artistId]);
@@ -144,7 +147,7 @@ export default function Dashboard({ code }) {
             ))}
           </div>
           <div className="w-full sticky bottom-4 flex justify-end mt-5">
-            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+            <div>
               <Button
                 onClick={getReccomendationsBasedOnArtists}
                 className={"me-5"}
@@ -152,7 +155,7 @@ export default function Dashboard({ code }) {
                 Get Reccomendations{" "}
                 <p className="m-0 ms-2 text-slate-400">{artistIds.length}</p>
               </Button>
-            </motion.div>
+            </div>
           </div>
         </div>
       ) : (
