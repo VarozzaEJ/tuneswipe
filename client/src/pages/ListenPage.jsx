@@ -27,6 +27,7 @@ export default function ListenPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lastDirection, setLastDirection] = useState();
   const [lastSwipedURI, setLastSwipedURI] = useState("");
+  const [isReady, setIsReady] = useState(false);
 
   console.log("🎤", lastSwipedURI);
   const currentIndexRef = useRef(currentIndex);
@@ -150,6 +151,7 @@ export default function ListenPage() {
     setAccessToken(accessToken);
     setIds();
     setDeviceId();
+    setIsReady(true);
   }, []);
 
   useEffect(() => {
@@ -182,6 +184,7 @@ export default function ListenPage() {
           console.log("Something went wrong!", err);
         }
       );
+    setIsReady(true);
   }, [artistIds, accessToken]);
 
   function setIds() {
@@ -224,20 +227,24 @@ export default function ListenPage() {
             ))}
         </div>
         <div className="flex sticky bottom-12 justify-center items-center">
-          <Player
-            accessToken={accessToken}
-            chosenDeviceId={chosenDeviceId}
-            recommendedTracks={recommendedTracks}
-            likeSongIndex={likeSongIndex}
-          />
-          <div
-            role="button"
-            title="replay"
-            onClick={() => goBack()}
-            className="hover:bg-slate-600 rounded-full ms-4 bg-slate-500 w-11 h-11 flex items-center justify-center"
-          >
-            <Icon path={mdiSync} size={1} color="white" />
-          </div>
+          {isReady && (
+            <>
+              <Player
+                accessToken={accessToken}
+                chosenDeviceId={chosenDeviceId}
+                recommendedTracks={recommendedTracks}
+                likeSongIndex={likeSongIndex}
+              />
+              <div
+                role="button"
+                title="replay"
+                onClick={() => goBack()}
+                className="hover:bg-slate-600 rounded-full ms-4 bg-slate-500 w-11 h-11 flex items-center justify-center"
+              >
+                <Icon path={mdiSync} size={1} color="white" />
+              </div>
+            </>
+          )}
         </div>
       </div>
     </>

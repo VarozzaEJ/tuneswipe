@@ -143,39 +143,37 @@ const Playback = ({
 
   return (
     <div className="flex items-center justify-center">
-      {isReady ? (
-        <>
+      <>
+        <div
+          role="button"
+          title="Previous"
+          onClick={() => previous()}
+          className="hover:bg-slate-600 delay-75 transition-all ease-in-out rounded-full me-4 bg-slate-500 w-11 h-11 flex items-center justify-center"
+        >
+          <Icon size={1} path={mdiReplay} color="white" />
+        </div>
+        {play ? (
           <div
+            title="Pause"
+            // onClick={() => play(`${trackUri}`)}
+            onClick={() => pause()}
             role="button"
-            title="Previous"
-            onClick={() => previous()}
-            className="hover:bg-slate-600 delay-75 transition-all ease-in-out rounded-full me-4 bg-slate-500 w-11 h-11 flex items-center justify-center"
+            className="hover:bg-purple-500 delay-75 transition-all ease-in-out rounded-full bg-purple-400 w-16 h-16 flex items-center justify-center"
           >
-            <Icon size={1} path={mdiReplay} color="white" />
+            <Icon path={mdiPause} color="white" size={1.8} />
           </div>
-          {play ? (
-            <div
-              title="Pause"
-              // onClick={() => play(`${trackUri}`)}
-              onClick={() => pause()}
-              role="button"
-              className="hover:bg-purple-500 delay-75 transition-all ease-in-out rounded-full bg-purple-400 w-16 h-16 flex items-center justify-center"
-            >
-              <Icon path={mdiPause} color="white" size={1.8} />
-            </div>
-          ) : (
-            <div
-              // onClick={() => play(`${trackUri}`)}
-              onClick={() => playSong()}
-              title="Play"
-              role="button"
-              className="hover:bg-purple-500 delay-75 transition-all ease-in-out rounded-full bg-purple-400 w-16 h-16 flex items-center justify-center"
-            >
-              <Icon path={mdiPlay} color="white" size={1.8} />
-            </div>
-          )}
-        </>
-      ) : null}
+        ) : (
+          <div
+            // onClick={() => play(`${trackUri}`)}
+            onClick={() => playSong()}
+            title="Play"
+            role="button"
+            className="hover:bg-purple-500 delay-75 transition-all ease-in-out rounded-full bg-purple-400 w-16 h-16 flex items-center justify-center"
+          >
+            <Icon path={mdiPlay} color="white" size={1.8} />
+          </div>
+        )}
+      </>
     </div>
   );
 };
