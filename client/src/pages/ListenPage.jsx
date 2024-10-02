@@ -26,7 +26,9 @@ export default function ListenPage() {
   //NOTE this grabbing an array that could not exist possibly could mess things up
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lastDirection, setLastDirection] = useState();
+  const [lastSwipedURI, setLastSwipedURI] = useState("");
 
+  console.log("🎤", lastSwipedURI);
   const currentIndexRef = useRef(currentIndex);
 
   const childRefs = useMemo(
@@ -47,7 +49,7 @@ export default function ListenPage() {
   const canSwipe = currentIndex >= 0;
 
   // set last direction and decrease current index
-  const swiped = async (direction, nameToDelete, index) => {
+  const swiped = async (direction, songURI, index) => {
     setLastDirection(direction);
     setCurrentSongIndex(currentSongIndex + 1);
     setLikeSongIndex(likeSongIndex + 1);
@@ -55,13 +57,14 @@ export default function ListenPage() {
       await skipToNext();
     }
     if (direction == "right") {
-      await addSongToYourMusic(recommendedTracks[likeSongIndex].id);
+      await addSongToYourMusic(recommendedTracks[likeSongIndex - 2].id);
       await skipToNext();
     }
-    if (currentSongIndex <= recommendedTracks.length) {
-      addSongToQueue(recommendedTracks[currentSongIndex].uri);
+    if (currentIndex > 1) {
+      addSongToQueue(recommendations[currentIndex - 2].uri);
     }
     updateCurrentIndex(index - 1);
+    setLastSwipedURI(songURI);
   };
 
   const outOfFrame = (name, idx) => {
@@ -84,8 +87,11 @@ export default function ListenPage() {
     if (!canGoBack) return;
     const newIndex = currentIndex + 1;
     updateCurrentIndex(newIndex);
-    console.log(childRefs);
     await childRefs[newIndex].current.restoreCard();
+    await addSongToQueue(lastSwipedURI);
+    await skipToNext();
+    await skipToNext();
+    await addSongToQueue(recommendations[currentIndex].uri);
   };
 
   const skipToNext = async () => {
@@ -203,7 +209,7 @@ export default function ListenPage() {
                 key={track.name}
                 flickOnSwipe
                 preventSwipe={["down", "up"]}
-                onSwipe={(dir) => swiped(dir, track.name, index)}
+                onSwipe={(dir) => swiped(dir, track.uri, index)}
                 onCardLeftScreen={() => outOfFrame(track.name, index)}
               >
                 <TrackCard
