@@ -147,7 +147,7 @@ const Playback = ({
         <div
           role="button"
           title="Previous"
-          onClick={() => previous()}
+          onClick={() => replay()}
           className="hover:bg-slate-600 delay-75 transition-all ease-in-out rounded-full me-4 bg-slate-500 w-11 h-11 flex items-center justify-center"
         >
           <Icon size={1} path={mdiReplay} color="white" />

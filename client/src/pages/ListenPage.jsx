@@ -237,7 +237,7 @@ export default function ListenPage() {
               />
               <div
                 role="button"
-                title="replay"
+                title="Play last song"
                 onClick={() => goBack()}
                 className="hover:bg-slate-600 rounded-full ms-4 bg-slate-500 w-11 h-11 flex items-center justify-center"
               >
