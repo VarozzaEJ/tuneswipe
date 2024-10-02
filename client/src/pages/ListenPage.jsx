@@ -24,9 +24,7 @@ export default function ListenPage() {
   const [artistIds, setArtistIds] = useState([]);
   const searchParams = useParams();
   //NOTE this grabbing an array that could not exist possibly could mess things up
-  const [currentIndex, setCurrentIndex] = useState(
-    recommendations.tracks?.length - 1
-  );
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [lastDirection, setLastDirection] = useState();
 
   const currentIndexRef = useRef(currentIndex);
@@ -36,7 +34,7 @@ export default function ListenPage() {
       Array(recommendations.length)
         .fill(0)
         .map((i) => React.createRef()),
-    []
+    [recommendations]
   );
 
   const updateCurrentIndex = (val) => {
@@ -86,6 +84,7 @@ export default function ListenPage() {
     if (!canGoBack) return;
     const newIndex = currentIndex + 1;
     updateCurrentIndex(newIndex);
+    console.log(childRefs);
     await childRefs[newIndex].current.restoreCard();
   };
 
@@ -171,6 +170,7 @@ export default function ListenPage() {
           console.log("🧍‍♂️", flippedArray);
           setRecommendations(data.body.tracks);
           setRecommendedTracks(flippedArray);
+          setCurrentIndex(data.body.tracks.length - 1);
         },
         function (err) {
           console.log("Something went wrong!", err);
@@ -224,6 +224,14 @@ export default function ListenPage() {
             recommendedTracks={recommendedTracks}
             likeSongIndex={likeSongIndex}
           />
+          <div
+            role="button"
+            title="replay"
+            onClick={() => goBack()}
+            className="hover:bg-slate-600 rounded-full ms-4 bg-slate-500 w-11 h-11 flex items-center justify-center"
+          >
+            <Icon path={mdiSync} size={1} color="white" />
+          </div>
         </div>
       </div>
     </>

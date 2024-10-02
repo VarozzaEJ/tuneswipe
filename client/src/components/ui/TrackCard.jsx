@@ -91,6 +91,7 @@ export default function TrackCard({
       <Card className="w-full max-w-md bg-slate-800 text-white">
         <CardHeader className="px-0 pt-0">
           <img
+            draggable="false"
             className="rounded-lg max-w-full"
             style={{ height: 350 }}
             src={image}

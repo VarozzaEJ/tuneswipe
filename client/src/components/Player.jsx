@@ -65,7 +65,8 @@ const Playback = ({
   }
 
   useEffect(() => {
-    if (!accessToken || !chosenDeviceId || !recommendedTracks) return;
+    if (!accessToken || !chosenDeviceId || recommendedTracks.length === 0)
+      return;
     const runRequiredFunctions = async () => {
       await addSongToQueue(recommendedTracks[0].uri);
       playSong();
@@ -173,14 +174,6 @@ const Playback = ({
               <Icon path={mdiPlay} color="white" size={1.8} />
             </div>
           )}
-          <div
-            role="button"
-            title="replay"
-            onClick={() => replay()}
-            className="hover:bg-slate-600 rounded-full ms-4 bg-slate-500 w-11 h-11 flex items-center justify-center"
-          >
-            <Icon path={mdiSync} size={1} color="white" />
-          </div>
         </>
       ) : null}
     </div>
