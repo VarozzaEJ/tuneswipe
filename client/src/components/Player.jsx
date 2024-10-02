@@ -17,12 +17,25 @@ const Playback = ({
   const [isReady, setIsReady] = useState(false);
   const [play, setPlay] = useState(false);
 
-  console.log(recommendedTracks);
-  console.log("💙", likeSongIndex);
   useEffect(() => {
     if (!accessToken) return;
     spotifyApi.setAccessToken(accessToken);
-  }, [accessToken]);
+    if (!chosenDeviceId) return;
+    transferPlayback();
+  }, [accessToken, chosenDeviceId]);
+
+  const transferPlayback = async () => {
+    await spotifyApi.transferMyPlayback([`${chosenDeviceId}`]).then(
+      function () {
+        console.log("Transfering playback to " + chosenDeviceId);
+      },
+      function (err) {
+        console.log(chosenDeviceId);
+        //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
+        console.log("Something went wrong!", err);
+      }
+    );
+  };
 
   const addSongToQueue = async (trackUri) => {
     if (!accessToken || recommendedTracks.length == 0) return;

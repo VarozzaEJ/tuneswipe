@@ -32,8 +32,6 @@ export default function Dashboard({ code }) {
   const [searchResults, setSearchResults] = useState([]);
   const [artistIds, setArtistIds] = useState([]);
 
-  console.log(chosenDeviceId);
-
   const navigate = useNavigate();
 
   const getAvailableDevices = async () => {
@@ -169,9 +167,6 @@ export default function Dashboard({ code }) {
                 <SelectContent
                   onClick={() => {
                     console.log("Working");
-                    toast({
-                      description: `Playback transferred to ${device.name}`,
-                    });
                   }}
                 >
                   <SelectGroup>

@@ -140,6 +140,7 @@ export default function ListenPage() {
   };
 
   useEffect(() => {
+    //TODO make this happen in a higher component to skip the login process if the token already exists or has not expired
     const accessToken = localStorage.getItem("accessToken");
     setAccessToken(accessToken);
     setIds();
