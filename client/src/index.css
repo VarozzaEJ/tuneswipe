@@ -89,3 +89,17 @@ body {
   -ms-user-select: none; /* IE 10 and IE 11 */
   user-select: none; /* Standard syntax */
 }
+
+.main::after {
+  content: "";
+  height: 100%;
+  background-color: green;
+}
+
+.disliked {
+  background-color: red;
+}
+
+.liked {
+  background-color: green;
+}

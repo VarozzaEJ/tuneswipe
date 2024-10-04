@@ -4,7 +4,16 @@ import SpotifyWebApi from "spotify-web-api-node";
 import useAuth from "../services/useAuth.js";
 import { useNavigate } from "react-router-dom";
 import TrackCard from "../components/ui/TrackCard.jsx";
-import { mdiPlay, mdiReplay, mdiRewind, mdiSync } from "@mdi/js";
+import {
+  mdiCheckCircle,
+  mdiCheckCircleOutline,
+  mdiCloseCircle,
+  mdiCloseCircleOutline,
+  mdiPlay,
+  mdiReplay,
+  mdiRewind,
+  mdiSync,
+} from "@mdi/js";
 import Icon from "@mdi/react";
 import Player from "../components/Player.jsx";
 import axios from "axios";
@@ -14,6 +23,8 @@ import TinderCard from "react-tinder-card";
 const spotifyApi = new SpotifyWebApi({
   clientId: `${import.meta.env.VITE_CLIENT_ID}`,
 });
+
+const main = document.getElementById("main");
 export default function ListenPage() {
   const [recommendedTracks, setRecommendedTracks] = useState([]);
   const [currentSongIndex, setCurrentSongIndex] = useState(2);
@@ -28,6 +39,8 @@ export default function ListenPage() {
   const [lastDirection, setLastDirection] = useState();
   const [lastSwipedURI, setLastSwipedURI] = useState("");
   const [isReady, setIsReady] = useState(false);
+  const [likeColor, setLikeColor] = useState("white");
+  const [dislikeColor, setDislikeColor] = useState("white");
 
   console.log("🎤", lastSwipedURI);
   const currentIndexRef = useRef(currentIndex);
@@ -56,14 +69,19 @@ export default function ListenPage() {
     setLikeSongIndex(likeSongIndex + 1);
     if (direction == "left") {
       await skipToNext();
+      setDislikeColor("red");
+      setLikeColor("white");
     }
     if (direction == "right") {
       await addSongToYourMusic(recommendedTracks[likeSongIndex - 2].id);
       await skipToNext();
+      setLikeColor("green");
+      setDislikeColor("white");
     }
     if (currentIndex > 1) {
       addSongToQueue(recommendations[currentIndex - 2].uri);
     }
+
     updateCurrentIndex(index - 1);
     setLastSwipedURI(songURI);
   };
@@ -78,9 +96,10 @@ export default function ListenPage() {
   };
 
   const swipe = async (dir) => {
-    if (canSwipe && currentIndex < recommendations.length) {
-      await childRefs[currentIndex].current.swipe(dir); // Swipe the card!
-    }
+    // if (canSwipe && currentIndex < recommendations.length) {
+    //   await childRefs[currentIndex].current.swipe(dir); // Swipe the card!
+    // }
+    console.log("working?");
   };
 
   // increase current index and show card
@@ -199,16 +218,22 @@ export default function ListenPage() {
     const deviceId = searchParams.deviceId;
     setChosenDeviceId(deviceId);
   }
+  function checkPosition() {
+    console.log("dragging");
+  }
 
   return (
     <>
       <div className="container overflow-y-hidden h-screen  flex-col flex justify-center">
         <div className="h-3/4 flex items-center justify-center">
+          <div className="z-10 fixed left-1 sm:left-4">
+            <Icon path={mdiCloseCircle} color={dislikeColor} size={2} />
+          </div>
           {recommendations &&
             recommendations.map((track, index) => (
               <TinderCard
                 ref={childRefs[index]}
-                className="absolute w-[350px] h-[375px]"
+                className="absolute w-[300px] sm:w-[350px] h-[375px] "
                 key={track.name}
                 flickOnSwipe
                 preventSwipe={["down", "up"]}
@@ -225,6 +250,9 @@ export default function ListenPage() {
                 />
               </TinderCard>
             ))}
+          <div className="z-10 fixed right-1 sm:right-4">
+            <Icon path={mdiCheckCircle} color={likeColor} size={2} />
+          </div>
         </div>
         <div className="flex sticky bottom-12 justify-center items-center">
           {isReady && (
@@ -235,18 +263,80 @@ export default function ListenPage() {
                 recommendedTracks={recommendedTracks}
                 likeSongIndex={likeSongIndex}
               />
-              <div
-                role="button"
-                title="Play last song"
-                onClick={() => goBack()}
-                className="hover:bg-slate-600 rounded-full ms-4 bg-slate-500 w-11 h-11 flex items-center justify-center"
-              >
-                <Icon path={mdiSync} size={1} color="white" />
+              <div className="flex flex-col ms-4 items-center justify-center">
+                <div
+                  role="button"
+                  title="Play last song"
+                  onClick={() => goBack()}
+                  className="hover:bg-slate-600 rounded-full  bg-slate-500 w-11 h-11 flex items-center justify-center"
+                >
+                  <Icon path={mdiSync} size={1} color="white" />
+                </div>
+                <span className="text-slate-400">Back</span>
               </div>
             </>
           )}
         </div>
       </div>
     </>
+    // <>
+    //   <div
+    //     id="main"
+    //     className="container overflow-y-hidden h-screen grid grid-cols-12 grid-flow-col justify-center"
+    //   >
+    //     <div className="col-span-1 z-10 flex justify-center items-center">
+    //       <Icon path={mdiCloseCircle} color="white" size={2} />
+    //     </div>
+    //     <div className="h-3/4 flex col-span-9 items-center justify-center">
+    //       {recommendations &&
+    //         recommendations.map((track, index) => (
+    //           <TinderCard
+    //             ref={childRefs[index]}
+    //             className="absolute  "
+    //             key={track.name}
+    //             flickOnSwipe
+    //             preventSwipe={["down", "up"]}
+    //             onSwipe={(dir) => swiped(dir, track.uri, index)}
+    //             onCardLeftScreen={() => outOfFrame(track.name, index)}
+    //           >
+    //             <TrackCard
+    //               trackId={track.id}
+    //               accessToken={accessToken}
+    //               trackTitle={track?.name}
+    //               trackArtist={track.artists[0]?.name}
+    //               image={track.album.images[0]?.url}
+    //               artistLink={track.artists[0]?.external_urls.spotify}
+    //             />
+    //           </TinderCard>
+    //         ))}
+    //     </div>
+    //     <div className="flex fixed bottom-12 left-1/4 col-span-12 justify-center items-center">
+    //       {isReady && (
+    //         <>
+    //           <Player
+    //             accessToken={accessToken}
+    //             chosenDeviceId={chosenDeviceId}
+    //             recommendedTracks={recommendedTracks}
+    //             likeSongIndex={likeSongIndex}
+    //           />
+    //           <div className="flex flex-col ms-4 items-center">
+    //             <div
+    //               role="button"
+    //               title="Play last song"
+    //               onClick={() => goBack()}
+    //               className="hover:bg-slate-600 rounded-full  bg-slate-500 w-11 h-11 flex items-center justify-center"
+    //             >
+    //               <Icon path={mdiSync} size={1} color="white" />
+    //             </div>
+    //             <span className="text-slate-400">Back</span>
+    //           </div>
+    //         </>
+    //       )}
+    //     </div>
+    //     <div className="col-span-1 z-10 flex items-center justify-center">
+    //       <Icon path={mdiCheckCircle} color="white" size={2} />
+    //     </div>
+    //   </div>
+    // </>
   );
 }
