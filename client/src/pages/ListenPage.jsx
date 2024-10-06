@@ -226,7 +226,7 @@ export default function ListenPage() {
   return (
     <>
       <div className="container overflow-y-hidden h-screen  flex-col flex justify-center">
-        <div className="h-3/4 flex items-center justify-center">
+        <div className="sm:h-3/4 h-full flex items-center justify-center">
           <div className="z-10 fixed left-1 sm:left-4">
             <Icon path={mdiCloseCircle} color={dislikeColor} size={2} />
           </div>
@@ -234,7 +234,7 @@ export default function ListenPage() {
             recommendations.map((track, index) => (
               <TinderCard
                 ref={childRefs[index]}
-                className="absolute w-[300px] sm:w-[350px] h-[375px] "
+                className="absolute w-[260px] sm:w-[350px] h-[375px] "
                 key={track.name}
                 flickOnSwipe
                 swipeRequirementType="position"
