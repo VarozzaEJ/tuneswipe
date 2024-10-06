@@ -76,10 +76,13 @@ export default function Dashboard({ code }) {
     setFormSubmitted(true);
     toast.success("Device Changed Successfully");
   }
-
   function addArtistId(artistId) {
     const isAdded = artistIds.find((id) => id == artistId);
-    if (isAdded) toast.error("This artist is already added");
+    const foundArtistId = artistIds.findIndex((id) => id == artistId);
+    if (isAdded) {
+      artistIds.splice(foundArtistId, 1);
+      // toast.error("This artist is already added");
+    }
     if (artistIds.length >= 10)
       toast.error("A maximum of 10 artists is allowed");
     if (isAdded || artistIds.length >= 10) return;
@@ -91,6 +94,7 @@ export default function Dashboard({ code }) {
     if (!accessToken) return;
 
     navigate(`listen/${artistIds}/${chosenDeviceId}`);
+    //TODO when navigating for the first time per user, the queue does not work. I suspect that this is because spotify is not technically playing anything at the start of a user's session.
   }
 
   useEffect(() => {
@@ -144,7 +148,7 @@ export default function Dashboard({ code }) {
               </div>
             ))}
           </div>
-          <div className="w-full sticky bottom-4 flex justify-end mt-5">
+          <div className="w-full fixed bottom-4 flex justify-end mt-5">
             <div>
               <Button
                 onClick={getReccomendationsBasedOnArtists}

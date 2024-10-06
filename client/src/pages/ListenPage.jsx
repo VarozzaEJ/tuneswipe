@@ -126,6 +126,10 @@ export default function ListenPage() {
     );
   };
 
+  const startPlaying = async () => {
+    await spotifyApi.play();
+  };
+
   const addSongToQueue = async (trackUri) => {
     if (!accessToken || recommendedTracks.length == 0) return;
     try {
@@ -218,9 +222,6 @@ export default function ListenPage() {
     const deviceId = searchParams.deviceId;
     setChosenDeviceId(deviceId);
   }
-  function checkPosition() {
-    console.log("dragging");
-  }
 
   return (
     <>
@@ -236,6 +237,8 @@ export default function ListenPage() {
                 className="absolute w-[300px] sm:w-[350px] h-[375px] "
                 key={track.name}
                 flickOnSwipe
+                swipeRequirementType="position"
+                swipeThreshold={50}
                 preventSwipe={["down", "up"]}
                 onSwipe={(dir) => swiped(dir, track.uri, index)}
                 onCardLeftScreen={() => outOfFrame(track.name, index)}
