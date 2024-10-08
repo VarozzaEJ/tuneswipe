@@ -1,4 +1,6 @@
 import {
+  mdiAccount,
+  mdiAccountOutline,
   mdiChatOutline,
   mdiHome,
   mdiHomeOutline,
@@ -41,6 +43,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import Login from "../components/Login.jsx";
 
 export default function CreatePage() {
   return (
@@ -140,7 +143,7 @@ export default function CreatePage() {
           </div>
         </form>
       </div>
-      <div className="grid w-full grid-cols-3 fixed bottom-0 h-10 left-0 items-center justify-items-center bg-slate-950">
+      <div className="grid w-full grid-cols-4 fixed bottom-0 h-10 left-0 items-center justify-items-center bg-slate-950">
         <div className="">
           <Icon path={mdiHomeOutline} color="white" size={1} />
         </div>
@@ -150,6 +153,12 @@ export default function CreatePage() {
         <div className="">
           <Icon path={mdiPencilPlus} color="white" size={1} />
         </div>
+        {/* <Link to={"/account"}>
+          <div className="">
+            <Icon path={mdiAccountOutline} color="white" size={1} />
+          </div>
+        </Link> */}
+        <Login />
       </div>
     </>
   );

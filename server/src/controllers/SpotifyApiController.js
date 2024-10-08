@@ -7,12 +7,14 @@ const bodyParser = require('body-parser')
 
 export class SpotifyApiController extends BaseController {
     constructor() {
-        super("/login")
+        super("/spotify")
         this.router
             .post('', this.login)
             .post('/refresh', this.refresh)
     }
     login(request, response, next) {
+        debugger
+
         try {
             const code = request.body.code
             const spotifyApi = new SpotifyWebApi({

@@ -20,7 +20,7 @@ export default function useAuth(code) {
     }, [refreshToken, expiresIn])
 
     async function login() {
-        await axios.post('http://localhost:3000/login', { code })
+        await axios.post('http://localhost:3000/spotify', { code })
             .then(res => {
                 console.log(res.data)
                 setAccessToken(res.data.accessToken)
@@ -35,7 +35,7 @@ export default function useAuth(code) {
     }
 
     async function refresh() {
-        await axios.post('http://localhost:3000/login/refresh', { refreshToken })
+        await axios.post('http://localhost:3000/spotify/refresh', { refreshToken })
             .then(res => {
                 console.log(res.data)
                 setAccessToken(res.data.accessToken)

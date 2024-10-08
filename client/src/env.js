@@ -1,5 +1,5 @@
 export const dev = window.location.origin.includes('localhost')
-export const baseURL = dev ? 'http://localhost:5173' : 'https://tower.evanvarozza.dev'
+export const baseURL = dev ? 'http://localhost:3000' : ''
 export const useSockets = false
 export const domain = 'dev-cucsliboqrmpiibf.us.auth0.com'
 export const clientId = '9IHCopOWsypgrZC9Nniolr8lpzQ6Xvig'
