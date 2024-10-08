@@ -1,14 +1,17 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import SpotifyWebApi from "spotify-web-api-node";
 import useAuth from "../services/useAuth.js";
 import { useNavigate } from "react-router-dom";
 import TrackCard from "../components/ui/TrackCard.jsx";
 import {
+  mdiChatOutline,
   mdiCheckCircle,
   mdiCheckCircleOutline,
   mdiCloseCircle,
   mdiCloseCircleOutline,
+  mdiHome,
+  mdiPencilPlusOutline,
   mdiPlay,
   mdiReplay,
   mdiRewind,
@@ -223,6 +226,8 @@ export default function ListenPage() {
     setChosenDeviceId(deviceId);
   }
 
+  //TODO I think I should try and keep the artists I select in localStorage. This way, when I eventually add the different tabs the user won't have to readd what artists they want to listen to. I should set it when I hit the get recommendations button. I'll both simultaneously remove the id's in local storage and set the new ones at the same time. Then, in the setIds() function above, I will try and find the id's in local storage
+
   return (
     <>
       <div className="container overflow-y-hidden h-screen  flex-col flex justify-center">
@@ -280,66 +285,20 @@ export default function ListenPage() {
             </>
           )}
         </div>
+        <div className="grid w-full grid-cols-3 fixed bottom-0 h-10 left-0 items-center justify-items-center bg-slate-950">
+          <div className="">
+            <Icon path={mdiHome} color="white" size={1} />
+          </div>
+          <div className="">
+            <Icon path={mdiChatOutline} color="white" size={1} />
+          </div>
+          <div className="">
+            <Link to={"/create"}>
+              <Icon path={mdiPencilPlusOutline} color="white" size={1} />
+            </Link>
+          </div>
+        </div>
       </div>
     </>
-    // <>
-    //   <div
-    //     id="main"
-    //     className="container overflow-y-hidden h-screen grid grid-cols-12 grid-flow-col justify-center"
-    //   >
-    //     <div className="col-span-1 z-10 flex justify-center items-center">
-    //       <Icon path={mdiCloseCircle} color="white" size={2} />
-    //     </div>
-    //     <div className="h-3/4 flex col-span-9 items-center justify-center">
-    //       {recommendations &&
-    //         recommendations.map((track, index) => (
-    //           <TinderCard
-    //             ref={childRefs[index]}
-    //             className="absolute  "
-    //             key={track.name}
-    //             flickOnSwipe
-    //             preventSwipe={["down", "up"]}
-    //             onSwipe={(dir) => swiped(dir, track.uri, index)}
-    //             onCardLeftScreen={() => outOfFrame(track.name, index)}
-    //           >
-    //             <TrackCard
-    //               trackId={track.id}
-    //               accessToken={accessToken}
-    //               trackTitle={track?.name}
-    //               trackArtist={track.artists[0]?.name}
-    //               image={track.album.images[0]?.url}
-    //               artistLink={track.artists[0]?.external_urls.spotify}
-    //             />
-    //           </TinderCard>
-    //         ))}
-    //     </div>
-    //     <div className="flex fixed bottom-12 left-1/4 col-span-12 justify-center items-center">
-    //       {isReady && (
-    //         <>
-    //           <Player
-    //             accessToken={accessToken}
-    //             chosenDeviceId={chosenDeviceId}
-    //             recommendedTracks={recommendedTracks}
-    //             likeSongIndex={likeSongIndex}
-    //           />
-    //           <div className="flex flex-col ms-4 items-center">
-    //             <div
-    //               role="button"
-    //               title="Play last song"
-    //               onClick={() => goBack()}
-    //               className="hover:bg-slate-600 rounded-full  bg-slate-500 w-11 h-11 flex items-center justify-center"
-    //             >
-    //               <Icon path={mdiSync} size={1} color="white" />
-    //             </div>
-    //             <span className="text-slate-400">Back</span>
-    //           </div>
-    //         </>
-    //       )}
-    //     </div>
-    //     <div className="col-span-1 z-10 flex items-center justify-center">
-    //       <Icon path={mdiCheckCircle} color="white" size={2} />
-    //     </div>
-    //   </div>
-    // </>
   );
 }

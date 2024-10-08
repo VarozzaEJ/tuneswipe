@@ -4,6 +4,7 @@ import App from "./App.tsx";
 import ErrorPage from "./pages/HomePage.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import ListenPage from "./pages/ListenPage.jsx";
+import CreatePage from "./pages/CreatePage.jsx";
 
 export const router = createHashRouter([
   {
@@ -18,6 +19,10 @@ export const router = createHashRouter([
       {
         path: "/listen/:artistIds/:deviceId",
         element: <ListenPage />,
+      },
+      {
+        path: "/create",
+        element: <CreatePage />,
       },
     ],
   },
