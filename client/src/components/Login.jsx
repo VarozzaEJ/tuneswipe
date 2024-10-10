@@ -3,57 +3,50 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { AppState } from "../AppState.js";
 import { AuthService } from "../services/AuthService.js";
+import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 function Login() {
   function login() {
-    AuthService.loginWithRedirect();
+    AuthService.loginWithPopup();
   }
 
   function logout() {
     localStorage.removeItem("user-token");
+    //FIXME Logout does not work, redirects to port 8080 for an unkonwn reason.
     AuthService.logout({});
   }
 
   const notAuthenticated = (
-    <button
-      className="btn selectable text-success lighten-30 text-uppercase my-2 my-lg-0"
-      onClick={login}
-    >
+    <Button variant={"ghost"} onClick={login}>
       Login
-    </button>
+    </Button>
   );
 
   const authenticated = (
-    <div className="my-2 my-lg-0">
-      <img
-        src={AppState.account?.picture || AppState.user?.picture}
-        alt="account photo"
-        height="40"
-        className="rounded selectable no-select"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-      />
-
-      <div
-        className="dropdown-menu dropdown-menu-lg-end dropdown-menu-start p-0"
-        aria-labelledby="authDropdown"
-      >
-        <div className="list-group">
-          <Link to={"Account"}>
-            <div className="list-group-item dropdown-item list-group-item-action">
-              Manage Account
-            </div>
-          </Link>
-          <div
-            className="list-group-item dropdown-item list-group-item-action text-danger selectable"
-            onClick={logout}
-          >
-            <i className="mdi mdi-logout"></i>
-            logout
-          </div>
-        </div>
-      </div>
-    </div>
+    <Popover>
+      <PopoverTrigger>
+        <img
+          src={AppState.account?.picture || AppState.user?.picture}
+          alt="account photo"
+          style={{ height: 24 }}
+          className="rounded cursor-pointer select-none mt-1"
+          aria-expanded="false"
+        />
+      </PopoverTrigger>
+      <PopoverContent className="bg-slate-100 flex flex-col">
+        <Link className="text-center mb-4" to={"/account"}>
+          <span className="text-center">Manage Account</span>
+        </Link>
+        <Button variant={"ghost"} onClick={logout}>
+          Logout
+        </Button>
+      </PopoverContent>
+    </Popover>
   );
 
   return (

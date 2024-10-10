@@ -13,7 +13,6 @@ export class SpotifyApiController extends BaseController {
             .post('/refresh', this.refresh)
     }
     login(request, response, next) {
-        debugger
 
         try {
             const code = request.body.code

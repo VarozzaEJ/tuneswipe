@@ -8,12 +8,6 @@ class ObservableAppState {
   /** @type {import('./models/Account.js').Account} */
   account = null
 
-  temperature = null
-
-  weather = null
-
-  date = null
-  month = ''
   constructor() {
     makeAutoObservable(this)
   }

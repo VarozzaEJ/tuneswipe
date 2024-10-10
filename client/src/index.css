@@ -74,6 +74,10 @@
     @apply bg-background text-foreground;
   } */
 }
+
+.music-drawer::after {
+  position: static !important;
+}
 /* body {
   background: rgb(4, 0, 80);
   background: linear-gradient(

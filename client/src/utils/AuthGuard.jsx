@@ -31,7 +31,13 @@ const AuthGuard = (props) => {
     <React.Fragment>
       {
         // eslint-disable-next-line react/prop-types
-        isLoggedIn ? props.children : <div>Please Login 😋!!!!</div>
+        isLoggedIn ? (
+          props.children
+        ) : (
+          <div className="flex justify-center text-3xl mt-5">
+            Please Login To Continue
+          </div>
+        )
       }
     </React.Fragment>
   );
