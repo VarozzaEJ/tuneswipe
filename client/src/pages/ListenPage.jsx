@@ -22,6 +22,7 @@ import Player from "../components/Player.jsx";
 import axios from "axios";
 import PreBuiltPlayer from "../components/PreBuiltPlayer.jsx";
 import TinderCard from "react-tinder-card";
+import Login from "../components/Login.jsx";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: `${import.meta.env.VITE_CLIENT_ID}`,
@@ -285,18 +286,21 @@ export default function ListenPage() {
             </>
           )}
         </div>
-        <div className="grid w-full grid-cols-3 fixed bottom-0 h-10 left-0 items-center justify-items-center bg-slate-950">
+        <div className="grid w-full grid-cols-4 fixed bottom-0 h-10 left-0 items-center justify-items-center bg-slate-950">
           <div className="">
             <Icon path={mdiHome} color="white" size={1} />
           </div>
-          <div className="">
-            <Icon path={mdiChatOutline} color="white" size={1} />
-          </div>
+          <Link to={"/posts"}>
+            <div className="">
+              <Icon path={mdiChatOutline} color="white" size={1} />
+            </div>
+          </Link>
           <div className="">
             <Link to={"/create"}>
               <Icon path={mdiPencilPlusOutline} color="white" size={1} />
             </Link>
           </div>
+          <Login />
         </div>
       </div>
     </>

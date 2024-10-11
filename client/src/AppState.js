@@ -8,6 +8,9 @@ class ObservableAppState {
   /** @type {import('./models/Account.js').Account} */
   account = null
 
+  /** @type {import('./models/MusicPost.js').MusicPost[]} */
+  musicPosts = []
+
   constructor() {
     makeAutoObservable(this)
   }

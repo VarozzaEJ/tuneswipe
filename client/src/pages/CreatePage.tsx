@@ -266,9 +266,11 @@ export default function CreatePage() {
             <Icon path={mdiHomeOutline} color="white" size={1} />
           </div>
         </Link>
+        <Link to={"/posts"}>
         <div className="cursor-pointer">
           <Icon path={mdiChatOutline} color="white" size={1} />
         </div>
+        </Link>
         <div className="cursor-pointer">
           <Icon path={mdiPencilPlus} color="white" size={1} />
         </div>

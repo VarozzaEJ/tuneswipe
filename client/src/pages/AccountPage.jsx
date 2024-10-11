@@ -24,9 +24,11 @@ function AccountPage() {
           <div className="cursor-pointer">
             <Icon path={mdiHomeOutline} color="white" size={1} />
           </div>
-          <div className="cursor-pointer">
-            <Icon path={mdiChatOutline} color="white" size={1} />
-          </div>
+          <Link to={"/posts"}>
+            <div className="cursor-pointer">
+              <Icon path={mdiChatOutline} color="white" size={1} />
+            </div>
+          </Link>
           <Link to={"/create"}>
             <div className="cursor-pointer">
               <Icon path={mdiPencilPlusOutline} color="white" size={1} />
