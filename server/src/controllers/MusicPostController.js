@@ -7,6 +7,7 @@ export class MusicPostController extends BaseController {
     constructor() {
         super("create")
         this.router
+            .get('', this.getAllMusicPosts)
             .use(Auth0Provider.getAuthorizedUserInfo)
             .post('', this.createMusicPost)
     }
@@ -17,6 +18,15 @@ export class MusicPostController extends BaseController {
             request.body.creatorId = userId
             const musicPost = await musicPostsService.createMusicPost(request.body)
             response.send(musicPost)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async getAllMusicPosts(request, response, next) {
+        try {
+            const musicPosts = await musicPostsService.getAllMusicPosts()
+            response.send(musicPosts)
         } catch (error) {
             next(error)
         }
