@@ -4,7 +4,7 @@ import App from "./App.tsx";
 import ErrorPage from "./pages/HomePage.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import ListenPage from "./pages/ListenPage.jsx";
-import CreatePage from "./pages/CreatePage.jsx";
+import CreatePage from "./pages/CreatePage.tsx";
 import AccountPage from "./pages/AccountPage.jsx";
 import { accountService } from "./services/AccountService.js";
 import AuthGuard from "./utils/AuthGuard.jsx";

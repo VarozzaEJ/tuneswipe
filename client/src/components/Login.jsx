@@ -38,13 +38,13 @@ function Login() {
           aria-expanded="false"
         />
       </PopoverTrigger>
-      <PopoverContent className="bg-slate-100 flex flex-col">
+      <PopoverContent className="bg-slate-100 flex w-46 flex-col">
         <Link className="text-center mb-4" to={"/account"}>
-          <span className="text-center">Manage Account</span>
+          <span className="text-center">
+            <Button variant={"secondary"}>Manage Account</Button>
+          </span>
         </Link>
-        <Button variant={"ghost"} onClick={logout}>
-          Logout
-        </Button>
+        <Button onClick={logout}>Logout</Button>
       </PopoverContent>
     </Popover>
   );
