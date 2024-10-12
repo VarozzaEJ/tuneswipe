@@ -1,6 +1,6 @@
 import { mdiChat, mdiHomeOutline, mdiPencilPlusOutline } from "@mdi/js";
 import Icon from "@mdi/react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Login from "../components/Login.jsx";
 import { musicPostsService } from "../services/MusicPostsService.js";
@@ -15,11 +15,20 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { AppState } from "../AppState.js";
+import useGenerateRandomColor from "../models/TailwindColor.js";
 
 export default function PostsPage() {
+  const [musicPosts, setMusicPosts] = useState([]);
+  const { color, generateColor } = useGenerateRandomColor();
+
   useEffect(() => {
-    musicPostsService.getAllPosts();
+    generateColor();
+    getAllPosts();
   }, []);
+  const getAllPosts = async () => {
+    const musicPosts = await musicPostsService.getAllPosts();
+    setMusicPosts(musicPosts);
+  };
 
   return (
     <>
@@ -27,8 +36,12 @@ export default function PostsPage() {
         <span className="text-3xl">Explore Posts</span>
       </div>
       <section>
-        {AppState.musicPosts.map((post, index) => (
-          <Card key={post.id} className={"mx-4"}>
+        {musicPosts.map((post, index) => (
+          <Card
+            key={post.id}
+            className={`mx-4` + " " + `bg-[#${color}/75] text-light`}
+            style={{ backgroundColor: "#" + color }}
+          >
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex">

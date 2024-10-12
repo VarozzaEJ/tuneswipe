@@ -9,6 +9,7 @@ class MusicPostsService {
             const response = await api.get('/create')
             const musicPosts = response.data.map(musicPostPojo => new MusicPost(musicPostPojo))
             AppState.musicPosts = musicPosts
+            return musicPosts
         } catch (error) {
             console.error(error)
         }

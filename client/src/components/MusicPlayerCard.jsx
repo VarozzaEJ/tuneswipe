@@ -18,7 +18,6 @@ export default function MusicPlayerCard({ trackIds }) {
 
   useEffect(() => {
     if (!accessToken) return;
-    debugger;
     getTrackInfo();
   }, [accessToken]);
 
