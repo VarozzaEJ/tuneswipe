@@ -1,7 +1,26 @@
+import {
+  mdiClose,
+  mdiDotsHorizontal,
+  mdiOpenInNew,
+  mdiPlusCircleOutline,
+  mdiSpotify,
+} from "@mdi/js";
+import Icon from "@mdi/react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import TinderCard from "react-tinder-card";
 import { toast } from "sonner";
 import SpotifyWebApi from "spotify-web-api-node";
+import { Button } from "@/components/ui/button";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: `${import.meta.env.VITE_CLIENT_ID}`,
@@ -12,6 +31,7 @@ export default function MusicPlayerCard({ trackIds }) {
   const [tracks, setTracks] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lastDirection, setLastDirection] = useState();
+  const [isOpen, setIsOpen] = useState(false);
 
   const currentIndexRef = useRef(currentIndex);
 
@@ -100,32 +120,132 @@ export default function MusicPlayerCard({ trackIds }) {
 
   return (
     <>
-      <div className="bg-slate-400 rounded-sm shadow-sm">
-        <div className="flex flex-col h-60 md:h-80 justify-between items-center">
+      <div className="bg-slate-800 rounded-sm shadow-sm">
+        <div className="flex flex-col h-60 md:h-80 justify-center items-center">
           {tracks.map((track, index) => (
-            <>
-              <TinderCard
-                ref={childRefs[index]}
-                className="absolute w-1/2 flex justify-center"
-                key={track.name}
-                flickOnSwipe
-                swipeRequirementType="position"
-                swipeThreshold={50}
-                preventSwipe={["down", "up"]}
-                onSwipe={(dir) => swiped(dir, track.uri, index)}
-                onCardLeftScreen={() => outOfFrame(track.name, index)}
-              >
-                <img
-                  src={track.album.images[index].url}
-                  className="w-full max-w-[225px] md:max-w-[300px]"
-                  alt=""
-                  draggable="false"
-                />
-              </TinderCard>
-              <span>{track.name}</span>
-            </>
+            <TinderCard
+              ref={childRefs[index]}
+              className="absolute w-1/2 flex justify-center items-center"
+              key={track.name}
+              flickOnSwipe
+              swipeRequirementType="position"
+              swipeThreshold={50}
+              preventSwipe={["down", "up"]}
+              onSwipe={(dir) => swiped(dir, track.uri, index)}
+              onCardLeftScreen={() => outOfFrame(track.name, index)}
+            >
+              <img
+                src={track.album.images[0].url}
+                className="w-full max-w-[225px] md:max-w-[300px] rounded-sm"
+                alt=""
+                draggable="false"
+              />
+            </TinderCard>
           ))}
         </div>
+        {tracks[0] && (
+          <div className="h-20 flex flex-col justify-center bg-slate-800 rounded-sm shadow-sm">
+            <div className=" mx-4 flex justify-between">
+              <div>
+                <div>
+                  <span className="text-2xl">{tracks[0].name}</span>
+                </div>
+                <div className="flex">
+                  <Icon path={mdiSpotify} color="white" size={1} />
+                  <span className="text-xl">{tracks[0].artists[0].name}</span>
+                </div>
+              </div>
+              <div className={"flex items-center"}>
+                <Drawer open={isOpen} onOpenChange={setIsOpen}>
+                  <DrawerTrigger>
+                    <span aria-label="Open drawer to see more actions">
+                      <Icon
+                        title="Open Options Menu"
+                        path={mdiDotsHorizontal}
+                        size={1.4}
+                        color="white"
+                        className="cursor-pointer"
+                      />
+                    </span>
+                  </DrawerTrigger>
+                  <DrawerContent
+                    aria-label="Options for this song"
+                    className="bg-slate-800"
+                  >
+                    <DrawerTitle></DrawerTitle>
+                    <DrawerDescription></DrawerDescription>
+                    <div className="flex justify-end me-4">
+                      <DrawerClose
+                        className={"w-16 bg-transparent hover:bg-transparent"}
+                      >
+                        <Icon path={mdiClose} color="white" size={1} />
+                      </DrawerClose>
+                    </div>
+                    <DrawerTitle></DrawerTitle>
+                    <DrawerDescription></DrawerDescription>
+                    <div
+                      aria-describedby="Options for this song"
+                      className="w-full mx-auto flex flex-col "
+                    >
+                      <div className="flex flex-col justify-center items-center mt-3">
+                        <img
+                          style={{ height: 150, width: 150 }}
+                          src={tracks[0].album.images[0].url}
+                          alt={`${tracks[0].album.name}'s image'`}
+                        />
+                        <span>{tracks[0].name}</span>
+                        <a href={tracks[0].artists[0].href}>
+                          <span className="text-slate-500 cursor-pointer hover:text-slate-200 delay-75 transition-all ease-in-out">
+                            {tracks[0].artists[0].name}
+                          </span>
+                        </a>
+                      </div>
+                      <span
+                        onClick={() => {
+                          // addSongToYourMusic();
+                        }}
+                        className="flex my-4 text-lg ms-2 cursor-pointer hover:text-slate-600 delay-75 transition-all ease-in-out"
+                      >
+                        <Icon
+                          path={mdiPlusCircleOutline}
+                          color="white"
+                          className="me-4"
+                          size={1}
+                        />
+                        Save Song
+                      </span>
+                      {/* <span
+                      onClick={() => {
+                        skipToNext();
+                        }}
+                        className="flex mb-4 text-lg cursor-pointer hover:text-slate-600 ms-2 delay-75 transition-all ease-in-out"
+                        >
+                        <Icon
+                        path={mdiDiameterVariant}
+                        color="red"
+                        className="me-4"
+                        size={1}
+                        />
+                        Skip this Song
+                        </span> */}
+                      <a href={tracks[0].artists[0].href}>
+                        <span className="flex mb-4 text-lg ms-2 cursor-pointer hover:text-slate-600 delay-75 transition-all ease-in-out">
+                          <Icon
+                            path={mdiOpenInNew}
+                            color="white"
+                            className="me-4"
+                            size={1}
+                          />
+                          Open on Spotify
+                        </span>
+                      </a>
+                    </div>
+                  </DrawerContent>
+                </Drawer>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

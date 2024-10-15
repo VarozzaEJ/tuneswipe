@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AppState } from "../AppState.js";
 import { AuthService } from "../services/AuthService.js";
@@ -9,11 +9,20 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { mdiAccount } from "@mdi/js";
+import Icon from "@mdi/react";
 
-function Login() {
+function Login({ profilePic }) {
+  const [profilePicture, setProfilePicture] = useState("");
+
   function login() {
     AuthService.loginWithPopup();
   }
+
+  useEffect(() => {
+    setProfilePicture(AppState.account?.picture);
+  }, [AppState.account]);
 
   function logout() {
     localStorage.removeItem("user-token");
@@ -30,13 +39,12 @@ function Login() {
   const authenticated = (
     <Popover>
       <PopoverTrigger>
-        <img
-          src={AppState.account?.picture || AppState.user?.picture}
-          alt="account photo"
-          style={{ height: 24 }}
-          className="rounded cursor-pointer select-none mt-1"
-          aria-expanded="false"
-        />
+        <Avatar>
+          <AvatarImage src={profilePicture} className={"h-[24px] w-[24px]"} />
+          <AvatarFallback>
+            <Icon path={mdiAccount} color="black" size={1} />
+          </AvatarFallback>
+        </Avatar>
       </PopoverTrigger>
       <PopoverContent className="bg-slate-100 flex w-46 flex-col">
         <Link className="text-center mb-4" to={"/account"}>

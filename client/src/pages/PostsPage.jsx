@@ -35,11 +35,11 @@ export default function PostsPage() {
       <div className="flex justify-center my-4">
         <span className="text-3xl">Explore Posts</span>
       </div>
-      <section className="flex justify-center">
+      <section className="sm:flex sm:justify-center ">
         {musicPosts.map((post, index) => (
           <Card
             key={post.id}
-            className={`mx-4` + " " + `text-light w-3/4`}
+            className={`mx-4` + " " + `text-light sm:w-3/4`}
             style={{ backgroundColor: "#" + color }}
           >
             <CardHeader>

@@ -23,6 +23,7 @@ import axios from "axios";
 import PreBuiltPlayer from "../components/PreBuiltPlayer.jsx";
 import TinderCard from "react-tinder-card";
 import Login from "../components/Login.jsx";
+import { AppState } from "../AppState.js";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: `${import.meta.env.VITE_CLIENT_ID}`,
@@ -300,7 +301,7 @@ export default function ListenPage() {
               <Icon path={mdiPencilPlusOutline} color="white" size={1} />
             </Link>
           </div>
-          <Login />
+          <Login profilePic={AppState.account?.picture} />
         </div>
       </div>
     </>
