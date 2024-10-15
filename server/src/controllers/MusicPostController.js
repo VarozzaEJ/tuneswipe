@@ -10,6 +10,7 @@ export class MusicPostController extends BaseController {
             .get('', this.getAllMusicPosts)
             .use(Auth0Provider.getAuthorizedUserInfo)
             .post('', this.createMusicPost)
+            .delete('', this.deletePost)
     }
 
     async createMusicPost(request, response, next) {
@@ -27,6 +28,17 @@ export class MusicPostController extends BaseController {
         try {
             const musicPosts = await musicPostsService.getAllMusicPosts()
             response.send(musicPosts)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async deletePost(request, response, next) {
+        try {
+            const userId = request.userInfo.id
+            const musicPostId = request.body.musicPostId
+            await musicPostsService.deletePost(userId, musicPostId)
+            response.send("Post Deleted")
         } catch (error) {
             next(error)
         }
