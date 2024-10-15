@@ -27,6 +27,16 @@ class MusicPostsService {
       console.error(error);
     }
   }
+
+  async deletePost(musicPostId) {
+    try {
+      await api.delete(`/create/${musicPostId}`)
+      const musicPostIndex = AppState.musicPosts.findIndex(postId => postId == musicPostId)
+      AppState.musicPosts.splice(musicPostIndex, 1)
+    } catch (error) {
+      console.error(error)
+    }
+  }
 }
 
 export const musicPostsService = new MusicPostsService();

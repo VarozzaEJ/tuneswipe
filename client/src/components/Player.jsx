@@ -129,16 +129,15 @@ const Playback = ({
   };
 
   const replay = async () => {
-    spotifyApi.addToQueue(`${recommendedTracks[likeSongIndex].uri}`).then(
-      function () {},
-      function (err) {
+    await spotifyApi
+      .addToQueue(`${recommendedTracks[likeSongIndex].uri}`)
+      .then(function (err) {
         //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
         console.log("Something went wrong!", err);
-      }
-    );
+      });
     await skipToNext();
     await skipToNext();
-    spotifyApi.addToQueue(`${recommendedTracks[likeSongIndex + 1].uri}`);
+    await spotifyApi.addToQueue(`${recommendedTracks[likeSongIndex + 1].uri}`);
   };
 
   return (

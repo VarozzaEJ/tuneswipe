@@ -25,8 +25,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { AppState } from "../AppState.js";
 import useGenerateRandomColor from "../models/TailwindColor.js";
+import { toast } from "sonner";
 
 export default function PostsPage() {
   const [musicPosts, setMusicPosts] = useState([]);
@@ -39,6 +51,14 @@ export default function PostsPage() {
   const getAllPosts = async () => {
     const musicPosts = await musicPostsService.getAllPosts();
     setMusicPosts(musicPosts);
+  };
+
+  const deletePost = async (musicPostId) => {
+    try {
+      await musicPostsService.deletePost(musicPostId);
+    } catch (error) {
+      toast.error("Error Deleting Post");
+    }
   };
 
   return (
@@ -82,9 +102,44 @@ export default function PostsPage() {
                       />
                     </PopoverTrigger>
                     <PopoverContent className={"w-36 flex justify-center"}>
-                      <Button variant={"destructive"} className="w-full">
-                        <Icon path={mdiDelete} color="black" size={1} />
-                      </Button>
+                      {AppState.account?.id == post.creator.id && (
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant={"destructive"} className="w-full">
+                              <Icon path={mdiDelete} color="black" size={1} />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent className={"bg-slate-900"}>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Are you absolutely sure?
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel
+                                className={
+                                  "hover:bg-accent hover:text-accent-foreground bg-transparent border-none"
+                                }
+                              >
+                                Cancel
+                              </AlertDialogCancel>
+                              <AlertDialogAction
+                                className={
+                                  "bg-destructive hover:bg-destructive/80"
+                                }
+                                onClick={() => {
+                                  deletePost(post.id);
+                                }}
+                              >
+                                Continue
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      )}
                     </PopoverContent>
                   </Popover>
                 </div>

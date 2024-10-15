@@ -111,6 +111,8 @@ export default function ListenPage() {
   const goBack = async () => {
     if (!canGoBack) return;
     const newIndex = currentIndex + 1;
+    setCurrentSongIndex(currentSongIndex - 1);
+    setLikeSongIndex(likeSongIndex - 1);
     updateCurrentIndex(newIndex);
     await childRefs[newIndex].current.restoreCard();
     await addSongToQueue(lastSwipedURI);
