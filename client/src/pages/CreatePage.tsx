@@ -58,6 +58,8 @@ import Login from "../components/Login.jsx";
 import SpotifyWebApi from "spotify-web-api-node";
 import { toast } from "sonner";
 import TopTrackCard from "@/components/TopTrackCard.js";
+import { musicPostsService } from "../services/MusicPostsService";
+import { useNavigate } from "react-router-dom";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: `${import.meta.env.VITE_CLIENT_ID}`,
@@ -87,7 +89,7 @@ export default function CreatePage() {
   const [likedSongs, setLikedSongs] = useState([]);
   const [chosenSongIds, setChosenSongIds] = useState([])
   const [open, setOpen] = useState(false)
-
+  const navigate = useNavigate()
   useEffect(() => {
     //TODO make this happen in a higher component to skip the login process if the token already exists or has not expired
     const accessToken = localStorage.getItem("accessToken");
@@ -113,12 +115,15 @@ export default function CreatePage() {
     );
   };
 
-  
+  //TODO make only tracks possible or pictures. A user shouldn't be able to use both in the same form submission
   const {register, handleSubmit} = useForm<FormData>({resolver: zodResolver(formSchema)})
 
-  const submitForm = (data: FormData) => {
+  const submitForm = async (data: FormData) => {
     data.trackIds = chosenSongIds
     console.log("📊", data)
+    await musicPostsService.createPost(data)
+    toast.success("Post Created")
+    navigate('/posts')
   }
 
    function addSongId(songId : string) {

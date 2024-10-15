@@ -11,6 +11,7 @@ import TinderCard from "react-tinder-card";
 import { toast } from "sonner";
 import SpotifyWebApi from "spotify-web-api-node";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Drawer,
   DrawerClose,
@@ -35,6 +36,7 @@ export default function MusicPlayerCard({ trackIds }) {
 
   const currentIndexRef = useRef(currentIndex);
 
+  console.log("🎇", currentIndex);
   const childRefs = useMemo(
     () =>
       Array(tracks.length)
@@ -109,6 +111,7 @@ export default function MusicPlayerCard({ trackIds }) {
         .then(function (data) {
           console.log(data.body);
           setTracks(data.body.tracks);
+          setCurrentIndex(data.body.tracks.length - 1);
         })
         .catch(function (error) {
           console.error(error);
@@ -143,16 +146,18 @@ export default function MusicPlayerCard({ trackIds }) {
             </TinderCard>
           ))}
         </div>
-        {tracks[0] && (
+        {tracks[0] && currentIndex >= 0 ? (
           <div className="h-20 flex flex-col justify-center bg-slate-800 rounded-sm shadow-sm">
             <div className=" mx-4 flex justify-between">
               <div>
                 <div>
-                  <span className="text-2xl">{tracks[0].name}</span>
+                  <span className="text-2xl">{tracks[currentIndex].name}</span>
                 </div>
                 <div className="flex">
                   <Icon path={mdiSpotify} color="white" size={1} />
-                  <span className="text-xl">{tracks[0].artists[0].name}</span>
+                  <span className="text-xl">
+                    {tracks[currentIndex].artists[0].name}
+                  </span>
                 </div>
               </div>
               <div className={"flex items-center"}>
@@ -190,13 +195,13 @@ export default function MusicPlayerCard({ trackIds }) {
                       <div className="flex flex-col justify-center items-center mt-3">
                         <img
                           style={{ height: 150, width: 150 }}
-                          src={tracks[0].album.images[0].url}
-                          alt={`${tracks[0].album.name}'s image'`}
+                          src={tracks[currentIndex].album.images[0].url}
+                          alt={`${tracks[currentIndex].album.name}'s image'`}
                         />
-                        <span>{tracks[0].name}</span>
-                        <a href={tracks[0].artists[0].href}>
+                        <span>{tracks[currentIndex].name}</span>
+                        <a href={tracks[currentIndex].artists[0].href}>
                           <span className="text-slate-500 cursor-pointer hover:text-slate-200 delay-75 transition-all ease-in-out">
-                            {tracks[0].artists[0].name}
+                            {tracks[currentIndex].artists[0].name}
                           </span>
                         </a>
                       </div>
@@ -228,7 +233,7 @@ export default function MusicPlayerCard({ trackIds }) {
                         />
                         Skip this Song
                         </span> */}
-                      <a href={tracks[0].artists[0].href}>
+                      <a href={tracks[currentIndex].artists[0].href}>
                         <span className="flex mb-4 text-lg ms-2 cursor-pointer hover:text-slate-600 delay-75 transition-all ease-in-out">
                           <Icon
                             path={mdiOpenInNew}
@@ -242,6 +247,24 @@ export default function MusicPlayerCard({ trackIds }) {
                     </div>
                   </DrawerContent>
                 </Drawer>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="h-20 flex flex-col justify-center bg-slate-800 rounded-sm shadow-sm">
+            <div className="mx-4 flex justify-between">
+              <div>
+                <Skeleton className={"w-36 mb-3 h-4"} />
+                <Skeleton className={"w-32 h-4"} />
+              </div>
+              <div className="flex items-center">
+                <Icon
+                  title="Open Options Menu"
+                  path={mdiDotsHorizontal}
+                  size={1.4}
+                  color="white"
+                  className="cursor-pointer"
+                />
               </div>
             </div>
           </div>

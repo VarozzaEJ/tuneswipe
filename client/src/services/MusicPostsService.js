@@ -1,19 +1,32 @@
-import { AppState } from "../AppState.js"
-import { MusicPost } from "../models/MusicPost.js"
-import { api } from "./AxiosService.js"
-
+import { AppState } from "../AppState.js";
+import { MusicPost } from "../models/MusicPost.js";
+import { api } from "./AxiosService.js";
 
 class MusicPostsService {
-    async getAllPosts() {
-        try {
-            const response = await api.get('/create')
-            const musicPosts = response.data.map(musicPostPojo => new MusicPost(musicPostPojo))
-            AppState.musicPosts = musicPosts
-            return musicPosts
-        } catch (error) {
-            console.error(error)
-        }
+  async getAllPosts() {
+    try {
+      const response = await api.get("/create");
+      response.data.reverse()
+      const musicPosts = response.data.map(
+        (musicPostPojo) => new MusicPost(musicPostPojo)
+      );
+      AppState.musicPosts = musicPosts;
+      return musicPosts;
+    } catch (error) {
+      console.error(error);
     }
+  }
+
+  async createPost(postData) {
+    try {
+      const response = await api.post("/create", postData);
+      const newMusicPost = new MusicPost(response.data);
+      AppState.musicPosts.push(newMusicPost);
+      return newMusicPost
+    } catch (error) {
+      console.error(error);
+    }
+  }
 }
 
-export const musicPostsService = new MusicPostsService()
+export const musicPostsService = new MusicPostsService();

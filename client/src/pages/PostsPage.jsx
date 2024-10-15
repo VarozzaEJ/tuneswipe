@@ -32,14 +32,16 @@ export default function PostsPage() {
 
   return (
     <>
-      <div className="flex justify-center my-4">
-        <span className="text-3xl">Explore Posts</span>
+      <div className="">
+        <div className="flex justify-center my-4">
+          <span className="text-3xl">Explore Posts</span>
+        </div>
       </div>
-      <section className="sm:flex sm:justify-center ">
+      <section className="sm:flex sm:flex-col sm:items-center ">
         {musicPosts.map((post, index) => (
           <Card
             key={post.id}
-            className={`mx-4` + " " + `text-light sm:w-3/4`}
+            className={`mx-4` + " " + `text-light sm:w-3/4 mb-4`}
             style={{ backgroundColor: "#" + color }}
           >
             <CardHeader>
@@ -58,9 +60,17 @@ export default function PostsPage() {
                   </div>
                 </div>
               </div>
+              <div className="flex justify-center">
+                <span className="text-xl">{post.textComment}</span>
+              </div>
             </CardHeader>
             <CardContent>
-              <MusicPlayerCard trackIds={post.trackIds} />
+              {post.trackIds.length > 0 && (
+                <MusicPlayerCard trackIds={post.trackIds} />
+              )}
+              {post.picture && (
+                <img src={post.picture} className="rounded-sm" />
+              )}
             </CardContent>
             <CardFooter></CardFooter>
           </Card>
