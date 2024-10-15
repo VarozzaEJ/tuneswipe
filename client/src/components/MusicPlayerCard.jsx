@@ -262,8 +262,8 @@ export default function MusicPlayerCard({ trackIds }) {
                   title="Open Options Menu"
                   path={mdiDotsHorizontal}
                   size={1.4}
-                  color="white"
-                  className="cursor-pointer"
+                  color="gray"
+                  className=""
                 />
               </div>
             </div>

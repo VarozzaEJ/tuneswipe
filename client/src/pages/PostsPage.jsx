@@ -1,4 +1,10 @@
-import { mdiChat, mdiHomeOutline, mdiPencilPlusOutline } from "@mdi/js";
+import {
+  mdiChat,
+  mdiDelete,
+  mdiDotsHorizontal,
+  mdiHomeOutline,
+  mdiPencilPlusOutline,
+} from "@mdi/js";
 import Icon from "@mdi/react";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -6,6 +12,11 @@ import Login from "../components/Login.jsx";
 import { musicPostsService } from "../services/MusicPostsService.js";
 import MusicPlayerCard from "../components/MusicPlayerCard.jsx";
 import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Card,
   CardContent,
@@ -58,6 +69,24 @@ export default function PostsPage() {
                     <span>{post.creator.name}</span>
                     <span>{post.createdAt}</span>
                   </div>
+                </div>
+                <div>
+                  <Popover>
+                    <PopoverTrigger>
+                      <Icon
+                        title="Open Options Menu"
+                        path={mdiDotsHorizontal}
+                        size={1.4}
+                        color="white"
+                        className="cursor-pointer"
+                      />
+                    </PopoverTrigger>
+                    <PopoverContent className={"w-36 flex justify-center"}>
+                      <Button variant={"destructive"} className="w-full">
+                        <Icon path={mdiDelete} color="black" size={1} />
+                      </Button>
+                    </PopoverContent>
+                  </Popover>
                 </div>
               </div>
               <div className="flex justify-center">
