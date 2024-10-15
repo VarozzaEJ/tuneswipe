@@ -1,9 +1,12 @@
 import {
   mdiChat,
+  mdiChatOutline,
+  mdiClose,
   mdiDelete,
   mdiDotsHorizontal,
   mdiHomeOutline,
   mdiPencilPlusOutline,
+  mdiPlus,
 } from "@mdi/js";
 import Icon from "@mdi/react";
 import React, { useEffect, useState } from "react";
@@ -12,6 +15,7 @@ import Login from "../components/Login.jsx";
 import { musicPostsService } from "../services/MusicPostsService.js";
 import MusicPlayerCard from "../components/MusicPlayerCard.jsx";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
@@ -39,10 +43,38 @@ import {
 import { AppState } from "../AppState.js";
 import useGenerateRandomColor from "../models/TailwindColor.js";
 import { toast } from "sonner";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z, ZodType } from "zod";
+import {commentsService} from "../services/commentsService"
+
+
+type FormData = {
+  comment: string;
+  postId: string
+}
+
+const formSchema : ZodType<FormData> = z.object({
+  comment: z.string().min(5, {
+    message: "Message must be at least 5 characters.",
+  }).max(500),
+  postId: z.string()
+});
 
 export default function PostsPage() {
   const [musicPosts, setMusicPosts] = useState([]);
   const { color, generateColor } = useGenerateRandomColor();
+  const [focusedPostId, setFocusedPostId] = useState("")
 
   useEffect(() => {
     generateColor();
@@ -61,6 +93,16 @@ export default function PostsPage() {
     }
   };
 
+  const {register, handleSubmit} = useForm<FormData>({resolver: zodResolver(formSchema)})
+  const submitForm = async (data: FormData) => {
+    debugger
+    console.log("📊", data)
+    data.postId = focusedPostId
+    // await commentsService.createPost(data)
+    // toast.success("Comment Created")
+  }
+
+
   return (
     <>
       <div className="">
@@ -68,7 +110,7 @@ export default function PostsPage() {
           <span className="text-3xl">Explore Posts</span>
         </div>
       </div>
-      <section className="sm:flex sm:flex-col sm:items-center ">
+      <section className="sm:flex sm:flex-col mb-10 sm:items-center ">
         {musicPosts.map((post, index) => (
           <Card
             key={post.id}
@@ -156,7 +198,38 @@ export default function PostsPage() {
                 <img src={post.picture} className="rounded-sm" />
               )}
             </CardContent>
-            <CardFooter></CardFooter>
+            <CardFooter>
+              <div className="flex">
+                <Drawer>
+                  <DrawerTrigger onClick={() => {
+                    setFocusedPostId(post.id)
+                  }}>
+                      <Icon path={mdiChatOutline} color="white" size={1} />
+                  </DrawerTrigger>
+                  <DrawerContent className={"h-4/6 bg-slate-800"}>
+                    <div className="flex justify-end">
+                      <DrawerClose>
+                        <Icon
+                          className="me-4"
+                          path={mdiClose}
+                          color="white"
+                          size={1}
+                        />
+                      </DrawerClose>
+                    </div>
+                    <DrawerTitle className="text-center my-4 text-2xl">
+                      Comments
+                    </DrawerTitle>
+                    <DrawerFooter >
+                      <form className="flex" onSubmit={handleSubmit(submitForm)}>
+                        <Input className="bg-slate-950" {...register("comment")} type="text" placeholder="Add a comment..." />
+                        <Button className="rounded-full"><Icon path={mdiPlus} size={1}/></Button>
+                      </form>
+                    </DrawerFooter>
+                  </DrawerContent>
+                </Drawer>
+              </div>
+            </CardFooter>
           </Card>
         ))}
       </section>

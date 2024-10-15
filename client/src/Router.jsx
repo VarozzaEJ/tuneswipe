@@ -8,7 +8,7 @@ import CreatePage from "./pages/CreatePage.tsx";
 import AccountPage from "./pages/AccountPage.jsx";
 import { accountService } from "./services/AccountService.js";
 import AuthGuard from "./utils/AuthGuard.jsx";
-import PostsPage from "./pages/PostsPage.jsx";
+import PostsPage from "./pages/PostsPage.tsx";
 
 export const router = createHashRouter([
   {
