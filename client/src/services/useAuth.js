@@ -11,12 +11,13 @@ export default function useAuth(code) {
         }
     }, [code])
 
+
     useEffect(() => {
         if (!refreshToken || !expiresIn) return
-        const interval = setInterval(() => {
+        const timeout = setTimeout(() => {
             refresh()
-            return () => clearInterval(interval)
         }, ((expiresIn - 60) * 1000))
+        return () => clearTimeout(timeout)
     }, [refreshToken, expiresIn])
 
     async function login() {
@@ -37,7 +38,7 @@ export default function useAuth(code) {
     async function refresh() {
         await axios.post('http://localhost:3000/spotify/refresh', { refreshToken })
             .then(res => {
-                console.log(res.data)
+                console.log('refresh function response data', res.data)
                 setAccessToken(res.data.accessToken)
                 setExpiresIn(res.data.expiresIn)
             })

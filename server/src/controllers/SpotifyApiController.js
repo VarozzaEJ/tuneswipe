@@ -42,10 +42,11 @@ export class SpotifyApiController extends BaseController {
                 redirectUri: process.env.REDIRECT_URI,
                 clientId: process.env.CLIENT_ID,
                 clientSecret: process.env.CLIENT_SECRET,
-                refreshToken: ""
+                refreshToken
             })
             spotifyApi.refreshAccessToken().then(
                 (data) => {
+                    console.log(data.body)
                     response.json({
                         accessToken: data.body.access_token,
                         expiresIn: data.body.expires_in
