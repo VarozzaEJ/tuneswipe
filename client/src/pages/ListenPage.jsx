@@ -10,6 +10,9 @@ import {
   mdiCheckCircleOutline,
   mdiCloseCircle,
   mdiCloseCircleOutline,
+  mdiDotsHorizontal,
+  mdiFinance,
+  mdiGraph,
   mdiHome,
   mdiPencilPlusOutline,
   mdiPlay,
@@ -17,6 +20,15 @@ import {
   mdiRewind,
   mdiSync,
 } from "@mdi/js";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import Icon from "@mdi/react";
 import Player from "../components/Player.jsx";
 import axios from "axios";
@@ -24,6 +36,7 @@ import PreBuiltPlayer from "../components/PreBuiltPlayer.jsx";
 import TinderCard from "react-tinder-card";
 import Login from "../components/Login.jsx";
 import { AppState } from "../AppState.js";
+import ChangeDeviceForm from "../components/ChangeDeviceForm.jsx";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: `${import.meta.env.VITE_CLIENT_ID}`,
@@ -226,7 +239,7 @@ export default function ListenPage() {
   }
 
   function setDeviceId() {
-    const deviceId = searchParams.deviceId;
+    const deviceId = localStorage.getItem("chosenDeviceId");
     setChosenDeviceId(deviceId);
   }
 
@@ -234,6 +247,29 @@ export default function ListenPage() {
 
   return (
     <>
+      <div className="fixed top-2 w-screen">
+        <div className="flex justify-between mx-5">
+          <div role="button">
+            <Icon path={mdiFinance} color="white" size={1} />
+          </div>
+          <div>
+            <span className="text-2xl">For You</span>
+          </div>
+          <Dialog>
+            <DialogTrigger>
+              <div>
+                <Icon path={mdiDotsHorizontal} color="white" size={1} />
+              </div>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Change Playback Device</DialogTitle>
+                <ChangeDeviceForm accessToken={accessToken} />
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </div>
       <div className="container overflow-y-hidden h-screen  flex-col flex justify-center">
         <div className="sm:h-3/4 h-full flex items-center justify-center">
           <div className="z-10 fixed left-1 sm:left-4">

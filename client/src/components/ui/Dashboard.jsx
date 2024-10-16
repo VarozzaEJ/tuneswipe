@@ -71,8 +71,10 @@ export default function Dashboard({ code }) {
   };
 
   function handleChange(e) {
+    localStorage.removeItem("chosenDeviceId");
     console.log("device selected", e);
     setChosenDeviceId(e);
+    localStorage.setItem("chosenDeviceId", e);
     setFormSubmitted(true);
     toast.success("Device Changed Successfully");
   }
@@ -93,11 +95,12 @@ export default function Dashboard({ code }) {
   function getReccomendationsBasedOnArtists() {
     if (!accessToken) return;
 
-    navigate(`listen/${artistIds}/${chosenDeviceId}`);
+    navigate(`listen/${artistIds}`);
     //TODO when navigating for the first time per user, the queue does not work. I suspect that this is because spotify is not technically playing anything at the start of a user's session.
   }
 
   useEffect(() => {
+    if (localStorage.getItem("chosenDeviceId")) setFormSubmitted(true);
     if (!accessToken) return;
     spotifyApi.setAccessToken(accessToken);
   }, [accessToken]);

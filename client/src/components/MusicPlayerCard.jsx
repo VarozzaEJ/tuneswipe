@@ -28,11 +28,11 @@ const spotifyApi = new SpotifyWebApi({
 });
 
 export default function MusicPlayerCard({ trackIds }) {
-  const [accessToken, setAccessToken] = useState("");
   const [tracks, setTracks] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lastDirection, setLastDirection] = useState();
   const [isOpen, setIsOpen] = useState(false);
+  const [accessToken, setAccessToken] = useState("");
 
   const currentIndexRef = useRef(currentIndex);
 
@@ -95,8 +95,8 @@ export default function MusicPlayerCard({ trackIds }) {
   useEffect(() => {
     //TODO make this happen in a higher component to skip the login process if the token already exists or has not expired
     const accessToken = localStorage.getItem("accessToken");
-    setAccessToken(accessToken);
     spotifyApi.setAccessToken(accessToken);
+    setAccessToken(accessToken);
   }, []);
 
   useEffect(() => {

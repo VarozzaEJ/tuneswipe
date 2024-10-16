@@ -16,6 +16,7 @@ export class SpotifyApiController extends BaseController {
 
         try {
             const code = request.body.code
+
             const spotifyApi = new SpotifyWebApi({
                 redirectUri: process.env.REDIRECT_URI,
                 clientId: process.env.CLIENT_ID,

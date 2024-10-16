@@ -8,6 +8,7 @@ import {
   mdiPencilPlusOutline,
   mdiPlus,
 } from "@mdi/js";
+import SpotifyWebApi from "spotify-web-api-node";
 import Icon from "@mdi/react";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -16,6 +17,7 @@ import { musicPostsService } from "../services/MusicPostsService.js";
 import MusicPlayerCard from "../components/MusicPlayerCard.jsx";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import CommentForm from "../components/CommentForm.tsx";
 import {
   Popover,
   PopoverContent,
@@ -56,30 +58,37 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z, ZodType } from "zod";
-import {commentsService} from "../services/commentsService"
+import { commentsService } from "../services/CommentsService.js";
+import useAuth from "../services/useAuth.js";
+import SpotifyLogin from "../components/ui/SpotifyLogin.jsx";
 
+const spotifyApi = new SpotifyWebApi({
+  clientId: `${import.meta.env.VITE_CLIENT_ID}`,
+});
 
-type FormData = {
-  comment: string;
-  postId: string
-}
-
-const formSchema : ZodType<FormData> = z.object({
-  comment: z.string().min(5, {
-    message: "Message must be at least 5 characters.",
-  }).max(500),
-  postId: z.string()
+const formSchema = z.object({
+  comment: z
+    .string()
+    .min(5, {
+      message: "Message must be at least 5 characters.",
+    })
+    .max(500),
+  postId: z.string(),
 });
 
 export default function PostsPage() {
   const [musicPosts, setMusicPosts] = useState([]);
   const { color, generateColor } = useGenerateRandomColor();
-  const [focusedPostId, setFocusedPostId] = useState("")
+  const [focusedPostId, setFocusedPostId] = useState("");
+  const code = new URLSearchParams(window.location.search).get("code");
+
+  // const accessToken = useAuth(code);
 
   useEffect(() => {
     generateColor();
     getAllPosts();
   }, []);
+
   const getAllPosts = async () => {
     const musicPosts = await musicPostsService.getAllPosts();
     setMusicPosts(musicPosts);
@@ -93,15 +102,9 @@ export default function PostsPage() {
     }
   };
 
-  const {register, handleSubmit} = useForm<FormData>({resolver: zodResolver(formSchema)})
-  const submitForm = async (data: FormData) => {
-    debugger
-    console.log("📊", data)
-    data.postId = focusedPostId
-    // await commentsService.createPost(data)
-    // toast.success("Comment Created")
-  }
-
+  const { register, handleSubmit } = useForm({
+    resolver: zodResolver(formSchema),
+  });
 
   return (
     <>
@@ -192,7 +195,10 @@ export default function PostsPage() {
             </CardHeader>
             <CardContent>
               {post.trackIds.length > 0 && (
-                <MusicPlayerCard trackIds={post.trackIds} />
+                <MusicPlayerCard
+                  // accessToken={accessToken}
+                  trackIds={post.trackIds}
+                />
               )}
               {post.picture && (
                 <img src={post.picture} className="rounded-sm" />
@@ -201,10 +207,12 @@ export default function PostsPage() {
             <CardFooter>
               <div className="flex">
                 <Drawer>
-                  <DrawerTrigger onClick={() => {
-                    setFocusedPostId(post.id)
-                  }}>
-                      <Icon path={mdiChatOutline} color="white" size={1} />
+                  <DrawerTrigger
+                    onClick={() => {
+                      setFocusedPostId(post.id);
+                    }}
+                  >
+                    <Icon path={mdiChatOutline} color="white" size={1} />
                   </DrawerTrigger>
                   <DrawerContent className={"h-4/6 bg-slate-800"}>
                     <div className="flex justify-end">
@@ -220,11 +228,8 @@ export default function PostsPage() {
                     <DrawerTitle className="text-center my-4 text-2xl">
                       Comments
                     </DrawerTitle>
-                    <DrawerFooter >
-                      <form className="flex" onSubmit={handleSubmit(submitForm)}>
-                        <Input className="bg-slate-950" {...register("comment")} type="text" placeholder="Add a comment..." />
-                        <Button className="rounded-full"><Icon path={mdiPlus} size={1}/></Button>
-                      </form>
+                    <DrawerFooter>
+                      <CommentForm postId={focusedPostId} />
                     </DrawerFooter>
                   </DrawerContent>
                 </Drawer>
@@ -233,6 +238,7 @@ export default function PostsPage() {
           </Card>
         ))}
       </section>
+
       <div className="grid w-full grid-cols-4 fixed bottom-0 h-10 left-0 items-center justify-items-center bg-slate-950">
         <Link to={"/"}>
           <div className="cursor-pointer">

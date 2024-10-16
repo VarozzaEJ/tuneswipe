@@ -8,7 +8,7 @@ import CreatePage from "./pages/CreatePage.tsx";
 import AccountPage from "./pages/AccountPage.jsx";
 import { accountService } from "./services/AccountService.js";
 import AuthGuard from "./utils/AuthGuard.jsx";
-import PostsPage from "./pages/PostsPage.tsx";
+import PostsPage from "./pages/PostsPage.jsx";
 
 export const router = createHashRouter([
   {
@@ -21,7 +21,7 @@ export const router = createHashRouter([
         element: <HomePage />,
       },
       {
-        path: "/listen/:artistIds/:deviceId",
+        path: "/listen/:artistIds",
         element: <ListenPage />,
       },
       {
