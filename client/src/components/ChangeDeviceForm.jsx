@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import SpotifyWebApi from "spotify-web-api-node";
 
@@ -17,7 +18,6 @@ const spotifyApi = new SpotifyWebApi({
 
 export default function ChangeDeviceForm({ accessToken }) {
   const [availableDevices, setAvailableDevices] = useState([]);
-  const [chosenDeviceId, setChosenDeviceId] = useState("");
 
   useEffect(() => {
     if (!accessToken) return;
@@ -55,7 +55,6 @@ export default function ChangeDeviceForm({ accessToken }) {
         console.log("Transfering playback to " + deviceId);
       },
       function (err) {
-        console.log(chosenDeviceId);
         //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
         console.log("Something went wrong!", err);
       }
@@ -73,7 +72,7 @@ export default function ChangeDeviceForm({ accessToken }) {
   return (
     <>
       <div className="mb-10 md:mb-0">
-        {availableDevices.devices && (
+        {availableDevices.devices ? (
           <Select onValueChange={handleChange}>
             <SelectTrigger className={"text-black"}>
               <SelectValue placeholder="Choose Your Playback Device" />
@@ -100,6 +99,8 @@ export default function ChangeDeviceForm({ accessToken }) {
               </SelectGroup>
             </SelectContent>
           </Select>
+        ) : (
+          <Skeleton className="h-10 w-full" />
         )}
       </div>
     </>

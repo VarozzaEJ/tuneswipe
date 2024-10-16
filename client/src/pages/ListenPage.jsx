@@ -59,6 +59,7 @@ export default function ListenPage() {
   const [isReady, setIsReady] = useState(false);
   const [likeColor, setLikeColor] = useState("white");
   const [dislikeColor, setDislikeColor] = useState("white");
+  const [open, setOpen] = useState(false);
 
   console.log("🎤", lastSwipedURI);
   const currentIndexRef = useRef(currentIndex);
@@ -261,9 +262,11 @@ export default function ListenPage() {
                 <Icon path={mdiDotsHorizontal} color="white" size={1} />
               </div>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className={"bg-primary"}>
               <DialogHeader>
-                <DialogTitle>Change Playback Device</DialogTitle>
+                <DialogTitle className={"mb-3"}>
+                  Change Playback Device
+                </DialogTitle>
                 <ChangeDeviceForm accessToken={accessToken} />
               </DialogHeader>
             </DialogContent>
