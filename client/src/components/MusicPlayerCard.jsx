@@ -22,18 +22,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Link } from "react-router-dom";
+import ExpiredTokenDialog from "./ExpiredTokenDialog.jsx";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: `${import.meta.env.VITE_CLIENT_ID}`,
@@ -142,25 +131,7 @@ export default function MusicPlayerCard({ trackIds }) {
   return (
     <>
       {isExpired ? (
-        <AlertDialog open={open} onOpenChange={setOpen}>
-          <AlertDialogContent className="bg-primary w-5/6 rounded-sm">
-            <AlertDialogHeader>
-              <AlertDialogTitle>Please Login Again</AlertDialogTitle>
-              <AlertDialogDescription></AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <Link to={"/"} className="w-full sm:w-auto flex justify-center">
-                <AlertDialogAction
-                  className={
-                    "hover:bg-accent hover:text-accent-foreground bg-transparent border-none"
-                  }
-                >
-                  Continue
-                </AlertDialogAction>
-              </Link>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <ExpiredTokenDialog open={open} />
       ) : (
         <div className="bg-slate-800 rounded-sm shadow-sm">
           <div className="flex flex-col h-60 md:h-80 justify-center items-center">

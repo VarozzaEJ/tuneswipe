@@ -1,4 +1,5 @@
 import {
+  mdiAccount,
   mdiChat,
   mdiChatOutline,
   mdiClose,
@@ -8,6 +9,7 @@ import {
   mdiPencilPlusOutline,
   mdiPlus,
 } from "@mdi/js";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import SpotifyWebApi from "spotify-web-api-node";
 import Icon from "@mdi/react";
 import React, { useEffect, useState } from "react";
@@ -124,11 +126,20 @@ export default function PostsPage() {
               <div className="flex items-center justify-between">
                 <div className="flex">
                   <div className="flex items-center me-2">
-                    <img
-                      src={post.creator.picture}
-                      className="rounded-full"
-                      style={{ height: 30 }}
-                    />
+                    {post.creator.picture ? (
+                      <img
+                        src={post.creator.picture}
+                        className="rounded-full"
+                        style={{ height: 30 }}
+                      />
+                    ) : (
+                      <Avatar>
+                        <AvatarImage src={post.creator.picture} />
+                        <AvatarFallback>
+                          <Icon path={mdiAccount} color="black" size={1} />
+                        </AvatarFallback>
+                      </Avatar>
+                    )}
                   </div>
                   <div className="flex flex-col">
                     <span>{post.creator.name}</span>

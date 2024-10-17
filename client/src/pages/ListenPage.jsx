@@ -262,7 +262,7 @@ export default function ListenPage() {
                 <Icon path={mdiDotsHorizontal} color="white" size={1} />
               </div>
             </DialogTrigger>
-            <DialogContent className={"bg-primary"}>
+            <DialogContent className={"bg-primary w-5/6 rounded-sm"}>
               <DialogHeader>
                 <DialogTitle className={"mb-3"}>
                   Change Playback Device

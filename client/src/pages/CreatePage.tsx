@@ -13,6 +13,7 @@ import Icon from "@mdi/react";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import ExpiredTokenDialog from "../components/ExpiredTokenDialog"
 import {
   Form,
   FormControl,
@@ -89,6 +90,8 @@ export default function CreatePage() {
   const [likedSongs, setLikedSongs] = useState([]);
   const [chosenSongIds, setChosenSongIds] = useState([])
   const [open, setOpen] = useState(false)
+  const [isExpired, setIsExpired] = useState(false)
+  const [expiredTokenDialogOpen, setExpiredTokenDialogOpen] = useState(false)
   const navigate = useNavigate()
   useEffect(() => {
     //TODO make this happen in a higher component to skip the login process if the token already exists or has not expired
@@ -99,7 +102,7 @@ export default function CreatePage() {
   useEffect(() => {
     if (!accessToken) return;
     //TODO if no access token found or if access token is expired, refressh the john
-    spotifyApi.setAccessToken(accessToken);
+    // spotifyApi.setAccessToken(accessToken);
   }, [accessToken]);
 
   const getUsersLikedSongs = async () => {
@@ -111,6 +114,11 @@ export default function CreatePage() {
       },
       function (err) {
         console.log("Something went wrong!", err);
+        const isExpired = err.message.includes("token");
+          if (isExpired) {
+            setIsExpired(true);
+            setExpiredTokenDialogOpen(true);
+          }
       }
     );
   };
@@ -150,6 +158,7 @@ export default function CreatePage() {
         <div className="flex justify-center text-3xl">
           <span className="my-4">Create post</span>
         </div>
+        {isExpired ? <ExpiredTokenDialog /> : 
         <form onSubmit={handleSubmit(submitForm)} className="flex-grow flex flex-col justify-between">
               <textarea
                 {...register("textComment")}
@@ -264,6 +273,7 @@ export default function CreatePage() {
                 </div>
           
         </form>
+}
       </div>
       <div className="grid w-full grid-cols-4 fixed bottom-0 h-10 left-0 items-center justify-items-center bg-slate-950">
         <Link to={"/"}>

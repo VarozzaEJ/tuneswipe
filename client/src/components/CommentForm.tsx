@@ -14,9 +14,9 @@ import { mdiPlus } from '@mdi/js';
 
 const formSchema : ZodType<FormData> = z.object({
   comment: z.string().min(5, {
-    message: "Message must be at least 5 characters.",
+    message: "Comment must be at least 5 characters.",
   }).max(500),
-  postId: z.string()
+  postId: z.string().optional()
 });
 export default function CommentForm({postId}) {
    
@@ -24,7 +24,8 @@ export default function CommentForm({postId}) {
 
     const {register, handleSubmit} = useForm<FormData>({resolver: zodResolver(formSchema)})
 
-    const submitForm = async (data) => {
+
+    const submitForm = async (data : FormData) => {
     console.log("📊", data);
     data.postId = postId;
     console.log(data);
@@ -43,7 +44,7 @@ export default function CommentForm({postId}) {
                           type="text"
                           placeholder="Add a comment..."
                         />
-                        <Button type={"submit"} className="rounded-full">
+                        <Button onClick={handleSubmit(submitForm)} type="submit" className="rounded-full">
                           <Icon path={mdiPlus} size={1} />
                         </Button>
                       </form>

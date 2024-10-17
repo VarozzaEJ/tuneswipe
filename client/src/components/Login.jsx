@@ -22,7 +22,7 @@ function Login({ profilePic }) {
 
   useEffect(() => {
     setProfilePicture(AppState.account?.picture);
-  }, [AppState.account]);
+  }, [AppState.account, AppState.user]);
 
   function logout() {
     localStorage.removeItem("user-token");
