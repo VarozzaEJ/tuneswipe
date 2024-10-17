@@ -4,8 +4,8 @@ import { Forbidden } from "../utils/Errors.js"
 
 
 class CommentsService {
-    async getEventComments(musicPostId) {
-        const comments = await dbContext.Comments.find({ musicPostId }).populate('creator')
+    async getPostComments(postId) {
+        const comments = await dbContext.Comments.find({ postId }).populate('creator')
         return comments
     }
     async createComment(commentData) {

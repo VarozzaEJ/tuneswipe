@@ -15,6 +15,7 @@ class CommentsService {
     async createComment(commentData) {
         const response = await api.post('api/comments', commentData)
         const newComment = new Comment(response.data)
+        console.log(newComment)
         // AppState.comments.unshift(newComment)
     }
 }

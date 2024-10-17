@@ -6,14 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Icon from '@mdi/react';
 import { mdiPlus } from '@mdi/js';
+import {commentsService} from "../services/commentsservice"
 
  type FormData = {
-  comment: string;
+  body: string;
   postId: string
 }
 
 const formSchema : ZodType<FormData> = z.object({
-  comment: z.string().min(5, {
+  body: z.string().min(5, {
     message: "Comment must be at least 5 characters.",
   }).max(500),
   postId: z.string().optional()
@@ -28,8 +29,7 @@ export default function CommentForm({postId}) {
     const submitForm = async (data : FormData) => {
     console.log("📊", data);
     data.postId = postId;
-    console.log(data);
-    // await commentsService.createPost(data)
+    await commentsService.createComment(data)
     // toast.success("Comment Created")
   };
 
@@ -40,7 +40,7 @@ export default function CommentForm({postId}) {
                       >
                         <Input
                           className="bg-slate-950"
-                          {...register("comment")}
+                          {...register("body")}
                           type="text"
                           placeholder="Add a comment..."
                         />
