@@ -82,6 +82,7 @@ export default function PostsPage() {
   const [musicPosts, setMusicPosts] = useState([]);
   const { color, generateColor } = useGenerateRandomColor();
   const [focusedPostId, setFocusedPostId] = useState("");
+  const [postComments, setPostComments] = useState([]);
   const code = new URLSearchParams(window.location.search).get("code");
 
   // const accessToken = useAuth(code);
@@ -110,7 +111,9 @@ export default function PostsPage() {
 
   const getPostComments = async (postId) => {
     try {
-      await commentsService.getAllComments(postId);
+      const postComments = await commentsService.getAllComments(postId);
+      console.log(postComments);
+      setPostComments(postComments);
     } catch (error) {
       toast.error(error);
     }
@@ -249,38 +252,42 @@ export default function PostsPage() {
                     <DrawerTitle className="text-center my-4 text-2xl">
                       Comments
                     </DrawerTitle>
-                    <div className="flex mx-5">
-                      <div className="flex me-2">
-                        <Avatar className={"sm:h-8 sm:w-8"}>
-                          <AvatarImage />
-                          <AvatarFallback>
-                            <Icon path={mdiAccount} color="black" size={1} />
-                          </AvatarFallback>
-                        </Avatar>
-                      </div>
-                      <div className="flex flex-col">
-                        <div className="flex">
-                          <span className="sm:text-xl">Evan</span>
-                          <span className="text-slate-400 ms-2 text-sm sm:text-lg flex items-center mt-px">
-                            Just now
-                          </span>
+                    {postComments.map((comment) => (
+                      <div key={comment.id} className="flex mx-5">
+                        <div className="flex me-2">
+                          <Avatar className={"sm:h-8 sm:w-8"}>
+                            <AvatarImage src={comment.creator.picture} />
+                            <AvatarFallback>
+                              <Icon path={mdiAccount} color="black" size={1} />
+                            </AvatarFallback>
+                          </Avatar>
                         </div>
-                        <div>
-                          <span className="text-slate-300 sm:text-lg">
-                            Heat
-                          </span>
-                        </div>
-                        <div className="flex">
+                        <div className="flex flex-col">
+                          <div className="flex">
+                            <span className="sm:text-xl">
+                              {comment.creator.name}
+                            </span>
+                            <span className="text-slate-400 ms-2 text-sm sm:text-lg flex items-center mt-px">
+                              {comment.fromNow}
+                            </span>
+                          </div>
                           <div>
-                            <Icon
-                              path={mdiDotsHorizontal}
-                              color="white"
-                              size={1}
-                            />
+                            <span className="text-slate-300 sm:text-lg">
+                              {comment.body}
+                            </span>
+                          </div>
+                          <div className="flex">
+                            <div>
+                              <Icon
+                                path={mdiDotsHorizontal}
+                                color="white"
+                                size={1}
+                              />
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
+                    ))}
                     <DrawerFooter>
                       <CommentForm postId={focusedPostId} />
                     </DrawerFooter>

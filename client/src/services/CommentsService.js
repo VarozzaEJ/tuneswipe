@@ -12,13 +12,13 @@ class CommentsService {
         const response = await api.get(`api/comments/${postId}`)
         const comments = response.data.map(commentData => new Comment(commentData))
         AppState.comments = comments
-        console.log(comments)
+        return comments
     }
     async createComment(commentData) {
         const response = await api.post('api/comments', commentData)
         const newComment = new Comment(response.data)
         console.log(newComment)
-        // AppState.comments.unshift(newComment)
+        AppState.comments.unshift(newComment)
     }
 }
 

@@ -1,3 +1,4 @@
+import moment from "moment/moment.js"
 import { Account } from "./Account.js"
 
 
@@ -9,5 +10,9 @@ export class Comment {
         this.createdAt = new Date(data.createdAt)
         this.creator = data.creator ? new Account(data.creator) : null
         this.musicPostId = data.musicPostId
+    }
+    get fromNow() {
+        return moment(this.createdAt).fromNow()
+        // toLocaleString('en-us', { year: '2-digit', month: '2-digit', day: '2-digit' })
     }
 }
