@@ -108,6 +108,14 @@ export default function PostsPage() {
     resolver: zodResolver(formSchema),
   });
 
+  const getPostComments = async (postId) => {
+    try {
+      await commentsService.getAllComments(postId);
+    } catch (error) {
+      toast.error(error);
+    }
+  };
+
   return (
     <>
       <div className="">
@@ -221,6 +229,7 @@ export default function PostsPage() {
                   <DrawerTrigger
                     onClick={() => {
                       setFocusedPostId(post.id);
+                      getPostComments(post.id);
                     }}
                   >
                     <Icon path={mdiChatOutline} color="white" size={1} />
@@ -236,9 +245,42 @@ export default function PostsPage() {
                         />
                       </DrawerClose>
                     </div>
+                    <DrawerDescription></DrawerDescription>
                     <DrawerTitle className="text-center my-4 text-2xl">
                       Comments
                     </DrawerTitle>
+                    <div className="flex mx-5">
+                      <div className="flex me-2">
+                        <Avatar className={"sm:h-8 sm:w-8"}>
+                          <AvatarImage />
+                          <AvatarFallback>
+                            <Icon path={mdiAccount} color="black" size={1} />
+                          </AvatarFallback>
+                        </Avatar>
+                      </div>
+                      <div className="flex flex-col">
+                        <div className="flex">
+                          <span className="sm:text-xl">Evan</span>
+                          <span className="text-slate-400 ms-2 text-sm sm:text-lg flex items-center mt-px">
+                            Just now
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-slate-300 sm:text-lg">
+                            Heat
+                          </span>
+                        </div>
+                        <div className="flex">
+                          <div>
+                            <Icon
+                              path={mdiDotsHorizontal}
+                              color="white"
+                              size={1}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                     <DrawerFooter>
                       <CommentForm postId={focusedPostId} />
                     </DrawerFooter>

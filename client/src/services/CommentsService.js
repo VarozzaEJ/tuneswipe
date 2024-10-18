@@ -1,4 +1,5 @@
 import { AppState } from "../AppState.js"
+import { Comment } from "../models/Comment.js"
 import { api } from "./AxiosService.js"
 
 class CommentsService {
@@ -6,11 +7,12 @@ class CommentsService {
         const commentToDelete = await api.delete(`api/comments/${commentId}`)
         return commentToDelete
     }
-    async getAllComments(musicPostId) {
+    async getAllComments(postId) {
         AppState.comments = []
-        const response = await api.get(`api/events/${musicPostId}/comments`)
+        const response = await api.get(`api/comments/${postId}`)
         const comments = response.data.map(commentData => new Comment(commentData))
         AppState.comments = comments
+        console.log(comments)
     }
     async createComment(commentData) {
         const response = await api.post('api/comments', commentData)
