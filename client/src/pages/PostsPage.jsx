@@ -63,6 +63,7 @@ import { z, ZodType } from "zod";
 import { commentsService } from "../services/CommentsService.js";
 import useAuth from "../services/useAuth.js";
 import SpotifyLogin from "../components/ui/SpotifyLogin.jsx";
+import useCommentForm from "../components/CommentForm.tsx";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: `${import.meta.env.VITE_CLIENT_ID}`,
@@ -83,14 +84,17 @@ export default function PostsPage() {
   const { color, generateColor } = useGenerateRandomColor();
   const [focusedPostId, setFocusedPostId] = useState("");
   const [postComments, setPostComments] = useState([]);
-  const code = new URLSearchParams(window.location.search).get("code");
-
-  // const accessToken = useAuth(code);
+  const { render, comment } = useCommentForm();
 
   useEffect(() => {
     generateColor();
     getAllPosts();
   }, []);
+  console.log("👺", postComments);
+  useEffect(() => {
+    if (!comment.creator) return;
+    setPostComments((comments) => [...comments, comment]);
+  }, [comment]);
 
   const getAllPosts = async () => {
     const musicPosts = await musicPostsService.getAllPosts();
@@ -289,7 +293,7 @@ export default function PostsPage() {
                       </div>
                     ))}
                     <DrawerFooter>
-                      <CommentForm postId={focusedPostId} />
+                      {render({ postId: focusedPostId })}
                     </DrawerFooter>
                   </DrawerContent>
                 </Drawer>
