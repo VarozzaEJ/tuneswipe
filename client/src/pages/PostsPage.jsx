@@ -6,6 +6,7 @@ import {
   mdiDelete,
   mdiDotsHorizontal,
   mdiHomeOutline,
+  mdiLoading,
   mdiPencilPlusOutline,
   mdiPlus,
 } from "@mdi/js";
@@ -256,42 +257,54 @@ export default function PostsPage() {
                     <DrawerTitle className="text-center my-4 text-2xl">
                       Comments
                     </DrawerTitle>
-                    {postComments.map((comment) => (
-                      <div key={comment.id} className="flex mx-5">
-                        <div className="flex me-2">
-                          <Avatar className={"sm:h-8 sm:w-8"}>
-                            <AvatarImage src={comment.creator.picture} />
-                            <AvatarFallback>
-                              <Icon path={mdiAccount} color="black" size={1} />
-                            </AvatarFallback>
-                          </Avatar>
-                        </div>
-                        <div className="flex flex-col">
-                          <div className="flex">
-                            <span className="sm:text-xl">
-                              {comment.creator.name}
-                            </span>
-                            <span className="text-slate-400 ms-2 text-sm sm:text-lg flex items-center mt-px">
-                              {comment.fromNow}
-                            </span>
-                          </div>
-                          <div>
-                            <span className="text-slate-300 sm:text-lg">
-                              {comment.body}
-                            </span>
-                          </div>
-                          <div className="flex">
-                            <div>
-                              <Icon
-                                path={mdiDotsHorizontal}
-                                color="white"
-                                size={1}
-                              />
+                    {postComments.length === 0 ? (
+                      <div className="flex justify-center items-center">
+                        <Icon path={mdiLoading} spin size={2} />
+                      </div>
+                    ) : (
+                      <>
+                        {postComments.map((comment) => (
+                          <div key={comment.id} className="flex mx-5">
+                            <div className="flex me-2">
+                              <Avatar className={"sm:h-8 sm:w-8"}>
+                                <AvatarImage src={comment.creator.picture} />
+                                <AvatarFallback>
+                                  <Icon
+                                    path={mdiAccount}
+                                    color="black"
+                                    size={1}
+                                  />
+                                </AvatarFallback>
+                              </Avatar>
+                            </div>
+                            <div className="flex flex-col">
+                              <div className="flex">
+                                <span className="sm:text-xl">
+                                  {comment.creator.name}
+                                </span>
+                                <span className="text-slate-400 ms-2 text-sm sm:text-lg flex items-center mt-px">
+                                  {comment.fromNow}
+                                </span>
+                              </div>
+                              <div>
+                                <span className="text-slate-300 sm:text-lg">
+                                  {comment.body}
+                                </span>
+                              </div>
+                              <div className="flex">
+                                <div>
+                                  <Icon
+                                    path={mdiDotsHorizontal}
+                                    color="white"
+                                    size={1}
+                                  />
+                                </div>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </div>
-                    ))}
+                        ))}
+                      </>
+                    )}
                     <DrawerFooter>
                       {render({ postId: focusedPostId })}
                     </DrawerFooter>
