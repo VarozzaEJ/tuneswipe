@@ -17,7 +17,7 @@ import { toast } from 'sonner';
 const formSchema : ZodType<FormData> = z.object({
   body: z.string().min(5, {
     message: "Comment must be at least 5 characters.",
-  }).max(500),
+  }).max(500).default(""),
   postId: z.string().optional()
 });
 
@@ -27,7 +27,7 @@ export default function useCommentForm() {
   const [postId, setPostId] = useState("")
     console.log(postId)
 
-    const {register, handleSubmit} = useForm<FormData>({resolver: zodResolver(formSchema)})
+    const {register, handleSubmit, reset} = useForm<FormData>({resolver: zodResolver(formSchema)})
 
 
     const submitForm = async (data : FormData) => {
@@ -35,6 +35,7 @@ export default function useCommentForm() {
     data.postId = postId;
     const comment = await commentsService.createComment(data)
     setComment(comment)
+    reset()
     // toast.success("Comment Created")
   };
 
@@ -51,7 +52,10 @@ export default function useCommentForm() {
                           type="text"
                           placeholder="Add a comment..."
                           />
-                        <Button onClick={() => setPostId(postId)} type="submit" className="rounded-full">
+                        <Button onClick={() => {
+                          setPostId(postId)
+                          
+                        }} type="submit" className="rounded-full">
                           <Icon path={mdiPlus} size={1} />
                         </Button>
                       </form>

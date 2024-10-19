@@ -90,7 +90,6 @@ export default function PostsPage() {
     generateColor();
     getAllPosts();
   }, []);
-  console.log("👺", postComments);
   useEffect(() => {
     if (!comment.creator) return;
     setPostComments((comments) => [...comments, comment]);
