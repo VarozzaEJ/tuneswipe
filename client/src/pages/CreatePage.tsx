@@ -15,6 +15,17 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ExpiredTokenDialog from "../components/ExpiredTokenDialog"
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   Form,
   FormControl,
   FormField,
@@ -92,6 +103,8 @@ export default function CreatePage() {
   const [open, setOpen] = useState(false)
   const [isExpired, setIsExpired] = useState(false)
   const [expiredTokenDialogOpen, setExpiredTokenDialogOpen] = useState(false)
+  const [isUsingMix, setIsUsingMix] = useState(false)
+  const [isUsingPicture, setIsUsingPicture] = useState(false)
   const navigate = useNavigate()
   useEffect(() => {
     //TODO make this happen in a higher component to skip the login process if the token already exists or has not expired
@@ -102,7 +115,7 @@ export default function CreatePage() {
   useEffect(() => {
     if (!accessToken) return;
     //TODO if no access token found or if access token is expired, refressh the john
-    // spotifyApi.setAccessToken(accessToken);
+    spotifyApi.setAccessToken(accessToken);
   }, [accessToken]);
 
   const getUsersLikedSongs = async () => {
@@ -114,7 +127,7 @@ export default function CreatePage() {
       },
       function (err) {
         console.log("Something went wrong!", err);
-        const isExpired = err.message.includes("token");
+        const isExpired = err.message.includes("expired");
           if (isExpired) {
             setIsExpired(true);
             setExpiredTokenDialogOpen(true);
@@ -124,10 +137,11 @@ export default function CreatePage() {
   };
 
   //TODO make only tracks possible or pictures. A user shouldn't be able to use both in the same form submission
-  const {register, handleSubmit} = useForm<FormData>({resolver: zodResolver(formSchema)})
-
+  const {register, handleSubmit, getValues} = useForm<FormData>({resolver: zodResolver(formSchema)})
   const submitForm = async (data: FormData) => {
-    data.trackIds = chosenSongIds
+    if(!isUsingPicture) {
+      data.trackIds = chosenSongIds
+    }
     console.log("📊", data)
     await musicPostsService.createPost(data)
     toast.success("Post Created")
@@ -135,6 +149,9 @@ export default function CreatePage() {
   }
 
    function addSongId(songId : string) {
+    if(isUsingPicture) {
+      toast.error("You can only have one attachment per post")
+    }
     const isAdded = chosenSongIds.find((id) => id == songId);
     const foundArtistId = chosenSongIds.findIndex((id) => id == songId);
     if (isAdded) {
@@ -152,13 +169,20 @@ export default function CreatePage() {
     setOpen(false)
   }
 
+  const checkPictureValue = () => {
+    const pictureValue = getValues()
+    console.log(pictureValue.picture)
+    if(pictureValue.picture !== '') setIsUsingPicture(true)
+    if(pictureValue.picture === '') setIsUsingPicture(false)
+  }
+
   return (
     <>
       <div className="container h-full justify-between flex flex-col">
         <div className="flex justify-center text-3xl">
           <span className="my-4">Create post</span>
         </div>
-        {isExpired ? <ExpiredTokenDialog /> : 
+        {isExpired ? <ExpiredTokenDialog open={expiredTokenDialogOpen} /> : 
         <form onSubmit={handleSubmit(submitForm)} className="flex-grow flex flex-col justify-between">
               <textarea
                 {...register("textComment")}
@@ -173,9 +197,37 @@ export default function CreatePage() {
                   </div>
           <div className="grid grid-cols-2 mb-10 justify-items-center">
             <div className="col-span-1">
+              {isUsingPicture ? <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button >
+                    <div>
+                      <Icon path={mdiMusicNote} color="white" size={1} />
+                      <span className="text-slate-400 mt-1">Mix</span>
+                    </div>
+                  </Button>
+                </AlertDialogTrigger>
+      <AlertDialogContent className="bg-primary w-5/6 rounded-sm">
+        <AlertDialogHeader>
+          <AlertDialogTitle>You can only have one attachment per post</AlertDialogTitle>
+          <AlertDialogDescription>
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+            <AlertDialogAction
+              className={
+                "hover:bg-accent hover:text-accent-foreground bg-transparent border-none"
+              }
+            >
+              Continue
+            </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog> : 
               <Drawer>
                 <DrawerTrigger asChild>
-                  <Button onClick={getUsersLikedSongs} className="">
+                  <Button onClick={() => {
+                    getUsersLikedSongs()
+                    }} className="">
                     <div>
                       <Icon path={mdiMusicNote} color="white" size={1} />
                       <span className="text-slate-400 mt-1">Mix</span>
@@ -189,6 +241,7 @@ export default function CreatePage() {
                     {likedSongs.map((song, index) => (
                       <div onClick={() => {
                         addSongId(song.id)
+                        setIsUsingMix(true)
                       }} key={song.id}>
                         <TopTrackCard song={song}/>
                       </div>
@@ -197,13 +250,10 @@ export default function CreatePage() {
                     <span className="text-center"><Icon path={mdiLoading} spin color={"white"} size={2}/></span>
                     </div>}
                   
-                  <DrawerFooter>
-                    {/* <DrawerClose asChild>
-                      <Button variant="outline">Cancel</Button>
-                      </DrawerClose> */}
-                  </DrawerFooter>
+                  
                 </DrawerContent>
               </Drawer>
+}
             </div>
             {/* <div className="col-span-1">
               <Drawer>
@@ -225,6 +275,30 @@ export default function CreatePage() {
               </Drawer>
             </div> */}
             <div className="col-span-1">
+              {isUsingMix ? <AlertDialog>
+                <AlertDialogTrigger asChild><Button>
+                    <div className="flex flex-col justify-center items-center">
+                      <Icon path={mdiImage} color="white" size={1} />
+                      <span className="text-slate-400">Photo</span>
+                    </div>
+                  </Button></AlertDialogTrigger>
+      <AlertDialogContent className="bg-primary w-5/6 rounded-sm">
+        <AlertDialogHeader>
+          <AlertDialogTitle>You can only have one attachment per post</AlertDialogTitle>
+          <AlertDialogDescription>
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+            <AlertDialogAction
+              className={
+                "hover:bg-accent hover:text-accent-foreground bg-transparent border-none"
+              }
+            >
+              Continue
+            </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog> : 
               <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                   <Button>
@@ -233,6 +307,7 @@ export default function CreatePage() {
                       <span className="text-slate-400">Photo</span>
                     </div>
                   </Button>
+                  
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-md w-5/6 bg-slate-800 rounded-lg">
                   <DialogHeader>
@@ -251,6 +326,9 @@ export default function CreatePage() {
                     <div className="flex items-center w-full mt-5">
                       <div className="grid flex-1 gap-2">
                         <Input
+                          onClick={() => {
+                            setIsUsingPicture(true)
+                          }}
                           {...register("picture")}
                           id="link"
                           type="url"
@@ -259,7 +337,10 @@ export default function CreatePage() {
                         />
                       </div>
                       <div className="ms-1">
-                        <Button onClick={closeDialog}>Save</Button>
+                        <Button onClick={() => {
+                          closeDialog()
+                          checkPictureValue()
+                        }}>Save</Button>
                       </div>
                     </div>
                   </div>
@@ -268,6 +349,7 @@ export default function CreatePage() {
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
+}
             </div>
           </div>
                 </div>

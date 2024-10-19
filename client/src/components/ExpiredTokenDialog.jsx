@@ -18,7 +18,9 @@ export default function ExpiredTokenDialog({ open }) {
       <AlertDialogContent className="bg-primary w-5/6 rounded-sm">
         <AlertDialogHeader>
           <AlertDialogTitle>Please Login Again</AlertDialogTitle>
-          <AlertDialogDescription></AlertDialogDescription>
+          <AlertDialogDescription>
+            Your access token has expired
+          </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <Link to={"/"} className="w-full sm:w-auto flex justify-center">
