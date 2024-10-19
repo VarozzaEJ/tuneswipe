@@ -234,6 +234,7 @@ export default function PostsPage() {
                 <Drawer>
                   <DrawerTrigger
                     onClick={() => {
+                      setPostComments([]);
                       setFocusedPostId(post.id);
                       getPostComments(post.id);
                     }}
