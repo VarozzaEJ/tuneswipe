@@ -130,7 +130,7 @@ export default function PostsPage() {
           <span className="text-3xl">Explore Posts</span>
         </div>
       </div>
-      <section className="sm:flex sm:flex-col mb-10 sm:items-center ">
+      <section className="sm:flex sm:flex-col sm:items-center ">
         {musicPosts.map((post, index) => (
           <Card
             key={post.id}
@@ -158,7 +158,7 @@ export default function PostsPage() {
                   </div>
                   <div className="flex flex-col">
                     <span>{post.creator.name}</span>
-                    <span>{post.createdAt}</span>
+                    <span>{post.fromNow}</span>
                   </div>
                 </div>
                 <div>
@@ -242,21 +242,31 @@ export default function PostsPage() {
                   >
                     <Icon path={mdiChatOutline} color="white" size={1} />
                   </DrawerTrigger>
-                  <DrawerContent className={"h-4/6 bg-slate-800"}>
-                    <div className="flex justify-end">
-                      <DrawerClose>
-                        <Icon
-                          className="me-4"
-                          path={mdiClose}
-                          color="white"
-                          size={1}
-                        />
-                      </DrawerClose>
-                    </div>
+                  <DrawerContent
+                    className={
+                      "h-3/4 bg-slate-800 music-drawer overflow-y-scroll"
+                    }
+                  >
+                    <div className="flex justify-end"></div>
                     <DrawerDescription></DrawerDescription>
-                    <DrawerTitle className="text-center my-4 text-2xl">
-                      Comments
-                    </DrawerTitle>
+                    <div className="grid grid-cols-3 sticky -mt-4 top-0 bg-slate-800">
+                      <div className="col-span-1"></div>
+                      <div className="col-span-1">
+                        <DrawerTitle className="text-center my-4 text-2xl">
+                          Comments
+                        </DrawerTitle>
+                      </div>
+                      <div className="col-span-1 flex justify-end items-center">
+                        <DrawerClose>
+                          <Icon
+                            className="me-4"
+                            path={mdiClose}
+                            color="white"
+                            size={1}
+                          />
+                        </DrawerClose>
+                      </div>
+                    </div>
                     {postComments.length === 0 ? (
                       <div className="flex justify-center items-center">
                         <Icon path={mdiLoading} spin size={2} />
@@ -266,7 +276,7 @@ export default function PostsPage() {
                         {postComments.map((comment) => (
                           <div key={comment.id} className="flex mx-5">
                             <div className="flex me-2">
-                              <Avatar className={"sm:h-8 sm:w-8"}>
+                              <Avatar className={"sm:h-8 sm:w-8 static"}>
                                 <AvatarImage src={comment.creator.picture} />
                                 <AvatarFallback>
                                   <Icon
@@ -305,9 +315,19 @@ export default function PostsPage() {
                         ))}
                       </>
                     )}
-                    <DrawerFooter>
-                      {render({ postId: focusedPostId })}
-                    </DrawerFooter>
+                    {postComments.length === 0 ? (
+                      <DrawerFooter
+                        className={"fixed bg-primary bottom-0 w-full"}
+                      >
+                        {render({ postId: focusedPostId })}
+                      </DrawerFooter>
+                    ) : (
+                      <DrawerFooter
+                        className={"sticky bg-primary bottom-0 w-full"}
+                      >
+                        {render({ postId: focusedPostId })}
+                      </DrawerFooter>
+                    )}
                   </DrawerContent>
                 </Drawer>
               </div>
@@ -316,22 +336,41 @@ export default function PostsPage() {
         ))}
       </section>
 
-      <div className="grid w-full grid-cols-4 fixed bottom-0 h-10 left-0 items-center justify-items-center bg-slate-950">
-        <Link to={"/"}>
+      {musicPosts.length === 0 ? (
+        <div className="grid w-full grid-cols-4 fixed bottom-0 h-10 left-0 items-center justify-items-center bg-slate-950">
+          <Link to={"/"}>
+            <div className="cursor-pointer">
+              <Icon path={mdiHomeOutline} color="white" size={1} />
+            </div>
+          </Link>
           <div className="cursor-pointer">
-            <Icon path={mdiHomeOutline} color="white" size={1} />
+            <Icon path={mdiChat} color="white" size={1} />
           </div>
-        </Link>
-        <div className="cursor-pointer">
-          <Icon path={mdiChat} color="white" size={1} />
+          <Link to={"/create"}>
+            <div className="cursor-pointer">
+              <Icon path={mdiPencilPlusOutline} color="white" size={1} />
+            </div>
+          </Link>
+          <Login />
         </div>
-        <Link to={"/create"}>
+      ) : (
+        <div className="grid w-full grid-cols-4 sticky bottom-0 h-10 left-0 items-center justify-items-center bg-slate-950">
+          <Link to={"/"}>
+            <div className="cursor-pointer">
+              <Icon path={mdiHomeOutline} color="white" size={1} />
+            </div>
+          </Link>
           <div className="cursor-pointer">
-            <Icon path={mdiPencilPlusOutline} color="white" size={1} />
+            <Icon path={mdiChat} color="white" size={1} />
           </div>
-        </Link>
-        <Login />
-      </div>
+          <Link to={"/create"}>
+            <div className="cursor-pointer">
+              <Icon path={mdiPencilPlusOutline} color="white" size={1} />
+            </div>
+          </Link>
+          <Login />
+        </div>
+      )}
     </>
   );
 }
