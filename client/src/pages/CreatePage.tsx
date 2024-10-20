@@ -105,6 +105,8 @@ export default function CreatePage() {
   const [expiredTokenDialogOpen, setExpiredTokenDialogOpen] = useState(false)
   const [isUsingMix, setIsUsingMix] = useState(false)
   const [isUsingPicture, setIsUsingPicture] = useState(false)
+  const [pictureString, setPictureString] = useState("")
+  const [commentString, setCommentString] = useState("")
   const navigate = useNavigate()
   useEffect(() => {
     //TODO make this happen in a higher component to skip the login process if the token already exists or has not expired
@@ -137,7 +139,7 @@ export default function CreatePage() {
   };
 
   //TODO make only tracks possible or pictures. A user shouldn't be able to use both in the same form submission
-  const {register, handleSubmit, getValues} = useForm<FormData>({resolver: zodResolver(formSchema)})
+  const {register, handleSubmit, getValues, resetField} = useForm<FormData>({resolver: zodResolver(formSchema)})
   const submitForm = async (data: FormData) => {
     if(!isUsingPicture) {
       data.trackIds = chosenSongIds
@@ -168,14 +170,20 @@ export default function CreatePage() {
   function closeDialog() {
     setOpen(false)
   }
+const pictureValue = getValues().picture
+
+  useEffect(() => {
+    checkPictureValue()
+    setPictureString(pictureValue)
+  }, [pictureValue])
+
+  
 
   const checkPictureValue = () => {
     const pictureValue = getValues()
-    console.log(pictureValue.picture)
-    if(pictureValue.picture !== '') setIsUsingPicture(true)
-    if(pictureValue.picture === '') setIsUsingPicture(false)
+    if(pictureValue.picture !== undefined) setIsUsingPicture(true)
+    if(pictureValue.picture === undefined) setIsUsingPicture(false)
   }
-
   return (
     <>
       <div className="container h-full justify-between flex flex-col">
@@ -184,25 +192,36 @@ export default function CreatePage() {
         </div>
         {isExpired ? <ExpiredTokenDialog open={expiredTokenDialogOpen} /> : 
         <form onSubmit={handleSubmit(submitForm)} className="flex-grow flex flex-col justify-between">
+          <div>
+
               <textarea
                 {...register("textComment")}
+                onChange={(e) => {
+                  setCommentString(e.target.value)
+                }}
                 className="bg-slate-900 w-full h-20 focus:outline-none"
                 placeholder="Share a song or write a note..."
                 maxLength={500}
                 minLength={5}
                 ></textarea>
+                <span>{commentString.length}/500</span>
+                {pictureString?.length >10 && 
+                <img src={pictureString} alt="Your chosen picture" className="w-full h-1/2 mt-3" />
+              }
+              </div>
                 <div>
                   <div className="flex justify-center">
             <Button type="submit" variant={"ghost"} className="w-1/4">Submit</Button>
                   </div>
           <div className="grid grid-cols-2 mb-10 justify-items-center">
             <div className="col-span-1">
-              {isUsingPicture ? <AlertDialog>
+              {isUsingPicture ? 
+              <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button >
-                    <div>
+                    <div className="text-slate-400 hover:text-slate-300 transition-all ease-in-out">
                       <Icon path={mdiMusicNote} color="white" size={1} />
-                      <span className="text-slate-400 mt-1">Mix</span>
+                      <span className="mt-1">Mix</span>
                     </div>
                   </Button>
                 </AlertDialogTrigger>
@@ -213,12 +232,19 @@ export default function CreatePage() {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
+          <AlertDialogCancel asChild>
+            <Button className="bg-primary">Cancel</Button>
+          </AlertDialogCancel>
             <AlertDialogAction
+            onClick={() => {
+              setIsUsingPicture(false)
+              resetField("picture")
+            }}
               className={
                 "hover:bg-accent hover:text-accent-foreground bg-transparent border-none"
               }
             >
-              Continue
+              Clear Photo
             </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -228,9 +254,9 @@ export default function CreatePage() {
                   <Button onClick={() => {
                     getUsersLikedSongs()
                     }} className="">
-                    <div>
+                    <div className="text-slate-400 hover:text-slate-300 transition-all ease-in-out">
                       <Icon path={mdiMusicNote} color="white" size={1} />
-                      <span className="text-slate-400 mt-1">Mix</span>
+                      <span className="  mt-1">Mix</span>
                     </div>
                   </Button>
                 </DrawerTrigger>
@@ -276,12 +302,14 @@ export default function CreatePage() {
             </div> */}
             <div className="col-span-1">
               {isUsingMix ? <AlertDialog>
-                <AlertDialogTrigger asChild><Button>
-                    <div className="flex flex-col justify-center items-center">
+                <AlertDialogTrigger asChild>
+                  <Button>
+                    <div className="flex flex-col text-slate-400 hover:text-slate-300 transition-all ease-in-out justify-center items-center">
                       <Icon path={mdiImage} color="white" size={1} />
-                      <span className="text-slate-400">Photo</span>
+                      <span className="">Photo</span>
                     </div>
-                  </Button></AlertDialogTrigger>
+                  </Button>
+                  </AlertDialogTrigger>
       <AlertDialogContent className="bg-primary w-5/6 rounded-sm">
         <AlertDialogHeader>
           <AlertDialogTitle>You can only have one attachment per post</AlertDialogTitle>
@@ -289,12 +317,19 @@ export default function CreatePage() {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
+          <AlertDialogCancel asChild>
+            <Button className="bg-primary">Cancel</Button>
+          </AlertDialogCancel>
             <AlertDialogAction
+            onClick={() => {
+              setChosenSongIds([])
+              setIsUsingMix(false)
+            }}
               className={
                 "hover:bg-accent hover:text-accent-foreground bg-transparent border-none"
               }
             >
-              Continue
+              Clear Songs?
             </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -302,9 +337,9 @@ export default function CreatePage() {
               <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                   <Button>
-                    <div className="flex flex-col justify-center items-center">
+                    <div className="flex flex-col text-slate-400 hover:text-slate-300 transition-all ease-in-out justify-center items-center">
                       <Icon path={mdiImage} color="white" size={1} />
-                      <span className="text-slate-400">Photo</span>
+                      <span className="">Photo</span>
                     </div>
                   </Button>
                   
@@ -316,12 +351,13 @@ export default function CreatePage() {
                   </DialogHeader>
                   <div className="flex flex-col items-center ">
                     <div className="d-flex justify-content-center">
+                      {pictureString !== undefined && pictureString?.includes(".") ? 
+                      <img className="rounded-lg h-52 w-52" src={pictureString}/>
+                      : 
                       <div className="bg-subtle rounded-lg h-52 w-52 flex justify-center items-center">
                         <Icon path={mdiImage} color="white" />
-                      </div>
-                      {/* <div v-else>
-                                    <img className="rounded h-20 w-20" />
-                                </div> */}
+                      </div> 
+                      }
                     </div>
                     <div className="flex items-center w-full mt-5">
                       <div className="grid flex-1 gap-2">
@@ -330,6 +366,9 @@ export default function CreatePage() {
                             setIsUsingPicture(true)
                           }}
                           {...register("picture")}
+                          onChange={(e) => {
+                            setPictureString(e.target.value)
+                          }}
                           id="link"
                           type="url"
                           placeholder="Photo URL"
