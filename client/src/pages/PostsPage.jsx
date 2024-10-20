@@ -106,6 +106,13 @@ export default function PostsPage() {
   const deletePost = async (musicPostId) => {
     try {
       await musicPostsService.deletePost(musicPostId);
+      const foundMusicPost = musicPosts.find((post) => post.id == musicPostId);
+      if (foundMusicPost) {
+        const updatedPosts = musicPosts.filter(
+          (post) => post.id !== musicPostId
+        );
+        setMusicPosts(updatedPosts);
+      }
     } catch (error) {
       toast.error("Error Deleting Post");
     }
@@ -288,7 +295,7 @@ export default function PostsPage() {
                     </div>
                     {postComments.length === 0 ? (
                       <div className="flex justify-center items-center">
-                        <Icon path={mdiLoading} spin size={2} />
+                        <span>No comments yet... Be the first!</span>
                       </div>
                     ) : (
                       <>
