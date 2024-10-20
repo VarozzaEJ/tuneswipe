@@ -423,7 +423,7 @@ export default function PostsPage() {
                         ))}
                       </>
                     )}
-                    {postComments.length === 0 ? (
+                    {postComments.length <= 6 ? (
                       <DrawerFooter
                         className={"fixed bg-primary bottom-0 w-full"}
                       >
