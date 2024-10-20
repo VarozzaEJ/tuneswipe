@@ -4,7 +4,9 @@ import {
   mdiChatOutline,
   mdiClose,
   mdiDelete,
+  mdiDeleteOutline,
   mdiDotsHorizontal,
+  mdiFlagOutline,
   mdiHomeOutline,
   mdiLoading,
   mdiPencilPlusOutline,
@@ -118,6 +120,23 @@ export default function PostsPage() {
       const postComments = await commentsService.getAllComments(postId);
       console.log(postComments);
       setPostComments(postComments);
+    } catch (error) {
+      toast.error(error);
+    }
+  };
+
+  const deleteComment = async (commentId) => {
+    try {
+      await commentsService.deleteComment(commentId);
+      const foundComment = postComments.find(
+        (comment) => comment.id == commentId
+      );
+      if (foundComment) {
+        const unDeletedComments = postComments.filter(
+          (comment) => comment.id !== commentId
+        );
+        setPostComments(unDeletedComments);
+      }
     } catch (error) {
       toast.error(error);
     }
@@ -303,11 +322,100 @@ export default function PostsPage() {
                               </div>
                               <div className="flex">
                                 <div>
-                                  <Icon
-                                    path={mdiDotsHorizontal}
-                                    color="white"
-                                    size={1}
-                                  />
+                                  <Drawer>
+                                    <DrawerTrigger>
+                                      <Icon
+                                        path={mdiDotsHorizontal}
+                                        color="white"
+                                        size={1}
+                                      />
+                                    </DrawerTrigger>
+                                    <DrawerContent className={"bg-primary"}>
+                                      <div className="grid grid-cols-3">
+                                        <div className="col-span-1"></div>
+                                        <div className="col-span-1 flex justify-center">
+                                          <DrawerTitle>
+                                            More Options
+                                          </DrawerTitle>
+                                        </div>
+                                        <div className="col-span-1 flex justify-end items-center">
+                                          <DrawerClose>
+                                            <Icon
+                                              className="me-4"
+                                              path={mdiClose}
+                                              color="white"
+                                              size={1}
+                                            />
+                                          </DrawerClose>
+                                        </div>
+                                      </div>
+                                      <div className="flex mx-5 mb-5">
+                                        <div>
+                                          <Icon
+                                            path={mdiFlagOutline}
+                                            color="white"
+                                            size={1}
+                                          />
+                                        </div>
+                                        <div className="ms-2">
+                                          <span>Report</span>
+                                        </div>
+                                      </div>
+
+                                      {AppState.account?.id ==
+                                        comment.creator.id && (
+                                        <AlertDialog>
+                                          <AlertDialogTrigger>
+                                            <div className="flex mx-5 mb-5">
+                                              <div>
+                                                <Icon
+                                                  path={mdiDeleteOutline}
+                                                  color="red"
+                                                  size={1}
+                                                />
+                                              </div>
+                                              <div className="ms-2">
+                                                <span className="text-destructive">
+                                                  Delete
+                                                </span>
+                                              </div>
+                                            </div>
+                                          </AlertDialogTrigger>
+                                          <AlertDialogContent
+                                            className={"bg-slate-900"}
+                                          >
+                                            <AlertDialogHeader>
+                                              <AlertDialogTitle>
+                                                Are you absolutely sure?
+                                              </AlertDialogTitle>
+                                              <AlertDialogDescription>
+                                                This action cannot be undone.
+                                              </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                              <AlertDialogCancel
+                                                className={
+                                                  "hover:bg-accent hover:text-accent-foreground bg-transparent border-none"
+                                                }
+                                              >
+                                                Cancel
+                                              </AlertDialogCancel>
+                                              <AlertDialogAction
+                                                className={
+                                                  "bg-destructive hover:bg-destructive/80"
+                                                }
+                                                onClick={() => {
+                                                  deleteComment(comment.id);
+                                                }}
+                                              >
+                                                Continue
+                                              </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                          </AlertDialogContent>
+                                        </AlertDialog>
+                                      )}
+                                    </DrawerContent>
+                                  </Drawer>
                                 </div>
                               </div>
                             </div>
