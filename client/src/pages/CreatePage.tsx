@@ -1,4 +1,5 @@
 import {
+  mdiArrowRight,
   mdiChatOutline,
   mdiCheckCircle,
   mdiHomeOutline,
@@ -66,6 +67,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator"
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs"
 import Login from "../components/Login.jsx";
 import SpotifyWebApi from "spotify-web-api-node";
 import { toast } from "sonner";
@@ -109,6 +117,8 @@ export default function CreatePage() {
   const [isUsingPicture, setIsUsingPicture] = useState(false)
   const [pictureString, setPictureString] = useState("")
   const [commentString, setCommentString] = useState("")
+  const [userName, setUserName] = useState("")
+  const [currentUsersPlaylists, setCurrentUsersPlaylists] = useState([])
   const navigate = useNavigate()
   useEffect(() => {
     //TODO make this happen in a higher component to skip the login process if the token already exists or has not expired
@@ -120,7 +130,16 @@ export default function CreatePage() {
     if (!accessToken) return;
     //TODO if no access token found or if access token is expired, refressh the john
     spotifyApi.setAccessToken(accessToken);
+    spotifyApi.getMe()
+  .then(function(data) {
+    console.log(data.body)
+    setUserName(data.body.id)
+  }, function(err) {
+
+    console.log('Something went wrong!', err);
+  });
   }, [accessToken]);
+
 
   const getUsersLikedSongs = async () => {
     await spotifyApi.getMyTopTracks().then(
@@ -139,6 +158,16 @@ export default function CreatePage() {
       }
     );
   };
+
+  const getUsersPlaylists = async () => {
+    await spotifyApi.getUserPlaylists(`${userName}`)
+  .then(function(data) {
+    console.log('Retrieved playlists', data.body);
+    setCurrentUsersPlaylists(data.body.items)
+  },function(err) {
+    console.log('Something went wrong!', err);
+  });
+  }
 
   //TODO make only tracks possible or pictures. A user shouldn't be able to use both in the same form submission
   const {register, handleSubmit, getValues, resetField} = useForm<FormData>({resolver: zodResolver(formSchema)})
@@ -266,6 +295,7 @@ const pictureValue = getValues().picture
                 <DrawerTrigger asChild>
                   <Button onClick={() => {
                     getUsersLikedSongs()
+                    getUsersPlaylists()
                     }} className="">
                     <div className="text-slate-400 hover:text-slate-300 transition-all ease-in-out">
                       <Icon path={mdiMusicNote} color="white" size={1} />
@@ -273,21 +303,53 @@ const pictureValue = getValues().picture
                     </div>
                   </Button>
                 </DrawerTrigger>
-                <DrawerContent className="bg-slate-800 music-drawer h-5/6 overflow-y-scroll after:top-full after:right-0 after:h-full">
-                  <DrawerTitle className="text-center text-3xl mb-3">Top Tracks</DrawerTitle>
-                  <DrawerDescription></DrawerDescription>
-                  {musicCardsReady ? <div className="flex-col flex mx-5">
-                    {likedSongs.map((song, index) => (
-                      <div onClick={() => {
-                        addSongId(song.id, song)
-                        setIsUsingMix(true)
-                      }} key={song.id}>
-                        <TopTrackCard song={song}/>
+                <DrawerContent className="bg-slate-800 music-drawer h-5/6 overflow-y-scroll ">
+                    <Tabs defaultValue="Top Tracks">
+                      <div className="mx-5">
+
+                      <TabsList className="grid w-full grid-cols-3 mt-3 bg-inherit text-secondary">
+                        <TabsTrigger value="Top Tracks">Top Tracks</TabsTrigger>
+                        <TabsTrigger value="Playlists">Playlists</TabsTrigger>
+                        <TabsTrigger value="Search Songs">Search Songs</TabsTrigger>
+                      </TabsList>
+                      <Separator className="my-4"/>
                       </div>
-                    ))}
+                      <TabsContent value="Top Tracks">
+                        <DrawerTitle className="text-center text-3xl mb-3"></DrawerTitle>
+                        <DrawerDescription></DrawerDescription>
+                        {musicCardsReady ? <div className="flex-col flex mx-5">
+                        {likedSongs.map((song, index) => (
+                          <div onClick={() => {
+                            addSongId(song.id, song)
+                            setIsUsingMix(true)
+                          }} key={song.id}>
+                            <TopTrackCard song={song}/>
+                          </div>
+                         ))}
                   </div> : <div className="flex flex-col items-center mx-5">
                     <span className="text-center"><Icon path={mdiLoading} spin color={"white"} size={2}/></span>
                     </div>}
+                      </TabsContent>
+                      <TabsContent value="Playlists">
+                         <DrawerTitle className="text-center text-3xl mb-3"></DrawerTitle>
+                         <DrawerDescription></DrawerDescription>
+                         {currentUsersPlaylists.map(playlist => (
+                          <div className="flex justify-between mb-4 mx-5">
+                            <div className="flex">
+                              <img className="rounded-sm" src={playlist.images[0].url} style={{width: 64}} alt="" />
+                              <span className="flex items-center ms-4">{playlist.name}</span>
+                            </div>
+                            <div className="flex items-center justify-center">
+                              <Icon path={mdiArrowRight} color={"white"} size={1}/>
+                            </div>
+                          </div>
+                         ))}
+                      </TabsContent>
+                      <TabsContent value="Search Songs">
+                         <DrawerTitle className="text-center text-3xl mb-3"></DrawerTitle>
+                         <DrawerDescription></DrawerDescription>
+                      </TabsContent>
+                    </Tabs>
                   
                   
                 </DrawerContent>

@@ -128,6 +128,24 @@ export default function MusicPlayerCard({ trackIds }) {
     }
   };
 
+  const addSongToYourMusic = async (trackId) => {
+    try {
+      await spotifyApi.addToMySavedTracks([`${trackId}`]).then(
+        function (data) {
+          console.log("Added track!");
+          toast.success("Added Track!");
+          setIsOpen(false);
+        },
+        function (err) {
+          toast.error("An error occured");
+          console.log("Something went wrong!", err);
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       {isExpired ? (
@@ -219,7 +237,7 @@ export default function MusicPlayerCard({ trackIds }) {
                         </div>
                         <span
                           onClick={() => {
-                            // addSongToYourMusic();
+                            addSongToYourMusic(tracks[currentIndex].id);
                           }}
                           className="flex my-4 text-lg ms-2 cursor-pointer hover:text-slate-600 delay-75 transition-all ease-in-out"
                         >
