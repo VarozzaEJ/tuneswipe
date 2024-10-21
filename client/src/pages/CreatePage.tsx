@@ -72,6 +72,7 @@ import { toast } from "sonner";
 import TopTrackCard from "@/components/TopTrackCard.js";
 import { musicPostsService } from "../services/MusicPostsService";
 import { useNavigate } from "react-router-dom";
+import AddedTopTrackCard from "@/components/AddedTopTrackCard.js";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: `${import.meta.env.VITE_CLIENT_ID}`,
@@ -100,6 +101,7 @@ export default function CreatePage() {
   const [musicCardsReady, setMusicCardsReady] = useState(false);
   const [likedSongs, setLikedSongs] = useState([]);
   const [chosenSongIds, setChosenSongIds] = useState([])
+  const [chosenSongCards, setChosenSongCards] = useState([])
   const [open, setOpen] = useState(false)
   const [isExpired, setIsExpired] = useState(false)
   const [expiredTokenDialogOpen, setExpiredTokenDialogOpen] = useState(false)
@@ -150,7 +152,7 @@ export default function CreatePage() {
     navigate('/posts')
   }
 
-   function addSongId(songId : string) {
+   function addSongId(songId : string, songObject) {
     if(isUsingPicture) {
       toast.error("You can only have one attachment per post")
     }
@@ -158,15 +160,19 @@ export default function CreatePage() {
     const foundArtistId = chosenSongIds.findIndex((id) => id == songId);
     if (isAdded) {
 
-      chosenSongIds.splice(foundArtistId, 1);
+      const correctSongIds = chosenSongIds.filter(song => song !== songId);
+      setChosenSongIds(correctSongIds)
+      const correctSongs = chosenSongCards.filter(song => song.id !== songId)
+      setChosenSongCards(correctSongs)
     }
     if (chosenSongIds.length >= 5)
       toast.error("A maximum of 5 artists is allowed");
     if (isAdded || chosenSongIds.length >= 5) return;
     //NOTE maybe throw a pop error of some sort here
     setChosenSongIds((songIds) => [...songIds, songId]);
+    setChosenSongCards((song) => [...song, songObject])
   }
-
+console.log(chosenSongCards)
   function closeDialog() {
     setOpen(false)
   }
@@ -205,8 +211,15 @@ const pictureValue = getValues().picture
                 minLength={5}
                 ></textarea>
                 <span>{commentString.length}/500</span>
-                {pictureString?.length >10 && 
+                {pictureString?.length > 10 && 
                 <img src={pictureString} alt="Your chosen picture" className="w-full h-1/2 mt-3" />
+              }
+              {chosenSongCards.length !== 0 && 
+              chosenSongCards.map(song => (
+                <div key={song.id} className="mt-3">
+                <AddedTopTrackCard  song={song} />
+                </div>
+              ))
               }
               </div>
                 <div>
@@ -266,7 +279,7 @@ const pictureValue = getValues().picture
                   {musicCardsReady ? <div className="flex-col flex mx-5">
                     {likedSongs.map((song, index) => (
                       <div onClick={() => {
-                        addSongId(song.id)
+                        addSongId(song.id, song)
                         setIsUsingMix(true)
                       }} key={song.id}>
                         <TopTrackCard song={song}/>

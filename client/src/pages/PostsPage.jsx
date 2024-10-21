@@ -389,7 +389,9 @@ export default function PostsPage() {
                                             </div>
                                           </AlertDialogTrigger>
                                           <AlertDialogContent
-                                            className={"bg-slate-900"}
+                                            className={
+                                              "bg-slate-900 w-5/6 rounded-sm"
+                                            }
                                           >
                                             <AlertDialogHeader>
                                               <AlertDialogTitle>
