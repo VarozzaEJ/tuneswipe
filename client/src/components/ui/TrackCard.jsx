@@ -129,7 +129,7 @@ export default function TrackCard({
             </div>
             <div className="sm:col-span-4 col-span-12 flex justify-end  items-center">
               <Drawer open={isOpen} onOpenChange={setIsOpen}>
-                <DrawerTrigger>
+                <DrawerTrigger asChild>
                   <span aria-label="Open drawer to see more actions">
                     <Icon
                       title="Open Options Menu"

@@ -211,7 +211,9 @@ export default function MusicPlayerCard({ trackIds }) {
                       <DrawerDescription></DrawerDescription>
                       <div className="flex justify-end me-4">
                         <DrawerClose
-                          className={"w-16 bg-transparent hover:bg-transparent"}
+                          className={
+                            "w-16 bg-transparent flex justify-end items-center mt-1 hover:bg-transparent"
+                          }
                         >
                           <Icon path={mdiClose} color="white" size={1} />
                         </DrawerClose>

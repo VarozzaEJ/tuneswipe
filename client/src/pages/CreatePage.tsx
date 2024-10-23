@@ -5,11 +5,22 @@ import {
   mdiHomeOutline,
   mdiImage,
   mdiLoading,
+  mdiMagnify,
   mdiMusicNote,
   mdiPencilPlus,
   mdiPlus,
   mdiSpotify,
 } from "@mdi/js";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 import Icon from "@mdi/react";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -119,7 +130,11 @@ export default function CreatePage() {
   const [commentString, setCommentString] = useState("")
   const [userName, setUserName] = useState("")
   const [currentUsersPlaylists, setCurrentUsersPlaylists] = useState([])
+  const [playlistTracks, setPlaylistTracks] = useState([])
+  const [searchResults, setSearchResults] = useState([]);
+  const [search, setSearch] = useState("");
   const navigate = useNavigate()
+
   useEffect(() => {
     //TODO make this happen in a higher component to skip the login process if the token already exists or has not expired
     const accessToken = localStorage.getItem("accessToken");
@@ -219,6 +234,35 @@ const pictureValue = getValues().picture
     if(pictureValue.picture !== undefined) setIsUsingPicture(true)
     if(pictureValue.picture === undefined) setIsUsingPicture(false)
   }
+
+  const getTracksInPlaylist = async (playlistId) => {
+    await spotifyApi.getPlaylistTracks(`${playlistId}`, {
+    fields: 'items'
+  })
+  .then(
+    function(data) {
+      console.log('The playlist contains these tracks', data.body.items);
+      setPlaylistTracks(data.body.items)
+    },
+    function(err) {
+      console.log('Something went wrong!', err);
+    }
+  );
+  }
+
+  useEffect(() => {
+    if (!search) return setSearchResults([]);
+
+    let cancel = false;
+    spotifyApi.searchTracks(search, { limit: 6 }).then((res) => {
+      if (cancel) return;
+      setSearchResults(
+        res.body.tracks.items
+      );
+    });
+    return () => (cancel = true);
+  }, [search]);
+  console.log(searchResults)
   return (
     <>
       <div className="container h-full justify-between flex flex-col">
@@ -334,7 +378,14 @@ const pictureValue = getValues().picture
                          <DrawerTitle className="text-center text-3xl mb-3"></DrawerTitle>
                          <DrawerDescription></DrawerDescription>
                          {currentUsersPlaylists.map(playlist => (
-                          <div className="flex justify-between mb-4 mx-5">
+                          <Sheet key={playlist.id}>
+                            <SheetTrigger asChild>
+
+                          <div onClick={() => {
+                            setPlaylistTracks([])
+                            getTracksInPlaylist(playlist.id)
+                          }} className="flex cursor-pointer hover:bg-slate-700 transition-all ease-in-out rounded-sm justify-between mb-4 mx-5">
+                            
                             <div className="flex">
                               <img className="rounded-sm" src={playlist.images[0].url} style={{width: 64}} alt="" />
                               <span className="flex items-center ms-4">{playlist.name}</span>
@@ -343,11 +394,65 @@ const pictureValue = getValues().picture
                               <Icon path={mdiArrowRight} color={"white"} size={1}/>
                             </div>
                           </div>
+                            </SheetTrigger>
+                            <SheetContent className="bg-slate-800 w-screen overflow-y-scroll">
+                              <SheetHeader>
+                                <SheetTitle className="text-slate-200">
+                                  {playlist.name}
+                                </SheetTitle>
+                                <SheetDescription></SheetDescription>
+                              </SheetHeader>
+                              {playlistTracks.length == 0 ? 
+                              <div className="flex flex-col items-center mx-5">
+                                <span className="text-center">
+                                    <Icon path={mdiLoading} spin color={"white"} size={2}/>
+                                </span>
+                              </div> 
+                    : 
+                              <div>
+                              {playlistTracks.map(track => (
+                                <div onClick={() => {
+                                    addSongId(track.track.id, track.track)
+                                    setIsUsingMix(true)
+                                }} key={track.track.id}>
+                                    <TopTrackCard  song={track.track} />
+                                </div>
+                              ))}
+                              </div>
+                            }
+                            </SheetContent>
+                          </Sheet>
                          ))}
                       </TabsContent>
                       <TabsContent value="Search Songs">
                          <DrawerTitle className="text-center text-3xl mb-3"></DrawerTitle>
                          <DrawerDescription></DrawerDescription>
+                         <div className="sticky top-0 mx-5 flex">
+                          <Input 
+                          value={search}
+                          onChange={(e) => setSearch(e.target.value)}
+                          className="text-black" placeholder="Search by artist name..." />
+                          <Button className="ms-1"><Icon path={mdiMagnify} color={"white"} size={1}/></Button>
+                         </div>
+                         {searchResults.length == 0 ? 
+                         <div className="flex flex-col items-center mx-5 mt-4">
+                                <span className="text-center">
+                                    <Icon path={mdiLoading} spin color={"white"} size={2}/>
+                                </span>
+                        </div> 
+                              :
+                         <div>
+                          {searchResults.map(track => (
+                            <div onClick={() => {
+                                    addSongId(track.id, track)
+                                    setIsUsingMix(true)
+                                }} key={track.id} className="mx-5 mt-4" >
+
+                            <TopTrackCard song={track}/>
+                            </div>
+                          ))}
+                         </div>
+                        }
                       </TabsContent>
                     </Tabs>
                   
@@ -398,6 +503,7 @@ const pictureValue = getValues().picture
             <AlertDialogAction
             onClick={() => {
               setChosenSongIds([])
+              setChosenSongCards([])
               setIsUsingMix(false)
             }}
               className={

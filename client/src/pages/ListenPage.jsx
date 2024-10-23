@@ -243,6 +243,7 @@ export default function ListenPage() {
     const deviceId = localStorage.getItem("chosenDeviceId");
     setChosenDeviceId(deviceId);
   }
+  //TODO try getting a user's queue, seeing how many items there are in it, then skip that many times before adding anything to the queue and skipping again. This could work
 
   //TODO I think I should try and keep the artists I select in localStorage. This way, when I eventually add the different tabs the user won't have to readd what artists they want to listen to. I should set it when I hit the get recommendations button. I'll both simultaneously remove the id's in local storage and set the new ones at the same time. Then, in the setIds() function above, I will try and find the id's in local storage
 
@@ -254,7 +255,7 @@ export default function ListenPage() {
             <Icon path={mdiFinance} color="white" size={1} />
           </div>
           <div>
-            <span className="text-2xl">For You</span>
+            <span className="text-3xl">For You</span>
           </div>
           <Dialog>
             <DialogTrigger>
@@ -267,6 +268,7 @@ export default function ListenPage() {
                 <DialogTitle className={"mb-3"}>
                   Change Playback Device
                 </DialogTitle>
+                <DialogDescription></DialogDescription>
                 <ChangeDeviceForm accessToken={accessToken} />
               </DialogHeader>
             </DialogContent>
