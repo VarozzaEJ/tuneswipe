@@ -38,6 +38,7 @@ import Login from "../components/Login.jsx";
 import { AppState } from "../AppState.js";
 import ChangeDeviceForm from "../components/ChangeDeviceForm.jsx";
 import { toast } from "sonner";
+import ExpiredTokenDialog from "../components/ExpiredTokenDialog.jsx";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: `${import.meta.env.VITE_CLIENT_ID}`,
@@ -66,6 +67,8 @@ export default function ListenPage() {
   const [rainSoundId, setRainSoundId] = useState("3Ec830TpI83UCdYDHkBScO");
   const [currentlyPlayingId, setCurrentlyPlayingId] = useState("");
   const [rightSongAdded, setRightSongAdded] = useState(false);
+  const [isExpired, setIsExpired] = useState(false);
+  const [expiredTokenDialogOpen, setExpiredTokenDialogOpen] = useState(false);
 
   console.log("🎤", lastSwipedURI);
   const currentIndexRef = useRef(currentIndex);
@@ -149,6 +152,11 @@ export default function ListenPage() {
       function (err) {
         //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
         console.error("Something went wrong!", err);
+        const isExpired = err.message.includes("expired");
+        if (isExpired) {
+          setIsExpired(true);
+          setExpiredTokenDialogOpen(true);
+        }
       }
     );
   };
@@ -294,6 +302,11 @@ export default function ListenPage() {
         },
         function (err) {
           console.log("Something went wrong!", err);
+          const isExpired = err.message.includes("expired");
+          if (isExpired) {
+            setIsExpired(true);
+            setExpiredTokenDialogOpen(true);
+          }
         }
       );
     setIsReady(true);
@@ -318,6 +331,7 @@ export default function ListenPage() {
   return (
     <>
       <div className="fixed top-2 w-screen">
+        {isExpired && <ExpiredTokenDialog open={expiredTokenDialogOpen} />}
         <div className="flex justify-between mx-5">
           <div role="button">
             <Icon path={mdiFinance} color="white" size={1} />
