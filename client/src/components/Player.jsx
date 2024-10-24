@@ -74,6 +74,7 @@ const Playback = ({
     )
       return;
     const runRequiredFunctions = async () => {
+      spotifyApi.setVolume(75);
       await addSongToQueue(recommendedTracks[0].uri);
       playSong();
       setPlay(true);

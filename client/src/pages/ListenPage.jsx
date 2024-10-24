@@ -248,6 +248,7 @@ export default function ListenPage() {
     const timeout = setTimeout(() => {
       addSongToQueue("spotify:track:3Ec830TpI83UCdYDHkBScO");
     }, 1000);
+    await spotifyApi.setVolume(0);
     setRightSongAdded(true);
     return () => clearTimeout(timeout);
   };
