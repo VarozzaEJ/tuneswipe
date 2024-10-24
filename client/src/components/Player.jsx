@@ -13,6 +13,7 @@ const Playback = ({
   chosenDeviceId,
   recommendedTracks,
   likeSongIndex,
+  isOnRightSong,
 }) => {
   const [isReady, setIsReady] = useState(false);
   const [play, setPlay] = useState(false);
@@ -65,7 +66,12 @@ const Playback = ({
   }
 
   useEffect(() => {
-    if (!accessToken || !chosenDeviceId || recommendedTracks.length === 0)
+    if (
+      !accessToken ||
+      !chosenDeviceId ||
+      recommendedTracks.length === 0 ||
+      !isOnRightSong
+    )
       return;
     const runRequiredFunctions = async () => {
       await addSongToQueue(recommendedTracks[0].uri);

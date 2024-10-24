@@ -37,6 +37,7 @@ import TinderCard from "react-tinder-card";
 import Login from "../components/Login.jsx";
 import { AppState } from "../AppState.js";
 import ChangeDeviceForm from "../components/ChangeDeviceForm.jsx";
+import { toast } from "sonner";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: `${import.meta.env.VITE_CLIENT_ID}`,
@@ -60,6 +61,11 @@ export default function ListenPage() {
   const [likeColor, setLikeColor] = useState("white");
   const [dislikeColor, setDislikeColor] = useState("white");
   const [open, setOpen] = useState(false);
+  const [isOnRightSong, setIsOnRightSong] = useState(false);
+  const [queueLength, setQueueLength] = useState(0);
+  const [rainSoundId, setRainSoundId] = useState("3Ec830TpI83UCdYDHkBScO");
+  const [currentlyPlayingId, setCurrentlyPlayingId] = useState("");
+  const [rightSongAdded, setRightSongAdded] = useState(false);
 
   console.log("🎤", lastSwipedURI);
   const currentIndexRef = useRef(currentIndex);
@@ -142,17 +148,29 @@ export default function ListenPage() {
       },
       function (err) {
         //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
-        console.log("Something went wrong!", err);
+        console.error("Something went wrong!", err);
       }
     );
   };
+
+  // async function skip() {
+  //   await spotifyApi.skipToNext().then(
+  //     function () {
+  //       console.log("Skip to next");
+  //     },
+  //     function (err) {
+  //       //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
+  //       console.log("Something went wrong!", err);
+  //     }
+  //   );
+  // }
 
   const startPlaying = async () => {
     await spotifyApi.play();
   };
 
   const addSongToQueue = async (trackUri) => {
-    if (!accessToken || recommendedTracks.length == 0) return;
+    if (!accessToken) return;
     try {
       const response = await fetch(
         `https://api.spotify.com/v1/me/player/queue?uri=` + trackUri,
@@ -174,6 +192,26 @@ export default function ListenPage() {
     }
   };
 
+  const getUsersQueue = async () => {
+    if (!accessToken) return;
+    try {
+      const response = await axios.get(
+        `https://api.spotify.com/v1/me/player/queue`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response.data.currently_playing.id);
+      console.log(response.data.queue);
+      setQueueLength(response.data.queue.length);
+      setCurrentlyPlayingId(response.data.currently_playing.id);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   const addSongToYourMusic = async (songId) => {
     try {
       spotifyApi.addToMySavedTracks([`${songId}`]).then(
@@ -198,15 +236,45 @@ export default function ListenPage() {
     setIsReady(true);
   }, []);
 
+  const checkIfRightSong = async () => {
+    const timeout = setTimeout(() => {
+      addSongToQueue("spotify:track:3Ec830TpI83UCdYDHkBScO");
+    }, 1000);
+    setRightSongAdded(true);
+    return () => clearTimeout(timeout);
+  };
+
+  const skipAndGetQueue = async () => {
+    await skipToNext();
+    await getUsersQueue();
+  };
+
   useEffect(() => {
-    if (!accessToken) return;
+    if (!accessToken || rightSongAdded) return;
     //TODO if no access token found or if access token is expired, refressh the john
     spotifyApi.setAccessToken(accessToken);
+    checkIfRightSong();
+    getUsersQueue();
   }, [accessToken]);
 
   useEffect(() => {
-    if (accessToken.length == 0) return;
+    if (!accessToken || !rightSongAdded || currentIndex !== 0 || isOnRightSong)
+      return;
+    const timeout = setTimeout(() => {
+      skipAndGetQueue();
+      console.log("🌞");
+    }, 250);
+    if (currentlyPlayingId == rainSoundId) {
+      setIsOnRightSong(true);
+    }
+    return () => clearTimeout(timeout);
+  });
 
+  console.log(currentlyPlayingId);
+  console.log(rainSoundId);
+
+  useEffect(() => {
+    if (accessToken.length == 0 || !isOnRightSong || !rightSongAdded) return;
     spotifyApi
       .getRecommendations({
         min_energy: 0.4,
@@ -229,7 +297,7 @@ export default function ListenPage() {
         }
       );
     setIsReady(true);
-  }, [artistIds, accessToken]);
+  }, [artistIds, accessToken, isOnRightSong]);
 
   function setIds() {
     const ids = searchParams.artistIds
@@ -311,6 +379,7 @@ export default function ListenPage() {
           {isReady && (
             <>
               <Player
+                isOnRightSong={isOnRightSong}
                 accessToken={accessToken}
                 chosenDeviceId={chosenDeviceId}
                 recommendedTracks={recommendedTracks}
