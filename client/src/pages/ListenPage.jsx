@@ -69,6 +69,7 @@ export default function ListenPage() {
   const [rightSongAdded, setRightSongAdded] = useState(false);
   const [isExpired, setIsExpired] = useState(false);
   const [expiredTokenDialogOpen, setExpiredTokenDialogOpen] = useState(false);
+  const [isReadyForQueueCheck, setIsReadyForQueueCheck] = useState(false);
 
   console.log("🎤", lastSwipedURI);
   const currentIndexRef = useRef(currentIndex);
@@ -101,7 +102,7 @@ export default function ListenPage() {
       setLikeColor("white");
     }
     if (direction == "right") {
-      await addSongToYourMusic(recommendedTracks[likeSongIndex - 2].id);
+      await addSongToYourMusic(recommendedTracks[currentIndexRef.current].id);
       await skipToNext();
       setLikeColor("green");
       setDislikeColor("white");
@@ -142,6 +143,27 @@ export default function ListenPage() {
     await skipToNext();
     await skipToNext();
     await addSongToQueue(recommendations[currentIndex].uri);
+  };
+
+  const initialSkipToNext = async () => {
+    let isReady = false;
+    await spotifyApi.skipToNext().then(
+      function () {
+        console.log("Skip to next");
+        setIsReadyForQueueCheck(true);
+        isReady = true;
+      },
+      function (err) {
+        //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
+        console.error("Something went wrong!", err);
+        const isExpired = err.message.includes("expired");
+        if (isExpired) {
+          setIsExpired(true);
+          setExpiredTokenDialogOpen(true);
+        }
+      }
+    );
+    return isReady;
   };
 
   const skipToNext = async () => {
@@ -194,6 +216,10 @@ export default function ListenPage() {
         console.log();
       } else {
         console.error("Error adding song to queue", response.status);
+        if (response.status == 401) {
+          setIsExpired(true);
+          setExpiredTokenDialogOpen(true);
+        }
       }
     } catch (error) {
       console.error("Error adding song to queue", error);
@@ -252,10 +278,13 @@ export default function ListenPage() {
     setRightSongAdded(true);
     return () => clearTimeout(timeout);
   };
-
   const skipAndGetQueue = async () => {
-    await skipToNext();
-    await getUsersQueue();
+    const isReady = await initialSkipToNext();
+    console.log("💘", isReady);
+    if (isReady) {
+      await getUsersQueue();
+    }
+    // setIsReadyForQueueCheck(false);
   };
 
   useEffect(() => {
@@ -272,7 +301,7 @@ export default function ListenPage() {
     const timeout = setTimeout(() => {
       skipAndGetQueue();
       console.log("🌞");
-    }, 250);
+    }, 500);
     if (currentlyPlayingId == rainSoundId) {
       setIsOnRightSong(true);
     }
