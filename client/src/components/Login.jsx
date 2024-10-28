@@ -40,7 +40,10 @@ function Login({ profilePic }) {
     <Popover>
       <PopoverTrigger>
         <Avatar>
-          <AvatarImage src={profilePicture} className={"h-[24px] w-[24px]"} />
+          <AvatarImage
+            src={profilePicture || profilePic}
+            className={"h-[24px] w-[24px]"}
+          />
           <AvatarFallback>
             <Icon path={mdiAccount} color="black" size={1} />
           </AvatarFallback>

@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AppState } from "../AppState.js";
 import Icon from "@mdi/react";
 import { mdiChatOutline, mdiHomeOutline, mdiPencilPlusOutline } from "@mdi/js";
@@ -7,16 +7,24 @@ import Login from "../components/Login.jsx";
 import { Link } from "react-router-dom";
 
 function AccountPage() {
+  const [profilePicture, setProfilePicture] = useState("");
+
+  useEffect(() => {
+    setProfilePicture(AppState.account?.picture);
+  }, [AppState.account, AppState.user]);
+
   return (
     <div className="">
       <div className="h-screen flex flex-col justify-between">
         <div className="p-5 text-center flex flex-col justify-center items-center gap-y-4">
-          <img
-            src={AppState.account.picture}
-            alt={AppState.account.name}
-            className="rounded-full"
-            height="200"
-          />
+          {profilePicture !== "" && (
+            <img
+              src={profilePicture}
+              alt={AppState.account.name}
+              className="rounded-full"
+              height="200"
+            />
+          )}
           <p className="my-2">{AppState.account.name}</p>
           <kbd>{AppState.account.email}</kbd>
         </div>

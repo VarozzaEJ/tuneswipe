@@ -62,6 +62,7 @@ export default function ListenPage() {
   const [likeColor, setLikeColor] = useState("white");
   const [dislikeColor, setDislikeColor] = useState("white");
   const [open, setOpen] = useState(false);
+  const [count, setCount] = useState(0);
   const [isOnRightSong, setIsOnRightSong] = useState(false);
   const [queueLength, setQueueLength] = useState(0);
   const [rainSoundId, setRainSoundId] = useState("3Ec830TpI83UCdYDHkBScO");
@@ -238,14 +239,21 @@ export default function ListenPage() {
           },
         }
       );
-      console.log(response.data.currently_playing.id);
+      console.log(response.data.currently_playing?.id);
       console.log(response.data.queue);
       setQueueLength(response.data.queue.length);
-      setCurrentlyPlayingId(response.data.currently_playing.id);
+      if (response.data.currently_playing.id) {
+        setCurrentlyPlayingId(response.data.currently_playing?.id);
+      }
+      if (response.data.queue.length == 0) {
+        // setIsOnRightSong(true);
+        setRightSongAdded(true);
+      }
     } catch (error) {
       console.error(error);
     }
   };
+
   const addSongToYourMusic = async (songId) => {
     try {
       spotifyApi.addToMySavedTracks([`${songId}`]).then(
@@ -271,6 +279,7 @@ export default function ListenPage() {
   }, []);
 
   const checkIfRightSong = async () => {
+    if (rightSongAdded) return;
     const timeout = setTimeout(() => {
       addSongToQueue("spotify:track:3Ec830TpI83UCdYDHkBScO");
     }, 1000);
@@ -278,6 +287,7 @@ export default function ListenPage() {
     setRightSongAdded(true);
     return () => clearTimeout(timeout);
   };
+
   const skipAndGetQueue = async () => {
     const isReady = await initialSkipToNext();
     console.log("💘", isReady);
@@ -288,7 +298,7 @@ export default function ListenPage() {
   };
 
   useEffect(() => {
-    if (!accessToken || rightSongAdded) return;
+    if (!accessToken) return;
     //TODO if no access token found or if access token is expired, refressh the john
     spotifyApi.setAccessToken(accessToken);
     checkIfRightSong();
@@ -296,17 +306,29 @@ export default function ListenPage() {
   }, [accessToken]);
 
   useEffect(() => {
+    console.log("running");
     if (!accessToken || !rightSongAdded || currentIndex !== 0 || isOnRightSong)
       return;
     const timeout = setTimeout(() => {
       skipAndGetQueue();
       console.log("🌞");
+      setCount(count + 1);
     }, 500);
     if (currentlyPlayingId == rainSoundId) {
       setIsOnRightSong(true);
     }
     return () => clearTimeout(timeout);
-  });
+  }, [
+    accessToken,
+    rightSongAdded,
+    currentIndex,
+    isOnRightSong,
+    skipAndGetQueue,
+    count,
+    queueLength,
+    currentlyPlayingId,
+    rainSoundId,
+  ]);
 
   console.log(currentlyPlayingId);
   console.log(rainSoundId);

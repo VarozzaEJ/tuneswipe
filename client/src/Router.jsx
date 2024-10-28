@@ -26,7 +26,12 @@ export const router = createHashRouter([
       },
       {
         path: "/create",
-        element: <CreatePage />,
+        loader: accountService.getAccount,
+        element: (
+          <AuthGuard>
+            <CreatePage />
+          </AuthGuard>
+        ),
       },
       {
         path: "/posts",
