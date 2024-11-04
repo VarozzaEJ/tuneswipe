@@ -240,9 +240,9 @@ export default function ListenPage() {
         }
       );
       console.log(response.data.currently_playing?.id);
-      console.log(response.data.queue);
-      setQueueLength(response.data.queue.length);
-      if (response.data.currently_playing.id) {
+      console.log(response.data?.queue);
+      setQueueLength(response.data.queue?.length);
+      if (response.data.currently_playing !== null) {
         setCurrentlyPlayingId(response.data.currently_playing?.id);
       }
       if (response.data.queue.length == 0) {
@@ -280,6 +280,9 @@ export default function ListenPage() {
 
   const checkIfRightSong = async () => {
     if (rightSongAdded) return;
+    // await spotifyApi.play({
+    //   context_uri: "spotify:track:5XSKC4d0y0DfcGbvDOiL93",
+    // });
     const timeout = setTimeout(() => {
       addSongToQueue("spotify:track:3Ec830TpI83UCdYDHkBScO");
     }, 1000);
@@ -301,10 +304,12 @@ export default function ListenPage() {
     if (!accessToken) return;
     //TODO if no access token found or if access token is expired, refressh the john
     spotifyApi.setAccessToken(accessToken);
+    startPlaying();
     checkIfRightSong();
     getUsersQueue();
   }, [accessToken]);
 
+  //FIXME create better functionality for when the queue is nothing/doesn't exist. I can't figure out how to get the queue to not exist even though I did it by accident. The second a song is played, it will replay over and over.
   useEffect(() => {
     console.log("running");
     if (!accessToken || !rightSongAdded || currentIndex !== 0 || isOnRightSong)
@@ -329,9 +334,6 @@ export default function ListenPage() {
     currentlyPlayingId,
     rainSoundId,
   ]);
-
-  console.log(currentlyPlayingId);
-  console.log(rainSoundId);
 
   useEffect(() => {
     if (accessToken.length == 0 || !isOnRightSong || !rightSongAdded) return;

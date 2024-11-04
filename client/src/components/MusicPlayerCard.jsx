@@ -23,6 +23,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import ExpiredTokenDialog from "./ExpiredTokenDialog.jsx";
+import TrackImageInPost from "./TrackImageInPost.jsx";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: `${import.meta.env.VITE_CLIENT_ID}`,
@@ -165,11 +166,9 @@ export default function MusicPlayerCard({ trackIds }) {
                 onSwipe={(dir) => swiped(dir, track.uri, index)}
                 onCardLeftScreen={() => outOfFrame(track.name, index)}
               >
-                <img
-                  src={track.album.images[0].url}
-                  className="w-full max-w-[225px] md:max-w-[300px] rounded-sm"
-                  alt=""
-                  draggable="false"
+                <TrackImageInPost
+                  img={track.album.images[0].url}
+                  trackURI={track.uri}
                 />
               </TinderCard>
             ))}

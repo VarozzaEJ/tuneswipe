@@ -190,7 +190,6 @@ export default function CreatePage() {
     if(!isUsingPicture) {
       data.trackIds = chosenSongIds
     }
-    console.log("📊", data)
     await musicPostsService.createPost(data)
     toast.success("Post Created")
     navigate('/posts')
@@ -216,7 +215,6 @@ export default function CreatePage() {
     setChosenSongIds((songIds) => [...songIds, songId]);
     setChosenSongCards((song) => [...song, songObject])
   }
-console.log(chosenSongCards)
   function closeDialog() {
     setOpen(false)
   }
@@ -262,7 +260,6 @@ const pictureValue = getValues().picture
     });
     return () => (cancel = true);
   }, [search]);
-  console.log(searchResults)
   return (
     <>
       <div className="container h-full justify-between flex flex-col">
@@ -395,7 +392,7 @@ const pictureValue = getValues().picture
                             </div>
                           </div>
                             </SheetTrigger>
-                            <SheetContent className="bg-slate-800 w-screen overflow-y-scroll">
+                            <SheetContent className="bg-slate-800 w-screen border-none overflow-y-scroll">
                               <SheetHeader>
                                 <SheetTitle className="text-slate-200">
                                   {playlist.name}

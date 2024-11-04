@@ -55,7 +55,7 @@ export default function useCommentForm() {
                         <Button onClick={() => {
                           setPostId(postId)
                           
-                        }} type="submit" className="rounded-full">
+                        }} type="submit" className="rounded-full ms-2">
                           <Icon path={mdiPlus} size={1} />
                         </Button>
                       </form>

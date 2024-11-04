@@ -167,20 +167,12 @@ export default function PostsPage() {
               <div className="flex items-center justify-between">
                 <div className="flex">
                   <div className="flex items-center me-2">
-                    {post.creator.picture ? (
-                      <img
-                        src={post.creator.picture}
-                        className="rounded-full"
-                        style={{ height: 30 }}
-                      />
-                    ) : (
-                      <Avatar>
-                        <AvatarImage src={post.creator.picture} />
-                        <AvatarFallback>
-                          <Icon path={mdiAccount} color="black" size={1} />
-                        </AvatarFallback>
-                      </Avatar>
-                    )}
+                    <Avatar>
+                      <AvatarImage src={post.creator.picture} />
+                      <AvatarFallback>
+                        <Icon path={mdiAccount} color="black" size={1} />
+                      </AvatarFallback>
+                    </Avatar>
                   </div>
                   <div className="flex flex-col">
                     <span>{post.creator.name}</span>
@@ -275,7 +267,7 @@ export default function PostsPage() {
                   >
                     <div className="flex justify-end"></div>
                     <DrawerDescription></DrawerDescription>
-                    <div className="grid grid-cols-3 sticky -mt-4 top-0 bg-slate-800">
+                    <div className="grid grid-cols-3 sticky -mt-4 top-0 ">
                       <div className="col-span-1"></div>
                       <div className="col-span-1">
                         <DrawerTitle className="text-center my-4 text-2xl">
@@ -294,13 +286,13 @@ export default function PostsPage() {
                       </div>
                     </div>
                     {postComments.length === 0 ? (
-                      <div className="flex justify-center items-center">
+                      <div className="flex justify-center items-center mt-3.5">
                         <span>No comments yet... Be the first!</span>
                       </div>
                     ) : (
                       <>
                         {postComments.map((comment) => (
-                          <div key={comment.id} className="flex mx-5">
+                          <div key={comment.id} className="flex mx-5 mt-3.5">
                             <div className="flex me-2">
                               <Avatar className={"sm:h-8 sm:w-8 static"}>
                                 <AvatarImage src={comment.creator.picture} />
