@@ -13,6 +13,10 @@ export class MusicPost {
     }
 
     get fromNow() {
-        return moment(this.createdAt).fromNow(true)
+        return moment(this.createdAt).fromNow()
+    }
+
+    get color() {
+        return (Math.random().toString(16).substr(-6))
     }
 }

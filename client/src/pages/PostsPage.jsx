@@ -84,7 +84,6 @@ const formSchema = z.object({
 
 export default function PostsPage() {
   const [musicPosts, setMusicPosts] = useState([]);
-  const { color, generateColor } = useGenerateRandomColor();
   const [focusedPostId, setFocusedPostId] = useState("");
   const [postComments, setPostComments] = useState([]);
   const [accountSet, setAccountSet] = useState(false);
@@ -95,10 +94,8 @@ export default function PostsPage() {
     if (!AppState.account) return;
     setAccount(AppState.account);
   }, [accountSet]);
-  console.log(account);
 
   useEffect(() => {
-    generateColor();
     getAllPosts();
   }, []);
 
@@ -170,7 +167,7 @@ export default function PostsPage() {
           <Card
             key={post.id}
             className={`mx-4` + " " + `text-light sm:w-3/4 mb-4`}
-            style={{ backgroundColor: "#" + color }}
+            style={{ backgroundColor: "#" + post.color }}
           >
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -278,19 +275,19 @@ export default function PostsPage() {
                   </DrawerTrigger>
                   <DrawerContent
                     className={
-                      "h-3/4 bg-slate-800 music-drawer overflow-y-scroll"
+                      "h-3/4 bg-slate-800 music-drawer overflow-y-scroll "
                     }
                   >
                     <div className="flex justify-end"></div>
                     <DrawerDescription></DrawerDescription>
-                    <div className="grid grid-cols-3 sticky -mt-4 top-0 ">
+                    <div className="grid grid-cols-3 sticky items-center bg-inherit -mt-4 mb-4 top-0 ">
                       <div className="col-span-1"></div>
-                      <div className="col-span-1">
-                        <DrawerTitle className="text-center my-4 text-2xl">
+                      <div className="col-span-1 h-10 ">
+                        <DrawerTitle className="text-center text-2xl mt-1">
                           Comments
                         </DrawerTitle>
                       </div>
-                      <div className="col-span-1 flex justify-end items-center">
+                      <div className="col-span-1 h-10 flex justify-end items-center">
                         <DrawerClose>
                           <Icon
                             className="me-4"
@@ -302,142 +299,144 @@ export default function PostsPage() {
                       </div>
                     </div>
                     {postComments.length === 0 ? (
-                      <div className="flex justify-center items-center mt-3.5">
+                      <div className="flex flex-grow h-full justify-center items-center mt-3.5">
                         <span>No comments yet... Be the first!</span>
                       </div>
                     ) : (
                       <>
-                        {postComments.map((comment) => (
-                          <div key={comment.id} className="flex mx-5 mt-3.5">
-                            <div className="flex me-2">
-                              <Avatar className={"sm:h-8 sm:w-8 static"}>
-                                <AvatarImage src={comment.creator.picture} />
-                                <AvatarFallback>
-                                  <Icon
-                                    path={mdiAccount}
-                                    color="black"
-                                    size={1}
-                                  />
-                                </AvatarFallback>
-                              </Avatar>
-                            </div>
-                            <div className="flex flex-col">
-                              <div className="flex">
-                                <span className="sm:text-xl">
-                                  {comment.creator.name}
-                                </span>
-                                <span className="text-slate-400 ms-2 text-sm sm:text-lg flex items-center mt-px">
-                                  {comment.fromNow}
-                                </span>
+                        <div className="flex flex-col flex-grow">
+                          {postComments.map((comment) => (
+                            <div key={comment.id} className="flex mx-5 mt-4">
+                              <div className="flex me-2">
+                                <Avatar className={"sm:h-8 sm:w-8 static"}>
+                                  <AvatarImage src={comment.creator.picture} />
+                                  <AvatarFallback>
+                                    <Icon
+                                      path={mdiAccount}
+                                      color="black"
+                                      size={1}
+                                    />
+                                  </AvatarFallback>
+                                </Avatar>
                               </div>
-                              <div>
-                                <span className="text-slate-300 sm:text-lg">
-                                  {comment.body}
-                                </span>
-                              </div>
-                              <div className="flex">
+                              <div className="flex flex-col">
+                                <div className="flex">
+                                  <span className="sm:text-xl">
+                                    {comment.creator.name}
+                                  </span>
+                                  <span className="text-slate-400 ms-2 text-sm sm:text-lg flex items-center mt-px">
+                                    {comment.fromNow}
+                                  </span>
+                                </div>
                                 <div>
-                                  <Drawer>
-                                    <DrawerTrigger>
-                                      <Icon
-                                        path={mdiDotsHorizontal}
-                                        color="white"
-                                        size={1}
-                                      />
-                                    </DrawerTrigger>
-                                    <DrawerContent className={"bg-primary"}>
-                                      <div className="grid grid-cols-3">
-                                        <div className="col-span-1"></div>
-                                        <div className="col-span-1 flex justify-center">
-                                          <DrawerTitle>
-                                            More Options
-                                          </DrawerTitle>
+                                  <span className="text-slate-300 sm:text-lg">
+                                    {comment.body}
+                                  </span>
+                                </div>
+                                <div className="flex">
+                                  <div>
+                                    <Drawer>
+                                      <DrawerTrigger>
+                                        <Icon
+                                          path={mdiDotsHorizontal}
+                                          color="white"
+                                          size={1}
+                                        />
+                                      </DrawerTrigger>
+                                      <DrawerContent className={"bg-primary"}>
+                                        <div className="grid grid-cols-3 mt-3">
+                                          <div className="col-span-1"></div>
+                                          <div className="col-span-1 flex justify-center">
+                                            <DrawerTitle>
+                                              More Options
+                                            </DrawerTitle>
+                                          </div>
+                                          <div className="col-span-1 flex justify-end items-center">
+                                            <DrawerClose>
+                                              <Icon
+                                                className="me-4"
+                                                path={mdiClose}
+                                                color="white"
+                                                size={1}
+                                              />
+                                            </DrawerClose>
+                                          </div>
                                         </div>
-                                        <div className="col-span-1 flex justify-end items-center">
-                                          <DrawerClose>
+                                        <div className="flex mx-5 mb-5">
+                                          <div>
                                             <Icon
-                                              className="me-4"
-                                              path={mdiClose}
+                                              path={mdiFlagOutline}
                                               color="white"
                                               size={1}
                                             />
-                                          </DrawerClose>
+                                          </div>
+                                          <div className="ms-2">
+                                            <span>Report</span>
+                                          </div>
                                         </div>
-                                      </div>
-                                      <div className="flex mx-5 mb-5">
-                                        <div>
-                                          <Icon
-                                            path={mdiFlagOutline}
-                                            color="white"
-                                            size={1}
-                                          />
-                                        </div>
-                                        <div className="ms-2">
-                                          <span>Report</span>
-                                        </div>
-                                      </div>
 
-                                      {AppState.account?.id ==
-                                        comment.creator.id && (
-                                        <AlertDialog>
-                                          <AlertDialogTrigger>
-                                            <div className="flex mx-5 mb-5">
-                                              <div>
-                                                <Icon
-                                                  path={mdiDeleteOutline}
-                                                  color="red"
-                                                  size={1}
-                                                />
+                                        {AppState.account?.id ==
+                                          comment.creator.id && (
+                                          <AlertDialog>
+                                            <AlertDialogTrigger>
+                                              <div className="flex mx-5 mb-5">
+                                                <div>
+                                                  <Icon
+                                                    path={mdiDeleteOutline}
+                                                    color="red"
+                                                    size={1}
+                                                  />
+                                                </div>
+                                                <div className="ms-2">
+                                                  <span className="text-destructive">
+                                                    Delete
+                                                  </span>
+                                                </div>
                                               </div>
-                                              <div className="ms-2">
-                                                <span className="text-destructive">
-                                                  Delete
-                                                </span>
-                                              </div>
-                                            </div>
-                                          </AlertDialogTrigger>
-                                          <AlertDialogContent
-                                            className={
-                                              "bg-slate-900 w-5/6 rounded-sm"
-                                            }
-                                          >
-                                            <AlertDialogHeader>
-                                              <AlertDialogTitle>
-                                                Are you absolutely sure?
-                                              </AlertDialogTitle>
-                                              <AlertDialogDescription>
-                                                This action cannot be undone.
-                                              </AlertDialogDescription>
-                                            </AlertDialogHeader>
-                                            <AlertDialogFooter>
-                                              <AlertDialogCancel
-                                                className={
-                                                  "hover:bg-accent hover:text-accent-foreground bg-transparent border-none"
-                                                }
-                                              >
-                                                Cancel
-                                              </AlertDialogCancel>
-                                              <AlertDialogAction
-                                                className={
-                                                  "bg-destructive hover:bg-destructive/80"
-                                                }
-                                                onClick={() => {
-                                                  deleteComment(comment.id);
-                                                }}
-                                              >
-                                                Continue
-                                              </AlertDialogAction>
-                                            </AlertDialogFooter>
-                                          </AlertDialogContent>
-                                        </AlertDialog>
-                                      )}
-                                    </DrawerContent>
-                                  </Drawer>
+                                            </AlertDialogTrigger>
+                                            <AlertDialogContent
+                                              className={
+                                                "bg-slate-900 w-5/6 rounded-sm"
+                                              }
+                                            >
+                                              <AlertDialogHeader>
+                                                <AlertDialogTitle>
+                                                  Are you absolutely sure?
+                                                </AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                  This action cannot be undone.
+                                                </AlertDialogDescription>
+                                              </AlertDialogHeader>
+                                              <AlertDialogFooter>
+                                                <AlertDialogCancel
+                                                  className={
+                                                    "hover:bg-accent hover:text-accent-foreground bg-transparent border-none"
+                                                  }
+                                                >
+                                                  Cancel
+                                                </AlertDialogCancel>
+                                                <AlertDialogAction
+                                                  className={
+                                                    "bg-destructive hover:bg-destructive/80"
+                                                  }
+                                                  onClick={() => {
+                                                    deleteComment(comment.id);
+                                                  }}
+                                                >
+                                                  Continue
+                                                </AlertDialogAction>
+                                              </AlertDialogFooter>
+                                            </AlertDialogContent>
+                                          </AlertDialog>
+                                        )}
+                                      </DrawerContent>
+                                    </Drawer>
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </>
                     )}
                     {postComments.length <= 6 ? (

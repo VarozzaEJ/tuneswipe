@@ -13,7 +13,7 @@ import { toast } from 'sonner';
   body: string;
   postId: string
 }
-
+//TODO show after the input when a comment must be five characters
 const formSchema : ZodType<FormData> = z.object({
   body: z.string().min(5, {
     message: "Comment must be at least 5 characters.",
