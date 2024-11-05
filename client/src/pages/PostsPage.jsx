@@ -87,12 +87,21 @@ export default function PostsPage() {
   const { color, generateColor } = useGenerateRandomColor();
   const [focusedPostId, setFocusedPostId] = useState("");
   const [postComments, setPostComments] = useState([]);
+  const [accountSet, setAccountSet] = useState(false);
+  const [account, setAccount] = useState({});
   const { render, comment } = useCommentForm();
+
+  useEffect(() => {
+    if (!AppState.account) return;
+    setAccount(AppState.account);
+  }, [accountSet]);
+  console.log(account);
 
   useEffect(() => {
     generateColor();
     getAllPosts();
   }, []);
+
   useEffect(() => {
     if (!comment.creator) return;
     setPostComments((comments) => [...comments, comment]);
@@ -148,7 +157,7 @@ export default function PostsPage() {
       toast.error(error);
     }
   };
-
+  console.log(accountSet);
   return (
     <>
       <div className="">
@@ -181,7 +190,12 @@ export default function PostsPage() {
                 </div>
                 <div>
                   <Popover>
-                    <PopoverTrigger>
+                    <PopoverTrigger
+                      onClick={() => {
+                        setAccountSet(!accountSet);
+                        console.log("working");
+                      }}
+                    >
                       <Icon
                         title="Open Options Menu"
                         path={mdiDotsHorizontal}
@@ -191,14 +205,16 @@ export default function PostsPage() {
                       />
                     </PopoverTrigger>
                     <PopoverContent className={"w-36 flex justify-center"}>
-                      {AppState.account?.id == post.creator.id && (
+                      {account?.id == post.creator.id && (
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
                             <Button variant={"destructive"} className="w-full">
                               <Icon path={mdiDelete} color="black" size={1} />
                             </Button>
                           </AlertDialogTrigger>
-                          <AlertDialogContent className={"bg-slate-900"}>
+                          <AlertDialogContent
+                            className={"bg-slate-900 rounded-sm w-5/6"}
+                          >
                             <AlertDialogHeader>
                               <AlertDialogTitle>
                                 Are you absolutely sure?

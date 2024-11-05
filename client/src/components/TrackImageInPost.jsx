@@ -6,7 +6,6 @@ const spotifyApi = new SpotifyWebApi({
 });
 export default function TrackImageInPost({ img, trackURI }) {
   const [accessToken, setAccessToken] = useState("");
-  console.log(trackURI);
 
   useEffect(() => {
     //TODO make this happen in a higher component to skip the login process if the token already exists or has not expired

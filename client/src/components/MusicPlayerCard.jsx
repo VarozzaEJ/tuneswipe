@@ -176,17 +176,23 @@ export default function MusicPlayerCard({ trackIds }) {
           {tracks[0] && currentIndex >= 0 ? (
             <div className="h-20 flex flex-col justify-center bg-slate-800 rounded-sm shadow-sm">
               <div className=" mx-4 flex justify-between">
-                <div>
-                  <div>
-                    <span className="text-2xl">
+                <div className="grid grid-cols-12">
+                  <div className="col-span-12 truncate">
+                    <span className="text-2xl truncate text-nowrap">
                       {tracks[currentIndex].name}
                     </span>
                   </div>
-                  <div className="flex">
-                    <Icon path={mdiSpotify} color="white" size={1} />
-                    <span className="text-xl">
-                      {tracks[currentIndex].artists[0].name}
-                    </span>
+                  <div className="col-span-12">
+                    <div className="grid grid-cols-12 items-center gap-6 sm:gap-1">
+                      <div className="col-span-1 items-center justify-items-center">
+                        <Icon path={mdiSpotify} color="white" size={1} />
+                      </div>
+                      <div className="col-span-10">
+                        <span className="text-xl truncate">
+                          {tracks[currentIndex].artists[0].name}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div className={"flex items-center"}>
