@@ -4,9 +4,8 @@ import SpotifyWebApi from "spotify-web-api-node";
 const spotifyApi = new SpotifyWebApi({
   clientId: `${import.meta.env.VITE_CLIENT_ID}`,
 });
-export default function TrackImageInPost({ img, trackURI }) {
+export default function TrackImageInPost({ img, trackURI, trackNumber }) {
   const [accessToken, setAccessToken] = useState("");
-
   useEffect(() => {
     //TODO make this happen in a higher component to skip the login process if the token already exists or has not expired
     const accessToken = localStorage.getItem("accessToken");
@@ -21,7 +20,14 @@ export default function TrackImageInPost({ img, trackURI }) {
 
   const playSong = async () => {
     if (!accessToken) return;
-    await spotifyApi.play({ context_uri: `${trackURI}` });
+    await spotifyApi.setShuffle(false);
+    const offset = trackNumber - 1;
+    await spotifyApi.play({
+      context_uri: `${trackURI}`,
+      offset: {
+        position: offset,
+      },
+    });
   };
 
   return (

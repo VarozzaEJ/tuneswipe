@@ -168,7 +168,8 @@ export default function MusicPlayerCard({ trackIds }) {
               >
                 <TrackImageInPost
                   img={track.album.images[0].url}
-                  trackURI={track.uri}
+                  trackURI={track.album.uri}
+                  trackNumber={track.track_number}
                 />
               </TinderCard>
             ))}
