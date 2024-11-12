@@ -21,7 +21,7 @@ export const router = createHashRouter([
         element: <HomePage />,
       },
       {
-        path: "/listen/:artistIds",
+        path: "/listen",
         element: <ListenPage />,
       },
       {
