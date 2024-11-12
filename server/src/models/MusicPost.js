@@ -6,7 +6,8 @@ export const MusicPostSchema = new Schema({
     creatorId: { type: Schema.ObjectId, ref: 'Account', required: true },
     textComment: { type: String, required: true },
     trackIds: [{ type: String }],
-    picture: { type: String }
+    picture: { type: String },
+    color: { type: String, required: true }
 }, { timestamps: true, toJSON: { virtuals: true } })
 
 MusicPostSchema.virtual('creator', {

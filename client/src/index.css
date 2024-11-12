@@ -88,6 +88,13 @@
   );
 } */
 
+.showme {
+  display: none;
+}
+.showhim:hover .showme {
+  display: block;
+}
+
 html {
   background-color: (15 23 42 / var(--tw-bg-opacity));
 }

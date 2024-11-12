@@ -1,3 +1,5 @@
+import { mdiPlay } from "@mdi/js";
+import Icon from "@mdi/react";
 import React, { useEffect, useState } from "react";
 import SpotifyWebApi from "spotify-web-api-node";
 
@@ -32,7 +34,7 @@ export default function TrackImageInPost({ img, trackURI, trackNumber }) {
 
   return (
     <div
-      className="cursor-pointer"
+      className="cursor-pointer showhim "
       onTouchStartCapture={() => {
         playSong();
       }}
@@ -40,11 +42,20 @@ export default function TrackImageInPost({ img, trackURI, trackNumber }) {
         playSong();
       }}
     >
-      <img
-        src={img}
-        className="w-full max-w-[225px] md:max-w-[300px] rounded-sm"
-        alt=""
+      <Icon
+        className="absolute showme left-[50%] top-[50%] flex justify-center items-center transition-all ease-in-out  translate-x-[-50%] translate-y-[-50%]   w-20 h-20 z-50"
+        path={mdiPlay}
+        color="white"
+        size={3}
       />
+      <div>
+        <img
+          draggable="false"
+          src={img}
+          className="w-full max-w-[225px] md:max-w-[300px] rounded-sm"
+          alt=""
+        />
+      </div>
     </div>
   );
 }

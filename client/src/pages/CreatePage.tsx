@@ -7,6 +7,7 @@ import {
   mdiLoading,
   mdiMagnify,
   mdiMusicNote,
+  mdiPalette,
   mdiPencilPlus,
   mdiPlus,
   mdiSpotify,
@@ -101,6 +102,7 @@ type FormData = {
   textComment: string;
   trackIds: string[];
   picture: string;
+  color: string;
 }
 
 const formSchema : ZodType<FormData> = z.object({
@@ -113,6 +115,7 @@ const formSchema : ZodType<FormData> = z.object({
   }).max(1000, {
     message: "Character limit must not exceed 1000"
   }).optional(),
+  color: z.string()
 });
 
 export default function CreatePage() {
@@ -294,9 +297,9 @@ const pictureValue = getValues().picture
               </div>
                 <div>
                   <div className="flex justify-center">
-            <Button type="submit" variant={"ghost"} className="w-1/4">Submit</Button>
+            <Button type="submit" variant={"ghost"} className="w-1/4 mb-2">Submit</Button>
                   </div>
-          <div className="grid grid-cols-2 mb-10 justify-items-center">
+          <div className="grid grid-cols-3 mb-10 justify-items-center">
             <div className="col-span-1">
               {isUsingPicture ? 
               <AlertDialog>
@@ -308,7 +311,7 @@ const pictureValue = getValues().picture
                     </div>
                   </Button>
                 </AlertDialogTrigger>
-      <AlertDialogContent className="bg-primary w-5/6 rounded-sm">
+      <AlertDialogContent className="bg-slate-800 w-5/6 rounded-sm">
         <AlertDialogHeader>
           <AlertDialogTitle>You can only have one attachment per post</AlertDialogTitle>
           <AlertDialogDescription>
@@ -458,25 +461,25 @@ const pictureValue = getValues().picture
               </Drawer>
 }
             </div>
-            {/* <div className="col-span-1">
-              <Drawer>
-                <DrawerTrigger asChild>
+            <div className="col-span-1">
+              <Dialog>
+                <DialogTrigger asChild>
                   <Button className="">
-                    <div>
-                      <Icon path={mdiPoll} color="white" size={1} />
-                      <span className="text-slate-400 mt-1">Poll</span>
+                    <div className="flex flex-col text-slate-400 hover:text-slate-300 transition-all ease-in-out justify-center items-center">
+                      <Icon path={mdiPalette} color="white" size={1} />
+                      <span className=" mt-1">Color</span>
                     </div>
                   </Button>
-                </DrawerTrigger>
-                <DrawerContent className="bg-slate-800 h-5/6">
-                  <DrawerTitle></DrawerTitle>
-                  <DrawerDescription></DrawerDescription>
-                  <DrawerFooter>
-                    <Button>Submit</Button>
-                  </DrawerFooter>
-                </DrawerContent>
-              </Drawer>
-            </div> */}
+                </DialogTrigger>
+                <DialogTitle></DialogTitle>
+                <DialogDescription></DialogDescription>
+                <DialogContent className="bg-slate-800 w-40">
+                  <div className="p-3 flex justify-center">
+                  <Input className="w-10 p-0 cursor-pointer" {...register("color")} type="color" />
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
             <div className="col-span-1">
               {isUsingMix ? <AlertDialog>
                 <AlertDialogTrigger asChild>
@@ -575,11 +578,11 @@ const pictureValue = getValues().picture
 }
       </div>
       <div className="grid w-full grid-cols-4 fixed bottom-0 h-10 left-0 items-center justify-items-center bg-slate-950">
-        <Link to={"/"}>
-          <div className="cursor-pointer">
-            <Icon path={mdiHomeOutline} color="white" size={1} />
-          </div>
-        </Link>
+        <Link to={`/listen/${sessionStorage.getItem("artistIds")}`}>
+            <div className="cursor-pointer">
+              <Icon path={mdiHomeOutline} color="white" size={1} />
+            </div>
+          </Link>
         <Link to={"/posts"}>
         <div className="cursor-pointer">
           <Icon path={mdiChatOutline} color="white" size={1} />

@@ -20,6 +20,23 @@ import {
   mdiRewind,
   mdiSync,
 } from "@mdi/js";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Dialog,
   DialogContent,
@@ -39,6 +56,8 @@ import { AppState } from "../AppState.js";
 import ChangeDeviceForm from "../components/ChangeDeviceForm.jsx";
 import { toast } from "sonner";
 import ExpiredTokenDialog from "../components/ExpiredTokenDialog.jsx";
+import { Button } from "@/components/ui/button";
+import SearchArtistsSheet from "../components/SearchArtistsSheet.jsx";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: `${import.meta.env.VITE_CLIENT_ID}`,
@@ -71,9 +90,14 @@ export default function ListenPage() {
   const [isExpired, setIsExpired] = useState(false);
   const [expiredTokenDialogOpen, setExpiredTokenDialogOpen] = useState(false);
   const [isReadyForQueueCheck, setIsReadyForQueueCheck] = useState(false);
+  const [count2, setCount2] = useState(0);
 
   console.log("🎤", lastSwipedURI);
   const currentIndexRef = useRef(currentIndex);
+
+  const handleCount = () => {
+    setCount2(count2 + 1);
+  };
 
   const childRefs = useMemo(
     () =>
@@ -273,7 +297,6 @@ export default function ListenPage() {
     //TODO make this happen in a higher component to skip the login process if the token already exists or has not expired
     const accessToken = localStorage.getItem("accessToken");
     setAccessToken(accessToken);
-    setIds();
     setDeviceId();
     setIsReady(true);
   }, []);
@@ -367,18 +390,25 @@ export default function ListenPage() {
   }, [artistIds, accessToken, isOnRightSong]);
 
   function setIds() {
-    const ids = searchParams.artistIds
+    const ids = sessionStorage
+      .getItem("artistIds")
       .split(",")
       .map((item) => item.trim())
       .filter((item) => item !== "");
     setArtistIds(ids);
   }
+  useEffect(() => {
+    setIds();
+    spotifyApi.setVolume(0);
+    skipToNext();
+    skipToNext();
+    spotifyApi.setVolume(0);
+  }, [count2]);
 
   function setDeviceId() {
     const deviceId = localStorage.getItem("chosenDeviceId");
     setChosenDeviceId(deviceId);
   }
-  //TODO try getting a user's queue, seeing how many items there are in it, then skip that many times before adding anything to the queue and skipping again. This could work
 
   //TODO I think I should try and keep the artists I select in localStorage. This way, when I eventually add the different tabs the user won't have to readd what artists they want to listen to. I should set it when I hit the get recommendations button. I'll both simultaneously remove the id's in local storage and set the new ones at the same time. Then, in the setIds() function above, I will try and find the id's in local storage
 
@@ -393,22 +423,48 @@ export default function ListenPage() {
           <div>
             <span className="text-3xl">For You</span>
           </div>
-          <Dialog>
-            <DialogTrigger>
+          <Popover>
+            <PopoverTrigger>
               <div>
                 <Icon path={mdiDotsHorizontal} color="white" size={1} />
               </div>
-            </DialogTrigger>
-            <DialogContent className={"bg-primary w-5/6 rounded-sm"}>
-              <DialogHeader>
-                <DialogTitle className={"mb-3"}>
-                  Change Playback Device
-                </DialogTitle>
-                <DialogDescription></DialogDescription>
-                <ChangeDeviceForm accessToken={accessToken} />
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
+            </PopoverTrigger>
+            <PopoverContent className={"w-56"}>
+              <Sheet>
+                <SheetTrigger asChild>
+                  <div className="flex justify-center mb-1">
+                    <Button>Change Recs</Button>
+                  </div>
+                </SheetTrigger>
+                <SheetContent
+                  className={
+                    "bg-slate-800 w-screen sm:max-w-screen overflow-y-scroll max-w-screen"
+                  }
+                >
+                  <SearchArtistsSheet
+                    handler={handleCount}
+                    accessToken={accessToken}
+                  />
+                </SheetContent>
+              </Sheet>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <div className="flex justify-center">
+                    <Button>Change Device</Button>
+                  </div>
+                </DialogTrigger>
+                <DialogContent className={"bg-primary w-5/6 rounded-sm"}>
+                  <DialogHeader>
+                    <DialogTitle className={"mb-3"}>
+                      Change Playback Device
+                    </DialogTitle>
+                    <DialogDescription></DialogDescription>
+                    <ChangeDeviceForm accessToken={accessToken} />
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
       <div className="container overflow-y-hidden h-screen  flex-col flex justify-center">

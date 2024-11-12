@@ -147,7 +147,7 @@ export default function TrackCard({
                   <DrawerTitle></DrawerTitle>
                   <DrawerDescription></DrawerDescription>
                   <div className="flex justify-end me-4">
-                    <DrawerClose className={""}>
+                    <DrawerClose asChild className={""}>
                       <Button
                         className={"w-16 bg-transparent hover:bg-transparent"}
                       >

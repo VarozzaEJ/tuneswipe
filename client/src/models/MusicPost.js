@@ -10,13 +10,12 @@ export class MusicPost {
         this.creator = data.creator ? new Account(data.creator) : null
         this.createdAt = new Date(data.createdAt)
         this.updatedAt = data.updatedAt
+        this.color = data.color ? data.color : "#94A3B8"
     }
 
     get fromNow() {
         return moment(this.createdAt).fromNow()
     }
 
-    get color() {
-        return (Math.random().toString(16).substr(-6))
-    }
+
 }

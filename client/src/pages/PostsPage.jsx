@@ -167,7 +167,7 @@ export default function PostsPage() {
           <Card
             key={post.id}
             className={`mx-4` + " " + `text-light sm:w-3/4 mb-4`}
-            style={{ backgroundColor: "#" + post.color }}
+            style={{ backgroundColor: post.color }}
           >
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -462,7 +462,7 @@ export default function PostsPage() {
 
       {musicPosts.length === 0 ? (
         <div className="grid w-full grid-cols-4 fixed bottom-0 h-10 left-0 items-center justify-items-center bg-slate-950">
-          <Link to={"/"}>
+          <Link to={`/listen/${sessionStorage.getItem("artistIds")}`}>
             <div className="cursor-pointer">
               <Icon path={mdiHomeOutline} color="white" size={1} />
             </div>
@@ -479,7 +479,7 @@ export default function PostsPage() {
         </div>
       ) : (
         <div className="grid w-full grid-cols-4 sticky bottom-0 h-10 left-0 items-center justify-items-center bg-slate-950">
-          <Link to={"/"}>
+          <Link to={`/listen/${sessionStorage.getItem("artistIds")}`}>
             <div className="cursor-pointer">
               <Icon path={mdiHomeOutline} color="white" size={1} />
             </div>

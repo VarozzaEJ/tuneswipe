@@ -78,6 +78,7 @@ export default function Dashboard({ code }) {
     setFormSubmitted(true);
     toast.success("Device Changed Successfully");
   }
+
   function addArtistId(artistId) {
     const isAdded = artistIds.find((id) => id == artistId);
     const foundArtistId = artistIds.findIndex((id) => id == artistId);
@@ -94,7 +95,7 @@ export default function Dashboard({ code }) {
 
   function getReccomendationsBasedOnArtists() {
     if (!accessToken) return;
-
+    sessionStorage.setItem("artistIds", `${artistIds}`);
     navigate(`listen/${artistIds}`);
     //TODO when navigating for the first time per user, the queue does not work. I suspect that this is because spotify is not technically playing anything at the start of a user's session.
   }
