@@ -90,6 +90,8 @@ export default function ListenPage() {
   const [isExpired, setIsExpired] = useState(false);
   const [expiredTokenDialogOpen, setExpiredTokenDialogOpen] = useState(false);
   const [isReadyForQueueCheck, setIsReadyForQueueCheck] = useState(false);
+  const [recommendedMusicOpen, setRecommendedMusicOpen] = useState(false);
+  const [optionsPopupOpen, setOptionsPopupOpen] = useState(false);
   const [count2, setCount2] = useState(0);
 
   console.log("🎤", lastSwipedURI);
@@ -403,6 +405,8 @@ export default function ListenPage() {
     skipToNext();
     skipToNext();
     spotifyApi.setVolume(0);
+    setRecommendedMusicOpen(false);
+    setOptionsPopupOpen(false);
   }, [count2]);
 
   function setDeviceId() {
@@ -423,14 +427,17 @@ export default function ListenPage() {
           <div>
             <span className="text-3xl">For You</span>
           </div>
-          <Popover>
+          <Popover open={optionsPopupOpen} onOpenChange={setOptionsPopupOpen}>
             <PopoverTrigger>
               <div>
                 <Icon path={mdiDotsHorizontal} color="white" size={1} />
               </div>
             </PopoverTrigger>
             <PopoverContent className={"w-56"}>
-              <Sheet>
+              <Sheet
+                open={recommendedMusicOpen}
+                onOpenChange={setRecommendedMusicOpen}
+              >
                 <SheetTrigger asChild>
                   <div className="flex justify-center mb-1">
                     <Button>Change Recs</Button>
