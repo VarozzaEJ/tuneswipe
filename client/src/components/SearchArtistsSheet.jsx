@@ -45,7 +45,6 @@ export default function SearchArtistsSheet({ accessToken, handler }) {
       sessionStorage.removeItem("artistIds");
     }
     sessionStorage.setItem("artistIds", `${artistId}`);
-    window.history.pushState(null, "", `#/listen/${artistId}`);
     //TODO when navigating for the first time per user, the queue does not work. I suspect that this is because spotify is not technically playing anything at the start of a user's session.
   }
 
