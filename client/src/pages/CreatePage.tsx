@@ -578,7 +578,7 @@ const pictureValue = getValues().picture
 }
       </div>
       <div className="grid w-full grid-cols-4 fixed bottom-0 h-10 left-0 items-center justify-items-center bg-slate-950">
-        <Link to={`/listen/${sessionStorage.getItem("artistIds")}`}>
+        <Link to={`/listen`}>
             <div className="cursor-pointer">
               <Icon path={mdiHomeOutline} color="white" size={1} />
             </div>

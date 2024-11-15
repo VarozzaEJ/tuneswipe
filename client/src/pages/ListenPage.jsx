@@ -58,6 +58,8 @@ import { toast } from "sonner";
 import ExpiredTokenDialog from "../components/ExpiredTokenDialog.jsx";
 import { Button } from "@/components/ui/button";
 import SearchArtistsSheet from "../components/SearchArtistsSheet.jsx";
+import { Skeleton } from "@/components/ui/skeleton";
+import ListenPageMusicCardLoading from "../components/ListenPageMusicCardLoading.tsx";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: `${import.meta.env.VITE_CLIENT_ID}`,
@@ -479,7 +481,7 @@ export default function ListenPage() {
           <div className="z-10 fixed left-1 sm:left-4">
             <Icon path={mdiCloseCircle} color={dislikeColor} size={2} />
           </div>
-          {recommendations &&
+          {recommendations.length !== 0 ? (
             recommendations.map((track, index) => (
               <TinderCard
                 ref={childRefs[index]}
@@ -501,7 +503,10 @@ export default function ListenPage() {
                   artistLink={track.artists[0]?.external_urls.spotify}
                 />
               </TinderCard>
-            ))}
+            ))
+          ) : (
+            <ListenPageMusicCardLoading />
+          )}
           <div className="z-10 fixed right-1 sm:right-4">
             <Icon path={mdiCheckCircle} color={likeColor} size={2} />
           </div>
