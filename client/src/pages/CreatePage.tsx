@@ -50,6 +50,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z, ZodType } from "zod";
+import {accountService} from "../services/accountService.js"
 import {
   Drawer,
   DrawerClose,
@@ -93,6 +94,7 @@ import TopTrackCard from "@/components/TopTrackCard.js";
 import { musicPostsService } from "../services/MusicPostsService";
 import { useNavigate } from "react-router-dom";
 import AddedTopTrackCard from "@/components/AddedTopTrackCard.js";
+import { AuthService } from "../services/AuthService.js";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: `${import.meta.env.VITE_CLIENT_ID}`,
@@ -119,6 +121,7 @@ const formSchema : ZodType<FormData> = z.object({
 });
 
 export default function CreatePage() {
+  const [accountId, setAccountId] = useState("")
   const [accessToken, setAccessToken] = useState("");
   const [musicCardsReady, setMusicCardsReady] = useState(false);
   const [likedSongs, setLikedSongs] = useState([]);
@@ -142,7 +145,16 @@ export default function CreatePage() {
     //TODO make this happen in a higher component to skip the login process if the token already exists or has not expired
     const accessToken = localStorage.getItem("accessToken");
     setAccessToken(accessToken);
+    checkUser()
   }, []);
+  
+  const checkUser = async () => {
+    const user = await accountService.getAccount()
+    if(user == null || undefined) {
+      AuthService.loginWithPopup()
+    }
+    console.log(user)
+  }
 
   useEffect(() => {
     if (!accessToken) return;

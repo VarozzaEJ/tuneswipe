@@ -19,6 +19,7 @@ import {
   mdiReplay,
   mdiRewind,
   mdiSync,
+  mdiTabletCellphone,
 } from "@mdi/js";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -95,6 +96,8 @@ export default function ListenPage() {
   const [recommendedMusicOpen, setRecommendedMusicOpen] = useState(false);
   const [optionsPopupOpen, setOptionsPopupOpen] = useState(false);
   const [count2, setCount2] = useState(0);
+
+  const navigate = useNavigate();
 
   console.log("🎤", lastSwipedURI);
   const currentIndexRef = useRef(currentIndex);
@@ -394,6 +397,11 @@ export default function ListenPage() {
   }, [artistIds, accessToken, isOnRightSong]);
 
   function setIds() {
+    if (!sessionStorage.getItem("artistIds")) {
+      setRecommendedMusicOpen(true);
+      toast.error("Please Choose Recommendations");
+      return;
+    }
     const ids = sessionStorage
       .getItem("artistIds")
       .split(",")
@@ -407,7 +415,7 @@ export default function ListenPage() {
     skipToNext();
     skipToNext();
     spotifyApi.setVolume(0);
-    setRecommendedMusicOpen(false);
+    if (sessionStorage.getItem("artistIds")) setRecommendedMusicOpen(false);
     setOptionsPopupOpen(false);
   }, [count2]);
 
@@ -423,57 +431,47 @@ export default function ListenPage() {
       <div className="fixed top-2 w-screen">
         {isExpired && <ExpiredTokenDialog open={expiredTokenDialogOpen} />}
         <div className="flex justify-between mx-5">
-          <div role="button">
-            <Icon path={mdiFinance} color="white" size={1} />
+          <div role="button" className="flex items-center">
+            <Sheet
+              open={recommendedMusicOpen}
+              onOpenChange={setRecommendedMusicOpen}
+            >
+              <SheetTrigger>
+                <div>
+                  <Icon path={mdiFinance} color="white" size={1} />
+                </div>
+              </SheetTrigger>
+              <SheetContent
+                className={
+                  "bg-slate-800 w-screen sm:max-w-screen overflow-y-scroll max-w-screen"
+                }
+              >
+                <SearchArtistsSheet
+                  handler={handleCount}
+                  accessToken={accessToken}
+                />
+              </SheetContent>
+            </Sheet>
           </div>
           <div>
             <span className="text-3xl">For You</span>
           </div>
-          <Popover open={optionsPopupOpen} onOpenChange={setOptionsPopupOpen}>
-            <PopoverTrigger>
+          <Dialog>
+            <DialogTrigger>
               <div>
-                <Icon path={mdiDotsHorizontal} color="white" size={1} />
+                <Icon path={mdiTabletCellphone} color="white" size={1} />
               </div>
-            </PopoverTrigger>
-            <PopoverContent className={"w-56"}>
-              <Sheet
-                open={recommendedMusicOpen}
-                onOpenChange={setRecommendedMusicOpen}
-              >
-                <SheetTrigger asChild>
-                  <div className="flex justify-center mb-1">
-                    <Button>Change Recs</Button>
-                  </div>
-                </SheetTrigger>
-                <SheetContent
-                  className={
-                    "bg-slate-800 w-screen sm:max-w-screen overflow-y-scroll max-w-screen"
-                  }
-                >
-                  <SearchArtistsSheet
-                    handler={handleCount}
-                    accessToken={accessToken}
-                  />
-                </SheetContent>
-              </Sheet>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <div className="flex justify-center">
-                    <Button>Change Device</Button>
-                  </div>
-                </DialogTrigger>
-                <DialogContent className={"bg-primary w-5/6 rounded-sm"}>
-                  <DialogHeader>
-                    <DialogTitle className={"mb-3"}>
-                      Change Playback Device
-                    </DialogTitle>
-                    <DialogDescription></DialogDescription>
-                    <ChangeDeviceForm accessToken={accessToken} />
-                  </DialogHeader>
-                </DialogContent>
-              </Dialog>
-            </PopoverContent>
-          </Popover>
+            </DialogTrigger>
+            <DialogContent className={"bg-primary w-5/6 rounded-sm"}>
+              <DialogHeader>
+                <DialogTitle className={"mb-3"}>
+                  Change Playback Device
+                </DialogTitle>
+                <DialogDescription></DialogDescription>
+                <ChangeDeviceForm accessToken={accessToken} />
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
       <div className="container overflow-y-hidden h-screen  flex-col flex justify-center">
