@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import React, { useEffect, useState } from "react";
 import { AppState } from "../AppState.js";
 import Icon from "@mdi/react";
-import { mdiAccount, mdiChatOutline, mdiHomeOutline, mdiPencilPlusOutline } from "@mdi/js";
+import { mdiAccount, mdiChatOutline, mdiHomeOutline, mdiImage, mdiPencilPlusOutline } from "@mdi/js";
 import Login from "../components/Login.jsx";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -75,7 +75,7 @@ function AccountPage() {
                                   <Icon
                                     path={mdiAccount}
                                     color="black"
-                                    size={1}
+                                    size={4}
                                   />
                                 </AvatarFallback>
                               </Avatar>
@@ -98,6 +98,13 @@ function AccountPage() {
               <Label className="mt-3" htmlFor="name">Name</Label>
               <Input {...register("name")}  id="name" className="text-black" />
               </div>
+              <div className="flex justify-center items-center mt-5">
+                {profilePicture !== "" ? 
+                <img src={profilePicture} className="w-52 h-52 rounded-sm" alt="" /> :
+                  <div className="bg-subtle rounded-lg h-52 w-52 flex justify-center items-center">
+                    <Icon path={mdiImage} color="white" />
+                  </div> }
+              </div>
               <div className="mt-5">
               <Label className="mt-10" htmlFor="picture">Picture</Label>
               <Input {...register("picture")} id="picture" className="text-black" />
@@ -110,7 +117,7 @@ function AccountPage() {
           </Sheet>
         </div>
         <div className="grid w-full grid-cols-4 fixed bottom-0 h-10 left-0 items-center justify-items-center bg-slate-950">
-          <Link to={`/listen/${sessionStorage.getItem("artistIds")}`}>
+          <Link to={`/listen`}>
             <div className="cursor-pointer">
               <Icon path={mdiHomeOutline} color="white" size={1} />
             </div>

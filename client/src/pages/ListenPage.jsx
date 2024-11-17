@@ -134,7 +134,7 @@ export default function ListenPage() {
       setLikeColor("white");
     }
     if (direction == "right") {
-      await addSongToYourMusic(recommendedTracks[currentIndexRef.current].id);
+      await addSongToYourMusic(recommendedTracks[likeSongIndex].id);
       await skipToNext();
       setLikeColor("green");
       setDislikeColor("white");
@@ -146,7 +146,7 @@ export default function ListenPage() {
     updateCurrentIndex(index - 1);
     setLastSwipedURI(songURI);
   };
-
+  console.log(recommendedTracks);
   const outOfFrame = (name, idx) => {
     console.log(`${name} (${idx}) left the screen!`, currentIndexRef.current);
     // handle the case in which go back is pressed before card goes outOfFrame
