@@ -16,7 +16,10 @@ const spotifyApi = new SpotifyWebApi({
   clientId: `${import.meta.env.VITE_CLIENT_ID}`,
 });
 
-export default function ChangeDeviceForm({ accessToken }) {
+export default function ChangeDeviceForm({
+  accessToken,
+  setChangeDeviceFormOpen,
+}) {
   const [availableDevices, setAvailableDevices] = useState([]);
 
   useEffect(() => {
@@ -67,6 +70,7 @@ export default function ChangeDeviceForm({ accessToken }) {
     transferPlayback(e);
     localStorage.setItem("chosenDeviceId", e);
     toast.success("Device Changed Successfully");
+    setChangeDeviceFormOpen(false);
   }
 
   return (
@@ -77,11 +81,7 @@ export default function ChangeDeviceForm({ accessToken }) {
             <SelectTrigger className={"text-black"}>
               <SelectValue placeholder="Choose Your Playback Device" />
             </SelectTrigger>
-            <SelectContent
-              onClick={() => {
-                console.log("Working");
-              }}
-            >
+            <SelectContent>
               <SelectGroup>
                 {availableDevices.devices.map((device, index) => (
                   <div key={index}>

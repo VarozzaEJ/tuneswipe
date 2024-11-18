@@ -94,7 +94,8 @@ export default function ListenPage() {
   const [expiredTokenDialogOpen, setExpiredTokenDialogOpen] = useState(false);
   const [isReadyForQueueCheck, setIsReadyForQueueCheck] = useState(false);
   const [recommendedMusicOpen, setRecommendedMusicOpen] = useState(false);
-  const [optionsPopupOpen, setOptionsPopupOpen] = useState(false);
+  const [changeDeviceFormOpen, setChangeDeviceFormOpen] = useState(false);
+
   const [count2, setCount2] = useState(0);
 
   const navigate = useNavigate();
@@ -134,7 +135,7 @@ export default function ListenPage() {
       setLikeColor("white");
     }
     if (direction == "right") {
-      await addSongToYourMusic(recommendedTracks[likeSongIndex].id);
+      // await addSongToYourMusic(recommendedTracks[likeSongIndex].id);
       await skipToNext();
       setLikeColor("green");
       setDislikeColor("white");
@@ -147,6 +148,7 @@ export default function ListenPage() {
     setLastSwipedURI(songURI);
   };
   console.log(recommendedTracks);
+
   const outOfFrame = (name, idx) => {
     console.log(`${name} (${idx}) left the screen!`, currentIndexRef.current);
     // handle the case in which go back is pressed before card goes outOfFrame
@@ -416,15 +418,12 @@ export default function ListenPage() {
     skipToNext();
     spotifyApi.setVolume(0);
     if (sessionStorage.getItem("artistIds")) setRecommendedMusicOpen(false);
-    setOptionsPopupOpen(false);
   }, [count2]);
 
   function setDeviceId() {
     const deviceId = localStorage.getItem("chosenDeviceId");
     setChosenDeviceId(deviceId);
   }
-
-  //TODO I think I should try and keep the artists I select in localStorage. This way, when I eventually add the different tabs the user won't have to readd what artists they want to listen to. I should set it when I hit the get recommendations button. I'll both simultaneously remove the id's in local storage and set the new ones at the same time. Then, in the setIds() function above, I will try and find the id's in local storage
 
   return (
     <>
@@ -456,7 +455,10 @@ export default function ListenPage() {
           <div>
             <span className="text-3xl">For You</span>
           </div>
-          <Dialog>
+          <Dialog
+            open={changeDeviceFormOpen}
+            onOpenChange={setChangeDeviceFormOpen}
+          >
             <DialogTrigger>
               <div>
                 <Icon path={mdiTabletCellphone} color="white" size={1} />
@@ -468,14 +470,17 @@ export default function ListenPage() {
                   Change Playback Device
                 </DialogTitle>
                 <DialogDescription></DialogDescription>
-                <ChangeDeviceForm accessToken={accessToken} />
+                <ChangeDeviceForm
+                  setChangeDeviceFormOpen={setChangeDeviceFormOpen}
+                  accessToken={accessToken}
+                />
               </DialogHeader>
             </DialogContent>
           </Dialog>
         </div>
       </div>
-      <div className="container overflow-y-hidden h-screen  flex-col flex justify-center">
-        <div className="sm:h-3/4 h-full flex items-center justify-center">
+      <div className="container overflow-y-hidden overflow-x-hidden overscroll-x-none h-screen  flex-col flex justify-center">
+        <div className="sm:h-3/4 overscroll-none overflow-hidden h-full flex items-center justify-center">
           <div className="z-10 fixed left-1 sm:left-4">
             <Icon path={mdiCloseCircle} color={dislikeColor} size={2} />
           </div>

@@ -83,8 +83,8 @@ export default function Dashboard({ code }) {
     const isAdded = artistIds.find((id) => id == artistId);
     const foundArtistId = artistIds.findIndex((id) => id == artistId);
     if (isAdded) {
-      artistIds.splice(foundArtistId, 1);
-      // toast.error("This artist is already added");
+      const newIds = artistIds.filter((id) => id !== isAdded);
+      setArtistIds(newIds);
     }
     if (artistIds.length >= 10)
       toast.error("A maximum of 10 artists is allowed");
@@ -95,6 +95,10 @@ export default function Dashboard({ code }) {
 
   function getReccomendationsBasedOnArtists() {
     if (!accessToken) return;
+    if (artistIds.length == 0) {
+      toast.error("Choose at least one artist.");
+      return;
+    }
     sessionStorage.setItem("artistIds", `${artistIds}`);
     navigate(`listen`);
     //TODO when navigating for the first time per user, the queue does not work. I suspect that this is because spotify is not technically playing anything at the start of a user's session.

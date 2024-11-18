@@ -37,7 +37,7 @@ export default function ArtistSearchResult({ artist }) {
           )}
         </div>
         <div className=" w-100 md:ms-5 text-3xl flex justify-center">
-          {artist.artist}
+          <span className="text-center">{artist.artist}</span>
         </div>
       </div>
       {/* <div

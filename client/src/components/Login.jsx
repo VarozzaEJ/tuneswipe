@@ -10,6 +10,20 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { mdiAccount } from "@mdi/js";
 import Icon from "@mdi/react";
 
@@ -37,8 +51,8 @@ function Login({ profilePic }) {
   );
 
   const authenticated = (
-    <Popover>
-      <PopoverTrigger>
+    <DropdownMenu>
+      <DropdownMenuTrigger>
         <Avatar>
           <AvatarImage
             src={profilePicture || profilePic}
@@ -48,16 +62,16 @@ function Login({ profilePic }) {
             <Icon path={mdiAccount} color="black" size={1} />
           </AvatarFallback>
         </Avatar>
-      </PopoverTrigger>
-      <PopoverContent className="bg-slate-100 flex w-46 flex-col">
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
         <Link className="text-center mb-4" to={"/account"}>
           <span className="text-center">
             <Button variant={"secondary"}>Manage Account</Button>
           </span>
         </Link>
         <Button onClick={logout}>Logout</Button>
-      </PopoverContent>
-    </Popover>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 
   return (
