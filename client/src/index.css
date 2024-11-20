@@ -107,3 +107,7 @@ body {
   -ms-user-select: none; /* IE 10 and IE 11 */
   user-select: none; /* Standard syntax */
 }
+
+:root {
+  overflow: hidden;
+}

@@ -479,7 +479,7 @@ export default function ListenPage() {
           </Dialog>
         </div>
       </div>
-      <div className="container overflow-y-hidden overflow-x-hidden overscroll-x-none h-screen  flex-col flex justify-center">
+      <div className="container overflow-y-hidden overflow-x-hidden overscroll-none h-screen  flex-col flex justify-center">
         <div className="sm:h-3/4 overscroll-none overflow-hidden h-full flex items-center justify-center">
           <div className="z-10 fixed left-1 sm:left-4">
             <Icon path={mdiCloseCircle} color={dislikeColor} size={2} />
@@ -538,7 +538,7 @@ export default function ListenPage() {
             </>
           )}
         </div>
-        <div className="grid w-full grid-cols-4 fixed bottom-0 h-10 left-0 items-center justify-items-center bg-slate-950">
+        <div className="grid w-screen grid-cols-4 fixed bottom-0 h-10 left-0 items-center justify-items-center bg-slate-950">
           <div className="">
             <Icon path={mdiHome} color="white" size={1} />
           </div>

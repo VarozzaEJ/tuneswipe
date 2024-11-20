@@ -23,6 +23,7 @@ import { z, ZodType } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { AuthService } from "../services/AuthService.js";
 
 type FormData = {
   name: string;
@@ -64,9 +65,16 @@ function AccountPage() {
       setOpen(false)
     }
 
+    function logout() {
+    localStorage.removeItem("user-token");
+    //FIXME Logout does not work, redirects to port 8080 for an unknown reason.
+    AuthService.logout({});
+    window.location.assign('#')
+  }
+
   return (
-    <div className="">
-      <div className="h-screen flex flex-col justify-between">
+    <div className="h-screen">
+      <div className="h-[95%] flex flex-col justify-between">
         <div className="p-5 text-center flex flex-col justify-center items-center gap-y-4">
           {profilePicture !== "" && (
             <Avatar className={"h-40 w-40 static"}>
@@ -84,7 +92,7 @@ function AccountPage() {
           <kbd>{AppState.account.email}</kbd>
           <Sheet onOpenChange={setOpen} open={open}>
             <SheetTrigger asChild>
-              <Button variant={"secondary"} className={"w-full"}>
+              <Button variant={"secondary"} className={"w-full sm:w-80"}>
                 Edit Profile
               </Button>
             </SheetTrigger>
@@ -115,6 +123,11 @@ function AccountPage() {
               </form>
             </SheetContent>
           </Sheet>
+        </div>
+        <div className="p-5 flex justify-center">
+          <Button onClick={logout} className="w-full sm:w-80" variant={"destructive"}>
+            Logout
+          </Button>
         </div>
         <div className="grid w-full grid-cols-4 fixed bottom-0 h-10 left-0 items-center justify-items-center bg-slate-950">
           <Link to={`/listen`}>

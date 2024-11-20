@@ -51,27 +51,17 @@ function Login({ profilePic }) {
   );
 
   const authenticated = (
-    <DropdownMenu>
-      <DropdownMenuTrigger>
-        <Avatar>
-          <AvatarImage
-            src={profilePicture || profilePic}
-            className={"h-[24px] w-[24px]"}
-          />
-          <AvatarFallback>
-            <Icon path={mdiAccount} color="black" size={1} />
-          </AvatarFallback>
-        </Avatar>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <Link className="text-center mb-4" to={"/account"}>
-          <span className="text-center">
-            <Button variant={"secondary"}>Manage Account</Button>
-          </span>
-        </Link>
-        <Button onClick={logout}>Logout</Button>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Link className="text-center mb-4" to={"/account"}>
+      <Avatar>
+        <AvatarImage
+          src={profilePicture || profilePic}
+          className={"h-[24px] w-[24px]"}
+        />
+        <AvatarFallback>
+          <Icon path={mdiAccount} color="black" size={1} />
+        </AvatarFallback>
+      </Avatar>
+    </Link>
   );
 
   return (
