@@ -30,8 +30,8 @@ export default function Dashboard({ code }) {
   const accessToken = useAuth(code);
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const [artistIds, setArtistIds] = useState([]);
-
+  const [artistName, setArtistName] = useState([]);
+  const [artistTopSong, setArtistTopSong] = useState("");
   const navigate = useNavigate();
 
   const getAvailableDevices = async () => {
@@ -79,27 +79,33 @@ export default function Dashboard({ code }) {
     toast.success("Device Changed Successfully");
   }
 
-  function addArtistId(artistId) {
-    const isAdded = artistIds.find((id) => id == artistId);
-    const foundArtistId = artistIds.findIndex((id) => id == artistId);
+  function addArtistId(artist) {
+    debugger;
+    const isAdded = artistName.find((name) => name == artist);
+    const foundArtistId = artistName.findIndex((name) => name == artist);
     if (isAdded) {
-      const newIds = artistIds.filter((id) => id !== isAdded);
-      setArtistIds(newIds);
+      const newName = artistName.filter((name) => name !== isAdded);
+      setArtistName(newName);
     }
-    if (artistIds.length >= 10)
-      toast.error("A maximum of 10 artists is allowed");
-    if (isAdded || artistIds.length >= 10) return;
+    if (artistName.length >= 1) toast.error("A maximum of 1 artist is allowed");
+    if (isAdded || artistName.length > 1) return;
     //NOTE maybe throw a pop error of some sort here
-    setArtistIds((artistIds) => [...artistIds, artistId]);
+    setArtistName((artistNames) => [...artistNames, artist]);
+  }
+
+  async function getTopSong(artistId) {
+    const topSongs = await spotifyApi.getArtistTopTracks(artistId, "US");
+    setArtistTopSong(topSongs.body.tracks[0].name);
   }
 
   function getReccomendationsBasedOnArtists() {
     if (!accessToken) return;
-    if (artistIds.length == 0) {
+    if (artistName.length == 0) {
       toast.error("Choose at least one artist.");
       return;
     }
-    sessionStorage.setItem("artistIds", `${artistIds}`);
+    sessionStorage.setItem("artistName", `${artistName}`);
+    sessionStorage.setItem("artistTopSong", `${artistTopSong}`);
     navigate(`listen`);
     //TODO when navigating for the first time per user, the queue does not work. I suspect that this is because spotify is not technically playing anything at the start of a user's session.
   }
@@ -115,7 +121,7 @@ export default function Dashboard({ code }) {
     if (!accessToken) return;
 
     let cancel = false;
-    spotifyApi.searchArtists(search, { limit: 4 }).then((res) => {
+    spotifyApi.searchArtists(search, { limit: 1 }).then((res) => {
       if (cancel) return;
       setSearchResults(
         res.body.artists.items.map((artist) => {
@@ -149,7 +155,8 @@ export default function Dashboard({ code }) {
                 key={artist.id}
                 className="w-full flex justify-center"
                 onClick={() => {
-                  addArtistId(artist.id);
+                  addArtistId(artist.artist);
+                  getTopSong(artist.id);
                 }}
               >
                 <ArtistSearchResult artist={artist} />
@@ -158,13 +165,18 @@ export default function Dashboard({ code }) {
           </div>
           <div className="w-full fixed bottom-4 flex justify-end mt-5">
             <div>
-              <Button
-                onClick={getReccomendationsBasedOnArtists}
-                className={"me-5"}
-              >
-                Get Reccomendations{" "}
-                <p className="m-0 ms-2 text-slate-400">{artistIds.length}</p>
-              </Button>
+              {artistName.length > 0 ? (
+                <Button
+                  onClick={getReccomendationsBasedOnArtists}
+                  className={"me-5"}
+                >
+                  Get Reccomendations{" "}
+                </Button>
+              ) : (
+                <Button className={"me-5"} variant={"destructive"}>
+                  Choose an Artist{" "}
+                </Button>
+              )}
             </div>
           </div>
         </div>

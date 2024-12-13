@@ -83,7 +83,7 @@ const Playback = ({
       setIsReady(true);
     };
     runRequiredFunctions();
-  }, [recommendedTracks, accessToken, chosenDeviceId]);
+  }, [recommendedTracks, accessToken, isOnRightSong, chosenDeviceId]);
 
   const skipToNext = async () => {
     await spotifyApi.skipToNext().then(

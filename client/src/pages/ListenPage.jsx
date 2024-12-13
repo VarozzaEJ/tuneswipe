@@ -95,6 +95,7 @@ export default function ListenPage() {
   const [isReadyForQueueCheck, setIsReadyForQueueCheck] = useState(false);
   const [recommendedMusicOpen, setRecommendedMusicOpen] = useState(false);
   const [changeDeviceFormOpen, setChangeDeviceFormOpen] = useState(false);
+  const [noActiveDeviceError, setNoActiveDeviceError] = useState(false);
 
   const [count2, setCount2] = useState(0);
 
@@ -135,7 +136,7 @@ export default function ListenPage() {
       setLikeColor("white");
     }
     if (direction == "right") {
-      // await addSongToYourMusic(recommendedTracks[likeSongIndex].id);
+      await addSongToYourMusic(recommendedTracks[likeSongIndex].id);
       await skipToNext();
       setLikeColor("green");
       setDislikeColor("white");
@@ -180,15 +181,16 @@ export default function ListenPage() {
   };
 
   const initialSkipToNext = async () => {
-    let isReady = false;
-    await spotifyApi.skipToNext().then(
+    let isReady = true;
+    spotifyApi.skipToNext().then(
       function () {
         console.log("Skip to next");
         setIsReadyForQueueCheck(true);
-        isReady = true;
+        //FIXME problem with isReady
       },
       function (err) {
         //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
+        isReady = false;
         console.error("Something went wrong!", err);
         const isExpired = err.message.includes("expired");
         if (isExpired) {
@@ -201,13 +203,14 @@ export default function ListenPage() {
   };
 
   const skipToNext = async () => {
+    //FIXME while on hotspot, this function completely clears the queue and anything you had playing before it. This makes everything choppy and slow.
     await spotifyApi.skipToNext().then(
       function () {
         console.log("Skip to next");
       },
       function (err) {
         //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
-        console.error("Something went wrong!", err);
+        console.error("Something Went Wrong!", err);
         const isExpired = err.message.includes("expired");
         if (isExpired) {
           setIsExpired(true);
@@ -312,9 +315,6 @@ export default function ListenPage() {
 
   const checkIfRightSong = async () => {
     if (rightSongAdded) return;
-    // await spotifyApi.play({
-    //   context_uri: "spotify:track:5XSKC4d0y0DfcGbvDOiL93",
-    // });
     const timeout = setTimeout(() => {
       addSongToQueue("spotify:track:3Ec830TpI83UCdYDHkBScO");
     }, 1000);
@@ -329,7 +329,6 @@ export default function ListenPage() {
     if (isReady) {
       await getUsersQueue();
     }
-    // setIsReadyForQueueCheck(false);
   };
 
   useEffect(() => {
@@ -368,35 +367,49 @@ export default function ListenPage() {
   ]);
 
   useEffect(() => {
-    if (accessToken.length == 0 || !isOnRightSong || !rightSongAdded) return;
-    spotifyApi
-      .getRecommendations({
-        min_energy: 0.4,
-        //NOTE length of this array can only be <10 artists?
-        seed_artists: artistIds,
-        min_popularity: 50,
-      })
-      .then(
-        function (data) {
-          let recommendations = data.body;
-          const flippedArray = [...data.body.tracks].reverse();
-          console.log("👺", recommendations);
-          console.log("🧍‍♂️", flippedArray);
-          setRecommendations(data.body.tracks);
-          setRecommendedTracks(flippedArray);
-          setCurrentIndex(data.body.tracks.length - 1);
-        },
-        function (err) {
-          console.log("Something went wrong!", err);
-          const isExpired = err.message.includes("expired");
-          if (isExpired) {
-            setIsExpired(true);
-            setExpiredTokenDialogOpen(true);
-          }
-        }
-      );
-    setIsReady(true);
-  }, [artistIds, accessToken, isOnRightSong]);
+    if (
+      accessToken.length == 0 ||
+      !accessToken ||
+      !isOnRightSong ||
+      !rightSongAdded ||
+      artistIds.length == 0
+    ) {
+      return;
+    }
+
+    // spotifyApi
+    //   .getRecommendations({ seed_artists: ["2P5sC9cVZDToPxyomzF1UH"] })
+    //   .then(function (data) {
+    //     console.log("💙", data);
+    //   });
+    // spotifyApi
+    //   .getRecommendations({
+    //     min_energy: 0.4,
+    //     //NOTE length of this array can only be <10 artists?
+    //     seed_artists: artistIds,
+    //     min_popularity: 50,
+    //   })
+    //   .then(
+    //     function (data) {
+    //       let recommendations = data.body;
+    //       const flippedArray = [...data.body.tracks].reverse();
+    //       console.log("👺", recommendations);
+    //       console.log("🧍‍♂️", flippedArray);
+    //       setRecommendations(data.body.tracks);
+    //       setRecommendedTracks(flippedArray);
+    //       setCurrentIndex(data.body.tracks.length - 1);
+    //       setIsReady(true);
+    //     },
+    //     function (err) {
+    //       console.log("Something Went Wrong!", err);
+    //       const isExpired = err.message.includes("expired");
+    //       if (isExpired) {
+    //         setIsExpired(true);
+    //         setExpiredTokenDialogOpen(true);
+    //       }
+    //     }
+    //   );
+  }, [artistIds, accessToken, rightSongAdded, isOnRightSong]);
 
   function setIds() {
     if (!sessionStorage.getItem("artistIds")) {
@@ -411,7 +424,10 @@ export default function ListenPage() {
       .filter((item) => item !== "");
     setArtistIds(ids);
   }
+
   useEffect(() => {
+    // if (count2 == 0) return;
+    //FIXME Not sure why this line was here?
     setIds();
     spotifyApi.setVolume(0);
     skipToNext();
