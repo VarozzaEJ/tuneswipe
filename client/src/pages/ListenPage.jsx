@@ -144,12 +144,10 @@ export default function ListenPage() {
     if (currentIndex > 1) {
       addSongToQueue(recommendations[currentIndex - 2].uri);
     }
-
     updateCurrentIndex(index - 1);
     setLastSwipedURI(songURI);
   };
-  console.log(recommendedTracks);
-
+  console.log(currentIndex);
   const outOfFrame = (name, idx) => {
     console.log(`${name} (${idx}) left the screen!`, currentIndexRef.current);
     // handle the case in which go back is pressed before card goes outOfFrame
@@ -181,6 +179,7 @@ export default function ListenPage() {
   };
 
   const initialSkipToNext = async () => {
+    if (!accessToken) return;
     let isReady = true;
     spotifyApi.skipToNext().then(
       function () {
@@ -314,7 +313,7 @@ export default function ListenPage() {
   }, []);
 
   const checkIfRightSong = async () => {
-    if (rightSongAdded) return;
+    if (rightSongAdded || !accessToken) return;
     const timeout = setTimeout(() => {
       addSongToQueue("spotify:track:3Ec830TpI83UCdYDHkBScO");
     }, 1000);
@@ -324,6 +323,7 @@ export default function ListenPage() {
   };
 
   const skipAndGetQueue = async () => {
+    if (!accessToken) return;
     const isReady = await initialSkipToNext();
     console.log("💘", isReady);
     if (isReady) {
@@ -412,20 +412,59 @@ export default function ListenPage() {
   }, [artistIds, accessToken, rightSongAdded, isOnRightSong]);
 
   function setIds() {
-    if (!sessionStorage.getItem("artistIds")) {
+    if (
+      !sessionStorage.getItem("artistName") ||
+      !sessionStorage.getItem("artistTopSong")
+    ) {
       setRecommendedMusicOpen(true);
       toast.error("Please Choose Recommendations");
       return;
     }
-    const ids = sessionStorage
-      .getItem("artistIds")
-      .split(",")
-      .map((item) => item.trim())
-      .filter((item) => item !== "");
-    setArtistIds(ids);
+    // const ids = sessionStorage
+    //   .getItem("artistIds")
+    //   .split(",")
+    //   .map((item) => item.trim())
+    //   .filter((item) => item !== "");
+    const name = sessionStorage.getItem("artistName");
+    const trackName = sessionStorage.getItem("artistTopSong");
+    setArtistIds([name]);
+    lastFMReccommendations(name, trackName);
   }
 
+  const lastFMReccommendations = async (name, trackName) => {
+    const response = await axios.get(
+      `https://ws.audioscrobbler.com/2.0/?method=track.getsimilar&artist=${name}&track=${trackName}&api_key=${
+        import.meta.env.VITE_LASTFM_API_KEY
+      }&limit=20&format=json`
+    );
+    console.log("💘", response.data);
+    for (let i = 0; i < response.data.similartracks.track.length; i++) {
+      searchSong(response.data.similartracks.track[i].name);
+    }
+  };
+
+  const searchSong = async (trackName) => {
+    await spotifyApi
+      .searchTracks(trackName, { limit: 1 })
+      .then(function (data) {
+        console.log(data.body.tracks.items);
+        setRecommendations((track) => [...track, data.body.tracks.items[0]]);
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+  };
+
   useEffect(() => {
+    if (recommendations.length !== 20) return;
+    const flippedArray = [...recommendations].reverse();
+    console.log("👺", recommendations);
+    console.log("🧍‍♂️", flippedArray);
+    setRecommendedTracks(flippedArray);
+  }, [recommendations]);
+
+  useEffect(() => {
+    if (!accessToken) return;
     // if (count2 == 0) return;
     //FIXME Not sure why this line was here?
     setIds();
@@ -434,7 +473,7 @@ export default function ListenPage() {
     skipToNext();
     spotifyApi.setVolume(0);
     if (sessionStorage.getItem("artistIds")) setRecommendedMusicOpen(false);
-  }, [count2]);
+  }, [count2, accessToken]);
 
   function setDeviceId() {
     const deviceId = localStorage.getItem("chosenDeviceId");
@@ -505,7 +544,7 @@ export default function ListenPage() {
               <TinderCard
                 ref={childRefs[index]}
                 className="absolute w-[260px] sm:w-[350px] h-[375px] "
-                key={track.name}
+                key={track.uri}
                 flickOnSwipe
                 swipeRequirementType="position"
                 swipeThreshold={50}

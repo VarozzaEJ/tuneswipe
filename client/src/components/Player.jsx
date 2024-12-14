@@ -69,7 +69,7 @@ const Playback = ({
     if (
       !accessToken ||
       !chosenDeviceId ||
-      recommendedTracks.length === 0 ||
+      recommendedTracks.length !== 20 ||
       !isOnRightSong
     )
       return;
@@ -80,6 +80,7 @@ const Playback = ({
       setPlay(true);
       await skipToNext();
       await addSongToQueue(recommendedTracks[1].uri);
+      await addSongToQueue(recommendedTracks[2].uri);
       setIsReady(true);
     };
     runRequiredFunctions();

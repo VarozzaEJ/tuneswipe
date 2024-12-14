@@ -80,7 +80,6 @@ export default function Dashboard({ code }) {
   }
 
   function addArtistId(artist) {
-    debugger;
     const isAdded = artistName.find((name) => name == artist);
     const foundArtistId = artistName.findIndex((name) => name == artist);
     if (isAdded) {
