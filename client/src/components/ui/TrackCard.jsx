@@ -90,11 +90,6 @@ export default function TrackCard({
     }
   };
 
-  function checkPosition() {
-    // const element = document.getElementById("card");
-    // var rect = element.getClientRects();
-    // console.log(rect[0].x);
-  }
   return (
     <>
       <Card className="w-full max-w-md  bg-slate-800 text-white">

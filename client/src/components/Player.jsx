@@ -123,7 +123,6 @@ const Playback = ({
       }
     );
   };
-
   const previous = () => {
     spotifyApi.skipToPrevious().then(
       function () {
@@ -143,9 +142,20 @@ const Playback = ({
         //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
         console.log("Something went wrong!", err);
       });
-    await skipToNext();
-    await skipToNext();
+    if (likeSongIndex !== 0) {
+      await skipToNext();
+      await skipToNext();
+    } else {
+      await skipToNext();
+      await skipToNext();
+      await skipToNext();
+    }
     await spotifyApi.addToQueue(`${recommendedTracks[likeSongIndex + 1].uri}`);
+    if (likeSongIndex == 0) {
+      await spotifyApi.addToQueue(
+        `${recommendedTracks[likeSongIndex + 2].uri}`
+      );
+    }
   };
 
   return (

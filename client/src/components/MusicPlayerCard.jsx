@@ -146,7 +146,6 @@ export default function MusicPlayerCard({ trackIds }) {
       console.log(error);
     }
   };
-
   return (
     <>
       {isExpired ? (
@@ -185,11 +184,11 @@ export default function MusicPlayerCard({ trackIds }) {
                   </div>
                   <div className="col-span-12">
                     <div className="grid grid-cols-12 items-center gap-6 sm:gap-1">
-                      <div className="col-span-1 items-center justify-items-center">
+                      <div className="col-span-1  text-slate-500 cursor-pointer hover:text-slate-200 delay-75 transition-all ease-in-out items-center justify-items-center">
                         <Icon path={mdiSpotify} color="white" size={1} />
                       </div>
                       <div className="col-span-10">
-                        <span className="text-xl truncate">
+                        <span className="text-xl  text-slate-500 cursor-pointer hover:text-slate-200 delay-75 transition-all ease-in-out truncate">
                           {tracks[currentIndex].artists[0].name}
                         </span>
                       </div>
@@ -271,7 +270,12 @@ export default function MusicPlayerCard({ trackIds }) {
                         />
                         Skip this Song
                         </span> */}
-                        <a href={tracks[currentIndex].artists[0].href}>
+                        <a
+                          href={
+                            tracks[currentIndex].artists[0].external_urls
+                              .spotify
+                          }
+                        >
                           <span className="flex mb-4 text-lg ms-2 cursor-pointer hover:text-slate-600 delay-75 transition-all ease-in-out">
                             <Icon
                               path={mdiOpenInNew}

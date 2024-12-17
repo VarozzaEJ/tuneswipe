@@ -138,8 +138,8 @@ export default function Dashboard({ code }) {
   return (
     <>
       {formSubmitted ? (
-        <div className="w-screen h-screen flex flex-col items-center justify-between">
-          <div className="w-80 mt-5 flex">
+        <div className="w-screen h-screen flex flex-col items-center justify-center">
+          <div className="w-80 fixed top-2 mt-5 flex">
             <Input
               type={"search"}
               placeholder={"Search Artists"}

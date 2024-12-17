@@ -96,6 +96,7 @@ export default function ListenPage() {
   const [recommendedMusicOpen, setRecommendedMusicOpen] = useState(false);
   const [changeDeviceFormOpen, setChangeDeviceFormOpen] = useState(false);
   const [noActiveDeviceError, setNoActiveDeviceError] = useState(false);
+  const [lastSwipedTrack, setLastSwipedTrack] = useState({});
 
   const [count2, setCount2] = useState(0);
 
@@ -147,7 +148,6 @@ export default function ListenPage() {
     updateCurrentIndex(index - 1);
     setLastSwipedURI(songURI);
   };
-  console.log(currentIndex);
   const outOfFrame = (name, idx) => {
     console.log(`${name} (${idx}) left the screen!`, currentIndexRef.current);
     // handle the case in which go back is pressed before card goes outOfFrame
@@ -166,7 +166,7 @@ export default function ListenPage() {
 
   // increase current index and show card
   const goBack = async () => {
-    if (!canGoBack) return;
+    if (likeSongIndex == 0) return;
     const newIndex = currentIndex + 1;
     setCurrentSongIndex(currentSongIndex - 1);
     setLikeSongIndex(likeSongIndex - 1);
@@ -430,6 +430,8 @@ export default function ListenPage() {
     setArtistIds([name]);
     lastFMReccommendations(name, trackName);
   }
+  console.log("💛", currentIndex);
+  console.log("💚", currentSongIndex);
 
   const lastFMReccommendations = async (name, trackName) => {
     const response = await axios.get(
@@ -438,6 +440,10 @@ export default function ListenPage() {
       }&limit=20&format=json`
     );
     console.log("💘", response.data);
+    if (response.data.similartracks.track.length === 0) {
+      setRecommendedMusicOpen(true);
+      toast.error("No tracks found, please choose another artist");
+    }
     for (let i = 0; i < response.data.similartracks.track.length; i++) {
       searchSong(response.data.similartracks.track[i].name);
     }
@@ -467,12 +473,16 @@ export default function ListenPage() {
     if (!accessToken) return;
     // if (count2 == 0) return;
     //FIXME Not sure why this line was here?
+    setRecommendations([]);
+    setCurrentSongIndex(2);
+    setCurrentIndex(0);
+    setLikeSongIndex(0);
     setIds();
     spotifyApi.setVolume(0);
     skipToNext();
     skipToNext();
     spotifyApi.setVolume(0);
-    if (sessionStorage.getItem("artistIds")) setRecommendedMusicOpen(false);
+    if (sessionStorage.getItem("artistTopSong")) setRecommendedMusicOpen(false);
   }, [count2, accessToken]);
 
   function setDeviceId() {
@@ -500,6 +510,8 @@ export default function ListenPage() {
                   "bg-slate-800 w-screen sm:max-w-screen overflow-y-scroll max-w-screen"
                 }
               >
+                <SheetTitle></SheetTitle>
+                <SheetDescription></SheetDescription>
                 <SearchArtistsSheet
                   handler={handleCount}
                   accessToken={accessToken}
@@ -534,12 +546,12 @@ export default function ListenPage() {
           </Dialog>
         </div>
       </div>
-      <div className="container overflow-y-hidden overflow-x-hidden overscroll-none h-screen  flex-col flex justify-center">
+      <div className="container overflow-y-hidden overflow-x-hidden overscroll-none h-screen w-screen flex-col flex justify-center">
         <div className="sm:h-3/4 overscroll-none overflow-hidden h-full flex items-center justify-center">
           <div className="z-10 fixed left-1 sm:left-4">
             <Icon path={mdiCloseCircle} color={dislikeColor} size={2} />
           </div>
-          {recommendations.length !== 0 ? (
+          {recommendations.length != 0 && isOnRightSong ? (
             recommendations.map((track, index) => (
               <TinderCard
                 ref={childRefs[index]}

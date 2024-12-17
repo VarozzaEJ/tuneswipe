@@ -15,37 +15,37 @@ export default function SearchArtistsSheet({ accessToken, handler }) {
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [artistId, setArtistId] = useState([]);
-  let { artistIds } = useParams();
-
-  const navigate = useNavigate();
+  const [artistName, setArtistName] = useState("");
+  const [artistTopSong, setArtistTopSong] = useState("");
 
   useEffect(() => {
     if (!accessToken) return;
     spotifyApi.setAccessToken(accessToken);
   }, [accessToken]);
 
-  function addArtistId(artistIds) {
-    const isAdded = artistId.find((id) => id == artistIds);
-    const foundArtistId = artistId.findIndex((id) => id == artistIds);
-    if (isAdded) {
-      artistId.splice(foundArtistId, 1);
-      // toast.error("This artist is already added");
-    }
-    if (artistId.length >= 10)
-      toast.error("A maximum of 10 artists is allowed");
-    if (isAdded || artistId.length >= 10) return;
-    //NOTE maybe throw a pop error of some sort here
-    setArtistId((artistId) => [...artistId, artistIds]);
+  function addArtistId(artist) {
+    // const isAdded = artistName.find((name) => name == artist);
+    // const foundArtistId = artistName.findIndex((name) => name == artist);
+    // if (isAdded) {
+    //   const newName = artistName.filter((name) => name !== isAdded);
+    //   setArtistName(newName);
+    // }
+    // if (artistName.length >= 1) toast.error("A maximum of 1 artist is allowed");
+    // if (isAdded || artistName.length > 1) return;
+    // //NOTE maybe throw a pop error of some sort here
+    setArtistName(artist);
   }
-  console.log(artistId);
-
+  console.log(artistName);
   function getReccomendationsBasedOnArtists() {
     if (!accessToken) return;
-    if (sessionStorage.getItem("artistIds")) {
-      sessionStorage.removeItem("artistIds");
-    }
-    sessionStorage.setItem("artistIds", `${artistId}`);
+    sessionStorage.setItem("artistName", `${artistName}`);
+    sessionStorage.setItem("artistTopSong", `${artistTopSong}`);
     //TODO when navigating for the first time per user, the queue does not work. I suspect that this is because spotify is not technically playing anything at the start of a user's session.
+  }
+
+  async function getTopSong(artistId) {
+    const topSongs = await spotifyApi.getArtistTopTracks(artistId, "US");
+    setArtistTopSong(topSongs.body.tracks[0].name);
   }
 
   useEffect(() => {
@@ -53,7 +53,7 @@ export default function SearchArtistsSheet({ accessToken, handler }) {
     if (!accessToken) return;
 
     let cancel = false;
-    spotifyApi.searchArtists(search, { limit: 4 }).then((res) => {
+    spotifyApi.searchArtists(search, { limit: 1 }).then((res) => {
       if (cancel) return;
       setSearchResults(
         res.body.artists.items.map((artist) => {
@@ -88,7 +88,8 @@ export default function SearchArtistsSheet({ accessToken, handler }) {
                 key={artist.id}
                 className="w-full flex justify-center"
                 onClick={() => {
-                  addArtistId(artist.id);
+                  addArtistId(artist.artist);
+                  getTopSong(artist.id);
                 }}
               >
                 <ArtistSearchResult artist={artist} />
@@ -97,16 +98,21 @@ export default function SearchArtistsSheet({ accessToken, handler }) {
           </div>
           <div className="w-full fixed bottom-4 flex justify-end mt-5">
             <div>
-              <Button
-                onClick={() => {
-                  getReccomendationsBasedOnArtists();
-                  handler();
-                }}
-                className={"me-5"}
-              >
-                Get Reccomendations{" "}
-                <p className="m-0 ms-2 text-slate-400">{artistId.length}</p>
-              </Button>
+              {artistName.length > 0 ? (
+                <Button
+                  onClick={() => {
+                    getReccomendationsBasedOnArtists();
+                    handler();
+                  }}
+                  className={"me-5"}
+                >
+                  Get Reccomendations{" "}
+                </Button>
+              ) : (
+                <Button className={"me-5"} variant={"destructive"}>
+                  Choose an Artist{" "}
+                </Button>
+              )}
             </div>
           </div>
         </div>

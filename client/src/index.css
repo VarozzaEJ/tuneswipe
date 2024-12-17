@@ -98,9 +98,12 @@
 html {
   background-color: (15 23 42 / var(--tw-bg-opacity));
   overscroll-behavior: none;
+  overflow-x: hidden;
 }
 body {
   overscroll-behavior: none;
+  overflow-x: hidden;
+  position: relative;
 }
 .prevent-select {
   -webkit-user-select: none; /* Safari */
@@ -109,5 +112,5 @@ body {
 }
 
 :root {
-  /* overflow: hidden; */
+  overflow: hidden;
 }
