@@ -177,10 +177,20 @@ export default function MusicPlayerCard({ trackIds }) {
             <div className="h-20 flex flex-col justify-center bg-slate-800 rounded-sm shadow-sm">
               <div className=" mx-4 flex justify-between">
                 <div className="grid grid-cols-12">
-                  <div className="col-span-12 truncate">
-                    <span className="text-2xl truncate text-nowrap">
-                      {tracks[currentIndex].name}
-                    </span>
+                  <div className="col-span-12 overflow-scroll text-nowrap con">
+                    {tracks[currentIndex].name.length > 30 ? (
+                      <div className="link_animated">
+                        <span className="text-2xl ">
+                          {tracks[currentIndex].name}
+                        </span>
+                      </div>
+                    ) : (
+                      <div>
+                        <span className="text-2xl ">
+                          {tracks[currentIndex].name}
+                        </span>
+                      </div>
+                    )}
                   </div>
                   <div className="col-span-12">
                     <div className="grid grid-cols-12 items-center gap-6 sm:gap-1">
@@ -188,9 +198,11 @@ export default function MusicPlayerCard({ trackIds }) {
                         <Icon path={mdiSpotify} color="white" size={1} />
                       </div>
                       <div className="col-span-10">
-                        <span className="text-xl  text-slate-500 cursor-pointer hover:text-slate-200 delay-75 transition-all ease-in-out truncate">
-                          {tracks[currentIndex].artists[0].name}
-                        </span>
+                        <a href={tracks[currentIndex].external_urls.spotify}>
+                          <span className="text-xl  text-slate-500 cursor-pointer hover:text-slate-200 delay-75 transition-all ease-in-out ">
+                            {tracks[currentIndex].artists[0].name}
+                          </span>
+                        </a>
                       </div>
                     </div>
                   </div>
