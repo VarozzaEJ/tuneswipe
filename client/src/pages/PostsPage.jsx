@@ -48,7 +48,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { AppState } from "../AppState.js";
-import useGenerateRandomColor from "../models/TailwindColor.js";
+import ReportPostForm from "../components/ReportPostForm.tsx";
 import { toast } from "sonner";
 import {
   Drawer,
@@ -61,6 +61,15 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { useForm } from "react-hook-form";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z, ZodType } from "zod";
 import { commentsService } from "../services/CommentsService.js";
@@ -190,7 +199,6 @@ export default function PostsPage() {
                     <PopoverTrigger
                       onClick={() => {
                         setAccountSet(!accountSet);
-                        console.log("working");
                       }}
                     >
                       <Icon
@@ -201,11 +209,16 @@ export default function PostsPage() {
                         className="cursor-pointer"
                       />
                     </PopoverTrigger>
-                    <PopoverContent className={"w-36 flex justify-center"}>
+                    <PopoverContent
+                      className={"w-36 flex flex-col justify-center"}
+                    >
                       {account?.id == post.creator.id && (
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
-                            <Button variant={"destructive"} className="w-full">
+                            <Button
+                              variant={"destructive"}
+                              className="w-full mb-2"
+                            >
                               <Icon path={mdiDelete} color="black" size={1} />
                             </Button>
                           </AlertDialogTrigger>
@@ -242,6 +255,25 @@ export default function PostsPage() {
                           </AlertDialogContent>
                         </AlertDialog>
                       )}
+                      <Dialog>
+                        <DialogTrigger>
+                          <Button asChild>
+                            <span>Report Post</span>
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent
+                          className={"bg-slate-800 rounded-sm w-5/6"}
+                        >
+                          <DialogTitle>Report Post</DialogTitle>
+                          <DialogDescription>
+                            Provide details of this report.
+                          </DialogDescription>
+                          <ReportPostForm
+                            postId={post.id}
+                            postCreatorId={post.creator.id}
+                          />
+                        </DialogContent>
+                      </Dialog>
                     </PopoverContent>
                   </Popover>
                 </div>

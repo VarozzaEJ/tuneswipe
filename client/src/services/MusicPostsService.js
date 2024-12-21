@@ -37,6 +37,11 @@ class MusicPostsService {
       console.error(error)
     }
   }
+
+  async reportPost(reportData) {
+    const response = await api.post('/create/report', reportData)
+    console.log(response)
+  }
 }
 
 export const musicPostsService = new MusicPostsService();
