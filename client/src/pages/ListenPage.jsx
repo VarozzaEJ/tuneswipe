@@ -145,6 +145,9 @@ export default function ListenPage() {
     if (currentIndex > 1) {
       addSongToQueue(recommendations[currentIndex - 2].uri);
     }
+    if (likeSongIndex == 19) {
+      setRecommendedMusicOpen(true);
+    }
     updateCurrentIndex(index - 1);
     setLastSwipedURI(songURI);
   };
@@ -166,6 +169,7 @@ export default function ListenPage() {
 
   // increase current index and show card
   const goBack = async () => {
+    //FIXME going back more than one time does not work!!!!
     if (likeSongIndex == 0) return;
     const newIndex = currentIndex + 1;
     setCurrentSongIndex(currentSongIndex - 1);
@@ -188,7 +192,6 @@ export default function ListenPage() {
         //FIXME problem with isReady
       },
       function (err) {
-        //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
         isReady = false;
         console.error("Something went wrong!", err);
         const isExpired = err.message.includes("expired");
