@@ -98,11 +98,16 @@ export default function PostsPage() {
   const [accountSet, setAccountSet] = useState(false);
   const [account, setAccount] = useState({});
   const { render, comment } = useCommentForm();
+  const [reportPostFormOpen, setReportPostFormOpen] = useState(false);
 
   useEffect(() => {
-    if (!AppState.account) return;
+    if (!AppState.account?.id) return;
     setAccount(AppState.account);
   }, [accountSet]);
+
+  const handleCount = () => {
+    setReportPostFormOpen(!reportPostFormOpen);
+  };
 
   useEffect(() => {
     getAllPosts();
@@ -146,7 +151,7 @@ export default function PostsPage() {
       toast.error(error);
     }
   };
-
+  console.log(account);
   const deleteComment = async (commentId) => {
     try {
       await commentsService.deleteComment(commentId);
@@ -194,88 +199,108 @@ export default function PostsPage() {
                     <span>{post.fromNow}</span>
                   </div>
                 </div>
-                <div>
-                  <Popover>
-                    <PopoverTrigger
-                      onClick={() => {
-                        setAccountSet(!accountSet);
-                      }}
-                    >
+                <div
+                  onClick={() => {
+                    setAccountSet(!accountSet);
+                  }}
+                >
+                  {account.id ? (
+                    <Popover>
+                      <PopoverTrigger
+                        asChild
+                        onClick={() => {
+                          setAccountSet(!accountSet);
+                        }}
+                      >
+                        <Icon
+                          title="Open Options Menu"
+                          path={mdiDotsHorizontal}
+                          size={1.4}
+                          color="white"
+                          className="cursor-pointer"
+                        />
+                      </PopoverTrigger>
+                      <PopoverContent
+                        className={"w-36 flex flex-col justify-center"}
+                      >
+                        {account?.id == post.creator.id && (
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant={"destructive"}
+                                className="w-full mb-2 focus-within:ring-0 focus-visible:ring-0"
+                              >
+                                <Icon path={mdiDelete} color="black" size={1} />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent
+                              className={"bg-slate-900 rounded-sm w-5/6"}
+                            >
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Are you absolutely sure?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This action cannot be undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel
+                                  className={
+                                    "hover:bg-accent hover:text-accent-foreground bg-transparent border-none"
+                                  }
+                                >
+                                  Cancel
+                                </AlertDialogCancel>
+                                <AlertDialogAction
+                                  className={
+                                    "bg-destructive hover:bg-destructive/80"
+                                  }
+                                  onClick={() => {
+                                    deletePost(post.id);
+                                  }}
+                                >
+                                  Continue
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        )}
+                        <Dialog
+                          open={reportPostFormOpen}
+                          onOpenChange={setReportPostFormOpen}
+                        >
+                          <DialogTrigger>
+                            <Button asChild>
+                              <span>Report Post</span>
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent
+                            className={"bg-slate-800 rounded-sm w-5/6"}
+                          >
+                            <DialogTitle>Report Post</DialogTitle>
+                            <DialogDescription>
+                              Provide details of this report.
+                            </DialogDescription>
+                            <ReportPostForm
+                              postId={post.id}
+                              handler={handleCount}
+                              postCreatorId={post.creator.id}
+                            />
+                          </DialogContent>
+                        </Dialog>
+                      </PopoverContent>
+                    </Popover>
+                  ) : (
+                    <div>
                       <Icon
-                        title="Open Options Menu"
                         path={mdiDotsHorizontal}
                         size={1.4}
                         color="white"
                         className="cursor-pointer"
                       />
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className={"w-36 flex flex-col justify-center"}
-                    >
-                      {account?.id == post.creator.id && (
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button
-                              variant={"destructive"}
-                              className="w-full mb-2"
-                            >
-                              <Icon path={mdiDelete} color="black" size={1} />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent
-                            className={"bg-slate-900 rounded-sm w-5/6"}
-                          >
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>
-                                Are you absolutely sure?
-                              </AlertDialogTitle>
-                              <AlertDialogDescription>
-                                This action cannot be undone.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel
-                                className={
-                                  "hover:bg-accent hover:text-accent-foreground bg-transparent border-none"
-                                }
-                              >
-                                Cancel
-                              </AlertDialogCancel>
-                              <AlertDialogAction
-                                className={
-                                  "bg-destructive hover:bg-destructive/80"
-                                }
-                                onClick={() => {
-                                  deletePost(post.id);
-                                }}
-                              >
-                                Continue
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      )}
-                      <Dialog>
-                        <DialogTrigger>
-                          <Button asChild>
-                            <span>Report Post</span>
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent
-                          className={"bg-slate-800 rounded-sm w-5/6"}
-                        >
-                          <DialogTitle>Report Post</DialogTitle>
-                          <DialogDescription>
-                            Provide details of this report.
-                          </DialogDescription>
-                          <ReportPostForm
-                            postId={post.id}
-                            postCreatorId={post.creator.id}
-                          />
-                        </DialogContent>
-                      </Dialog>
-                    </PopoverContent>
-                  </Popover>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="flex justify-center">

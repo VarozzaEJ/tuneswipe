@@ -3,6 +3,11 @@ import { Forbidden } from "../utils/Errors.js"
 
 
 class MusicPostService {
+    async reportPost(reportData) {
+        const report = await dbContext.PostReports.create(reportData)
+        await report.populate('creator')
+        return report
+    }
     async deletePost(userId, musicPostId) {
         const musicPost = await this.getMusicPostById(musicPostId)
         if (musicPost.creatorId != userId) throw new Forbidden("You cannot delete a post you didn't create.")

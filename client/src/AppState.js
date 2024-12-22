@@ -14,6 +14,9 @@ class ObservableAppState {
   /** @type {import('./models/Comment.js').Comment[]} user info from the database*/
   comments = []
 
+  /** @type {import('./models/PostReport.js').PostReport[]} user info from the database*/
+  postReports = []
+
   constructor() {
     makeAutoObservable(this)
   }

@@ -1,5 +1,6 @@
 import { AppState } from "../AppState.js";
 import { MusicPost } from "../models/MusicPost.js";
+import { PostReport } from "../models/PostReport.js";
 import { api } from "./AxiosService.js";
 
 class MusicPostsService {
@@ -40,7 +41,9 @@ class MusicPostsService {
 
   async reportPost(reportData) {
     const response = await api.post('/create/report', reportData)
-    console.log(response)
+    const report = new PostReport(response.data)
+    AppState.postReports.push(report)
+    return report
   }
 }
 

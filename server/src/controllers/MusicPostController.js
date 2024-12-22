@@ -49,6 +49,9 @@ export class MusicPostController extends BaseController {
         try {
             const userId = request.userInfo.id
             request.body.creatorId = userId
+            const report = await musicPostsService.reportPost(request.body)
+            response.send(report)
+
         } catch (error) {
             next(error)
         }

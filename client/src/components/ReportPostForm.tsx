@@ -36,8 +36,7 @@ const formSchema : ZodType<FormData> = z.object({
  postCreatorId: z.string().optional(),
 });
 
-export default function ReportPostForm({postId, postCreatorId}) {
-
+export default function ReportPostForm({postId, postCreatorId, handler}) {
     // const {handleSubmit, register, resetField, setValue, getValues} = useForm<FormData>({resolver: zodResolver(formSchema)})
      const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -53,7 +52,13 @@ export default function ReportPostForm({postId, postCreatorId}) {
         data.postId = postId
         data.postCreatorId = postCreatorId
         console.log(data)
-        await musicPostsService.reportPost(data)
+        const report = await musicPostsService.reportPost(data)
+        if(report) {
+            toast.success("Report Recieved!")
+            handler()
+        } else {
+            toast.error("Error!")
+        }
     }
 
   return (
@@ -121,7 +126,9 @@ export default function ReportPostForm({postId, postCreatorId}) {
             </FormItem>
           )}
           />
+          <div className='w-full flex justify-end'>
         <Button type="submit">Submit</Button>
+          </div>
       </form>
     </Form>
           </>
