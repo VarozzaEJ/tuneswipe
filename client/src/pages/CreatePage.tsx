@@ -117,7 +117,9 @@ const formSchema : ZodType<FormData> = z.object({
   }).max(1000, {
     message: "Character limit must not exceed 1000"
   }).optional(),
-  color: z.string()
+  color: z.string({message: "Color is required"}).min(2, {
+    message: "Color is required"
+  })
 });
 
 export default function CreatePage() {
@@ -200,7 +202,8 @@ export default function CreatePage() {
   }
 
   //TODO make only tracks possible or pictures. A user shouldn't be able to use both in the same form submission
-  const {register, handleSubmit, getValues, resetField} = useForm<FormData>({resolver: zodResolver(formSchema)})
+  const {register, handleSubmit, getValues, formState: {errors}, resetField} = useForm<FormData>({resolver: zodResolver(formSchema)})
+
   const submitForm = async (data: FormData) => {
     if(!isUsingPicture) {
       data.trackIds = chosenSongIds
@@ -241,6 +244,7 @@ const pictureValue = getValues().picture
   }, [pictureValue])
 
   
+if(errors) console.log(errors)
 
   const checkPictureValue = () => {
     const pictureValue = getValues()
@@ -306,6 +310,13 @@ const pictureValue = getValues().picture
                 </div>
               ))
               }
+              {errors.color && <div>
+                <span className="text-destructive">
+                {errors.color.message}
+                </span>
+                </div>
+                }
+              {errors.textComment && <div><span className="text-destructive">{errors.textComment.message}</span></div>}
               </div>
                 <div>
                   <div className="flex justify-center">
@@ -478,8 +489,16 @@ const pictureValue = getValues().picture
                 <DialogTrigger asChild>
                   <Button className="">
                     <div className="flex flex-col text-slate-400 hover:text-slate-300 transition-all ease-in-out justify-center items-center">
-                      <Icon path={mdiPalette} color="white" size={1} />
-                      <span className=" mt-1">Color</span>
+                      
+                      {errors.color ? 
+                      <>
+                      <Icon path={mdiPalette} color="red" size={1} />  <span className="text-destructive mt-1">Color</span> 
+                      </>
+                      : <>
+                      <Icon path={mdiPalette} color="white" size={1} /> <span className=" mt-1">Color</span>
+                      </>
+                      }
+                     
                     </div>
                   </Button>
                 </DialogTrigger>
