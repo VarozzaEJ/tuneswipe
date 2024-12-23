@@ -76,6 +76,7 @@ import { commentsService } from "../services/CommentsService.js";
 import useAuth from "../services/useAuth.js";
 import SpotifyLogin from "../components/ui/SpotifyLogin.jsx";
 import useCommentForm from "../components/CommentForm.tsx";
+import DisabledCommentForm from "../components/DisabledCommentForm.jsx";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: `${import.meta.env.VITE_CLIENT_ID}`,
@@ -307,17 +308,21 @@ export default function PostsPage() {
                 <span className="text-xl">{post.textComment}</span>
               </div>
             </CardHeader>
-            <CardContent>
-              {post.trackIds.length > 0 && (
-                <MusicPlayerCard
-                  // accessToken={accessToken}
-                  trackIds={post.trackIds}
-                />
-              )}
-              {post.picture && (
-                <img src={post.picture} className="rounded-sm" />
-              )}
-            </CardContent>
+            {post.trackIds.length > 0 || post.picture ? (
+              <CardContent>
+                {post.trackIds.length > 0 && (
+                  <MusicPlayerCard
+                    // accessToken={accessToken}
+                    trackIds={post.trackIds}
+                  />
+                )}
+                {post.picture && (
+                  <img src={post.picture} className="rounded-sm" />
+                )}
+              </CardContent>
+            ) : (
+              <div></div>
+            )}
             <CardFooter>
               <div className="flex">
                 <Drawer>
@@ -326,6 +331,7 @@ export default function PostsPage() {
                       setPostComments([]);
                       setFocusedPostId(post.id);
                       getPostComments(post.id);
+                      setAccountSet(!accountSet);
                     }}
                   >
                     <Icon path={mdiChatOutline} color="white" size={1} />
@@ -496,18 +502,42 @@ export default function PostsPage() {
                         </div>
                       </>
                     )}
-                    {postComments.length <= 6 ? (
-                      <DrawerFooter
-                        className={"fixed bg-primary bottom-0 w-full"}
-                      >
-                        {render({ postId: focusedPostId })}
-                      </DrawerFooter>
+                    {account.id ? (
+                      <div>
+                        {postComments.length <= 6 ? (
+                          <DrawerFooter
+                            className={"fixed bg-primary bottom-0 w-full"}
+                          >
+                            {render({
+                              postId: focusedPostId,
+                            })}
+                          </DrawerFooter>
+                        ) : (
+                          <DrawerFooter
+                            className={"sticky bg-primary bottom-0 w-full"}
+                          >
+                            {render({
+                              postId: focusedPostId,
+                            })}
+                          </DrawerFooter>
+                        )}
+                      </div>
                     ) : (
-                      <DrawerFooter
-                        className={"sticky bg-primary bottom-0 w-full"}
-                      >
-                        {render({ postId: focusedPostId })}
-                      </DrawerFooter>
+                      <div>
+                        {postComments.length <= 6 ? (
+                          <DrawerFooter
+                            className={"fixed bg-primary bottom-0 w-full"}
+                          >
+                            <DisabledCommentForm />
+                          </DrawerFooter>
+                        ) : (
+                          <DrawerFooter
+                            className={"sticky bg-primary bottom-0 w-full"}
+                          >
+                            <DisabledCommentForm />
+                          </DrawerFooter>
+                        )}
+                      </div>
                     )}
                   </DrawerContent>
                 </Drawer>
