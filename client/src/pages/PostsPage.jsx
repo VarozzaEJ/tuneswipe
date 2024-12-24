@@ -49,6 +49,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { AppState } from "../AppState.js";
 import ReportPostForm from "../components/ReportPostForm.tsx";
+import ReportCommentForm from "../components/ReportCommentForm.tsx";
 import { toast } from "sonner";
 import {
   Drawer,
@@ -100,6 +101,9 @@ export default function PostsPage() {
   const [account, setAccount] = useState({});
   const { render, comment } = useCommentForm();
   const [reportPostFormOpen, setReportPostFormOpen] = useState(false);
+  const [reportCommentFormOpen, setReportCommentFormOpen] = useState(false);
+  const [extraCommentOptionsDrawerOpen, setExtraCommentOptionsDrawerOpen] =
+    useState(false);
 
   useEffect(() => {
     if (!AppState.account?.id) return;
@@ -108,6 +112,12 @@ export default function PostsPage() {
 
   const handleCount = () => {
     setReportPostFormOpen(!reportPostFormOpen);
+  };
+  const handleCount2 = () => {
+    setReportCommentFormOpen(!reportCommentFormOpen);
+  };
+  const handleCount3 = () => {
+    setExtraCommentOptionsDrawerOpen(!extraCommentOptionsDrawerOpen);
   };
 
   useEffect(() => {
@@ -398,7 +408,12 @@ export default function PostsPage() {
                                 </div>
                                 <div className="flex">
                                   <div>
-                                    <Drawer>
+                                    <Drawer
+                                      open={extraCommentOptionsDrawerOpen}
+                                      onOpenChange={
+                                        setExtraCommentOptionsDrawerOpen
+                                      }
+                                    >
                                       <DrawerTrigger>
                                         <Icon
                                           path={mdiDotsHorizontal}
@@ -413,6 +428,7 @@ export default function PostsPage() {
                                             <DrawerTitle>
                                               More Options
                                             </DrawerTitle>
+                                            <DrawerDescription></DrawerDescription>
                                           </div>
                                           <div className="col-span-1 flex justify-end items-center">
                                             <DrawerClose>
@@ -425,18 +441,47 @@ export default function PostsPage() {
                                             </DrawerClose>
                                           </div>
                                         </div>
-                                        <div className="flex mx-5 mb-5">
-                                          <div>
-                                            <Icon
-                                              path={mdiFlagOutline}
-                                              color="white"
-                                              size={1}
+                                        <Dialog
+                                          open={reportCommentFormOpen}
+                                          onOpenChange={
+                                            setReportCommentFormOpen
+                                          }
+                                        >
+                                          <DialogTrigger asChild>
+                                            <div className="flex cursor-pointer mx-5 mb-5">
+                                              <div>
+                                                <Icon
+                                                  path={mdiFlagOutline}
+                                                  color="white"
+                                                  size={1}
+                                                />
+                                              </div>
+                                              <div className="ms-2">
+                                                <span>Report</span>
+                                              </div>
+                                            </div>
+                                          </DialogTrigger>
+                                          <DialogContent
+                                            className={
+                                              "bg-slate-800 rounded-sm w-5/6"
+                                            }
+                                          >
+                                            <DialogTitle>
+                                              Report Comment
+                                            </DialogTitle>
+                                            <DialogDescription>
+                                              Provide details of this report.
+                                            </DialogDescription>
+                                            <ReportCommentForm
+                                              handler={handleCount2}
+                                              handler2={handleCount3}
+                                              commentId={comment.id}
+                                              commentCreatorId={
+                                                comment.creator.id
+                                              }
                                             />
-                                          </div>
-                                          <div className="ms-2">
-                                            <span>Report</span>
-                                          </div>
-                                        </div>
+                                          </DialogContent>
+                                        </Dialog>
 
                                         {AppState.account?.id ==
                                           comment.creator.id && (

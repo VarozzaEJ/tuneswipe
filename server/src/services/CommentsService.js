@@ -4,6 +4,11 @@ import { Forbidden } from "../utils/Errors.js"
 
 
 class CommentsService {
+    async reportComment(reportData) {
+        const report = await dbContext.CommentReports.create(reportData)
+        await report.populate('creator')
+        return report
+    }
     async getPostComments(postId) {
         const comments = await dbContext.Comments.find({ postId }).populate('creator')
         return comments

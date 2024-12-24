@@ -1,5 +1,6 @@
 import { AppState } from "../AppState.js"
 import { Comment } from "../models/Comment.js"
+import { CommentReport } from "../models/CommentReport.js"
 import { api } from "./AxiosService.js"
 
 class CommentsService {
@@ -19,6 +20,13 @@ class CommentsService {
         const newComment = new Comment(response.data)
         AppState.comments.unshift(newComment)
         return newComment
+    }
+
+    async reportComment(reportData) {
+        const response = await api.post('api/comments/report', reportData)
+        const report = new CommentReport(response.data)
+        AppState.commentReports.push(report)
+        return report
     }
 }
 

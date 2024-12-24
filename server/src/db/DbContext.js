@@ -4,6 +4,7 @@ import { ValueSchema } from '../models/Value'
 import { MusicPostSchema } from '../models/MusicPost.js';
 import { CommentSchema } from '../models/Comment.js';
 import { PostReportSchema } from '../models/PostReport.js';
+import { CommentReportSchema } from '../models/CommentReport.js';
 
 class DbContext {
   Values = mongoose.model('Value', ValueSchema);
@@ -14,6 +15,8 @@ class DbContext {
   MusicPosts = mongoose.model('MusicPost', MusicPostSchema)
 
   PostReports = mongoose.model('PostReport', PostReportSchema)
+
+  CommentReports = mongoose.model('CommentReport', CommentReportSchema)
 }
 
 export const dbContext = new DbContext()
