@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import React, { useEffect, useState } from "react";
 import { AppState } from "../AppState.js";
 import Icon from "@mdi/react";
-import { mdiAccount, mdiChatOutline, mdiHomeOutline, mdiImage, mdiPencilPlusOutline } from "@mdi/js";
+import { mdiAccount, mdiAccountOutline, mdiChatOutline, mdiChevronRight, mdiHomeOutline, mdiImage, mdiPencilPlusOutline } from "@mdi/js";
 import Login from "../components/Login.jsx";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,21 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { z, ZodType } from "zod";
@@ -123,6 +138,57 @@ function AccountPage() {
               </form>
             </SheetContent>
           </Sheet>
+          <Drawer>
+            <DrawerTrigger asChild>
+                  <Button className="w-full bg-inherit" variant={"outline"}>See Reported Items</Button>
+            </DrawerTrigger>
+            <DrawerContent className="bg-slate-800">
+              <DrawerClose>
+
+              </DrawerClose>
+              <DrawerTitle className="mt-3 text-center">Reports</DrawerTitle>
+              <DrawerDescription></DrawerDescription>
+              <div className="mt-3 flex w-full justify-center">
+                <Popover>
+                  <PopoverTrigger asChild>
+
+                  <div className="w-11/12 border cursor-pointer ease-in-out transition-all hover:border-slate-200 border-t-0 border-s-0 border-e-0 mb-3 border-slate-400 h-20">
+                  <div className="flex items-center justify-between h-20">
+                    <div className="flex">
+
+                    <div className="flex justify-center border border-slate-400 w-10 h-10 items-center">
+                      <Icon path={mdiAccountOutline} color="white"/>
+                    </div>
+                    <div className="ms-2">
+
+                      <div>
+                        <span className="text-slate-400">Comment - Three Days Ago</span>
+                      </div>
+                      <div>
+                        <span>You reported Eggin's Comment</span>
+                      </div>
+                    </div>
+                      {/* FIXME put the reason and description behind a sheet or somethin */}
+
+                    </div>
+                        <div className="cursor-pointer">
+                          <Icon path={mdiChevronRight} color={"gray"} size={1}/>
+                        </div>
+                  </div>
+                  </div>
+                        </PopoverTrigger>
+                        <PopoverContent side={"top"} className="bg-slate-800 text-slate-200">
+                          <div>
+                            <span>Reason: Harrassment</span>
+                          </div>
+                          <div>
+                            <span>Description: This guy called me a mean name</span>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+              </div>
+            </DrawerContent>
+          </Drawer>
         </div>
         <div className="p-5 flex justify-center">
           <Button onClick={logout} className="w-full sm:w-80" variant={"destructive"}>
