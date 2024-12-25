@@ -104,6 +104,7 @@ export default function PostsPage() {
   const [reportCommentFormOpen, setReportCommentFormOpen] = useState(false);
   const [extraCommentOptionsDrawerOpen, setExtraCommentOptionsDrawerOpen] =
     useState(false);
+  const [extraOptionsPopoverOpen, setExtraOptionsPopoverOpen] = useState(false);
 
   useEffect(() => {
     if (!AppState.account?.id) return;
@@ -118,6 +119,9 @@ export default function PostsPage() {
   };
   const handleCount3 = () => {
     setExtraCommentOptionsDrawerOpen(!extraCommentOptionsDrawerOpen);
+  };
+  const handleCount4 = () => {
+    setExtraOptionsPopoverOpen(!extraOptionsPopoverOpen);
   };
 
   useEffect(() => {
@@ -162,7 +166,6 @@ export default function PostsPage() {
       toast.error(error);
     }
   };
-  console.log(account);
   const deleteComment = async (commentId) => {
     try {
       await commentsService.deleteComment(commentId);
@@ -179,7 +182,6 @@ export default function PostsPage() {
       toast.error(error);
     }
   };
-  console.log(accountSet);
   return (
     <>
       <div className="">
@@ -296,6 +298,7 @@ export default function PostsPage() {
                             <ReportPostForm
                               postId={post.id}
                               handler={handleCount}
+                              handler2={handleCount4}
                               postCreator={post.creator.name}
                             />
                           </DialogContent>

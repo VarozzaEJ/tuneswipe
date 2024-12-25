@@ -36,7 +36,7 @@ const formSchema : ZodType<FormData> = z.object({
  postCreatorName: z.string().optional(),
 });
 
-export default function ReportPostForm({postId, postCreator, handler}) {
+export default function ReportPostForm({postId, postCreator, handler, handler2}) {
     // const {handleSubmit, register, resetField, setValue, getValues} = useForm<FormData>({resolver: zodResolver(formSchema)})
      const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -56,6 +56,7 @@ export default function ReportPostForm({postId, postCreator, handler}) {
         if(report) {
             toast.success("Report Recieved!")
             handler()
+            handler2()
         } else {
             toast.error("Error!")
         }

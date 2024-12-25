@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import React, { useEffect, useState } from "react";
 import { AppState } from "../AppState.js";
 import Icon from "@mdi/react";
-import { mdiAccount, mdiAccountOutline, mdiChatOutline, mdiChevronRight, mdiHomeOutline, mdiImage, mdiPencilPlusOutline } from "@mdi/js";
+import { mdiAccount, mdiAccountOutline, mdiChatOutline, mdiChevronRight, mdiHomeOutline, mdiImage, mdiLoading, mdiPencilPlusOutline } from "@mdi/js";
 import Login from "../components/Login.jsx";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -91,12 +91,13 @@ function AccountPage() {
   }
 
   async function getYourReports() {
-    const reports = await musicPostsService.findReportedPosts()
-    const commentReports = await commentsService.findReportedComments()
-    setReports(reports)
-    setReports((report) => [...report, ...commentReports])
+    setTimeout(async () => {
+      const reports = await musicPostsService.findReportedPosts()
+      const commentReports = await commentsService.findReportedComments()
+      setReports(reports)
+      setReports((report) => [...report, ...commentReports])
+    }, 2000)
   }
-  console.log(reports)
 
   return (
     <div className="h-screen">
@@ -161,8 +162,8 @@ function AccountPage() {
               </DrawerClose>
               <DrawerTitle className="mt-3 text-center">Reports</DrawerTitle>
               <DrawerDescription></DrawerDescription>
-              <div className="mt-3 flex flex-col items-center w-full justify-center">
-                {reports.length !== 0 && 
+              <div className="mt-3 flex flex-col items-center w-full overflow-y-scroll justify-center">
+                {reports.length !== 0 ? 
                 reports.map((report, index) => (
                   
                 <Popover key={report.id}>
@@ -202,6 +203,10 @@ function AccountPage() {
                         </PopoverContent>
                 </Popover>
                 ))
+                :
+                <div>
+                  <Icon path={mdiLoading} spin size={3}/>
+                </div>
                 }
               </div>
             </DrawerContent>
