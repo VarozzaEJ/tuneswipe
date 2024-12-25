@@ -45,6 +45,13 @@ class MusicPostsService {
     AppState.postReports.push(report)
     return report
   }
+
+  async findReportedPosts() {
+    const response = await api.get('/create/report')
+    const mappedReports = response.data.map((reportPOJO) => new PostReport(reportPOJO))
+    console.log(mappedReports)
+    return mappedReports
+  }
 }
 
 export const musicPostsService = new MusicPostsService();

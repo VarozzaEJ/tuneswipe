@@ -3,11 +3,14 @@ import { Account } from "./Account.js"
 export class PostReport {
     constructor(data) {
         this.creatorId = data.creatorId
+        this.id = data.id
         this.type = data.type
         this.description = data.description
         this.postId = data.postId
-        this.postCreatorId = data.postCreatorId
+        this.creatorName = data.postCreatorName
         this.createdAt = new Date(data.createdAt)
-        this.creator = new Account(data.creator)
+        this.postOrComment = "post"
     }
+
+
 }

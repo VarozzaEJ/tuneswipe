@@ -12,6 +12,7 @@ export class MusicPostController extends BaseController {
             .post('', this.createMusicPost)
             .delete('/:musicPostId', this.deletePost)
             .post('/report', this.reportPost)
+            .get('/report', this.getReportedPosts)
     }
 
     async createMusicPost(request, response, next) {
@@ -52,6 +53,16 @@ export class MusicPostController extends BaseController {
             const report = await musicPostsService.reportPost(request.body)
             response.send(report)
 
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async getReportedPosts(request, response, next) {
+        try {
+            const userId = request.userInfo.id
+            const reportedPosts = await musicPostsService.getReportedPosts(userId)
+            response.send(reportedPosts)
         } catch (error) {
             next(error)
         }

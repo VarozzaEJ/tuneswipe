@@ -22,7 +22,7 @@ type FormData = {
     description: string;
     type: string;
     postId: string;
-    postCreatorId: string;
+    postCreatorName: string;
 }
 
 const formSchema : ZodType<FormData> = z.object({
@@ -33,10 +33,10 @@ const formSchema : ZodType<FormData> = z.object({
   }),
  type: z.enum(["vulgar language", "nudity", "harrassment", "other"]),
  postId: z.string().optional(),
- postCreatorId: z.string().optional(),
+ postCreatorName: z.string().optional(),
 });
 
-export default function ReportPostForm({postId, postCreatorId, handler}) {
+export default function ReportPostForm({postId, postCreator, handler}) {
     // const {handleSubmit, register, resetField, setValue, getValues} = useForm<FormData>({resolver: zodResolver(formSchema)})
      const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -50,7 +50,7 @@ export default function ReportPostForm({postId, postCreatorId, handler}) {
 
     async function onSubmit(data: z.infer<typeof formSchema>) {
         data.postId = postId
-        data.postCreatorId = postCreatorId
+        data.postCreatorName = postCreator
         console.log(data)
         const report = await musicPostsService.reportPost(data)
         if(report) {

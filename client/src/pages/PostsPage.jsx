@@ -296,7 +296,7 @@ export default function PostsPage() {
                             <ReportPostForm
                               postId={post.id}
                               handler={handleCount}
-                              postCreatorId={post.creator.id}
+                              postCreator={post.creator.name}
                             />
                           </DialogContent>
                         </Dialog>
@@ -476,8 +476,8 @@ export default function PostsPage() {
                                               handler={handleCount2}
                                               handler2={handleCount3}
                                               commentId={comment.id}
-                                              commentCreatorId={
-                                                comment.creator.id
+                                              commentCreatorName={
+                                                comment.creator.name
                                               }
                                             />
                                           </DialogContent>

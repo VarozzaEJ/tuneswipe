@@ -39,6 +39,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AuthService } from "../services/AuthService.js";
+import {musicPostsService} from "../services/musicPostsService.js"
+import {commentsService} from "../services/commentsService.js"
 
 type FormData = {
   name: string;
@@ -62,6 +64,7 @@ const formSchema: ZodType<FormData> = z.object({
 function AccountPage() {
   const [profilePicture, setProfilePicture] = useState("");
   const [open, setOpen] = useState(false)
+  const [reports, setReports] = useState([])
 
   useEffect(() => {
     if(!AppState.account) return
@@ -86,6 +89,14 @@ function AccountPage() {
     AuthService.logout({});
     window.location.assign('#')
   }
+
+  async function getYourReports() {
+    const reports = await musicPostsService.findReportedPosts()
+    const commentReports = await commentsService.findReportedComments()
+    setReports(reports)
+    setReports((report) => [...report, ...commentReports])
+  }
+  console.log(reports)
 
   return (
     <div className="h-screen">
@@ -140,7 +151,9 @@ function AccountPage() {
           </Sheet>
           <Drawer>
             <DrawerTrigger asChild>
-                  <Button className="w-full bg-inherit" variant={"outline"}>See Reported Items</Button>
+                  <Button onClick={() => {
+                    getYourReports()
+                  }} className="w-full bg-inherit" variant={"outline"}>See Reported Items</Button>
             </DrawerTrigger>
             <DrawerContent className="bg-slate-800">
               <DrawerClose>
@@ -148,8 +161,11 @@ function AccountPage() {
               </DrawerClose>
               <DrawerTitle className="mt-3 text-center">Reports</DrawerTitle>
               <DrawerDescription></DrawerDescription>
-              <div className="mt-3 flex w-full justify-center">
-                <Popover>
+              <div className="mt-3 flex flex-col items-center w-full justify-center">
+                {reports.length !== 0 && 
+                reports.map((report, index) => (
+                  
+                <Popover key={report.id}>
                   <PopoverTrigger asChild>
 
                   <div className="w-11/12 border cursor-pointer ease-in-out transition-all hover:border-slate-200 border-t-0 border-s-0 border-e-0 mb-3 border-slate-400 h-20">
@@ -162,13 +178,12 @@ function AccountPage() {
                     <div className="ms-2">
 
                       <div>
-                        <span className="text-slate-400">Comment - Three Days Ago</span>
+                        <span className="text-slate-400 capitalize">{report.postOrComment} - {report.createdAt.toLocaleDateString()}</span>
                       </div>
                       <div>
-                        <span>You reported Eggin's Comment</span>
+                        <span>You reported {report.creatorName}'s {report.postOrComment}</span>
                       </div>
                     </div>
-                      {/* FIXME put the reason and description behind a sheet or somethin */}
 
                     </div>
                         <div className="cursor-pointer">
@@ -179,13 +194,15 @@ function AccountPage() {
                         </PopoverTrigger>
                         <PopoverContent side={"top"} className="bg-slate-800 text-slate-200">
                           <div>
-                            <span>Reason: Harrassment</span>
+                            <span className=" capitalize">Reason: {report.type}</span>
                           </div>
                           <div>
-                            <span>Description: This guy called me a mean name</span>
+                            <span>Description: {report.description}</span>
                           </div>
                         </PopoverContent>
-                      </Popover>
+                </Popover>
+                ))
+                }
               </div>
             </DrawerContent>
           </Drawer>

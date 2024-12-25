@@ -21,7 +21,7 @@ type FormData = {
 description: string;
 type: string;
 commentId: string;
-commentCreatorId: string;
+commentCreatorName: string;
 }
 
 const formSchema : ZodType<FormData> = z.object({
@@ -32,9 +32,9 @@ message: "Description must not exceed 500 characters"
 }),
 type: z.enum(["vulgar language", "spam", "harrassment", "other"]),
 commentId: z.string().optional(),
-commentCreatorId: z.string().optional(),
+commentCreatorName: z.string().optional(),
 });
-export default function ReportCommentForm({commentId, commentCreatorId, handler, handler2}) {
+export default function ReportCommentForm({commentId, commentCreatorName, handler, handler2}) {
  
     const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -42,7 +42,7 @@ export default function ReportCommentForm({commentId, commentCreatorId, handler,
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
         data.commentId = commentId
-        data.commentCreatorId = commentCreatorId
+        data.commentCreatorName = commentCreatorName
         console.log(data)
         const report = await commentsService.reportComment(data)
         if(report) {

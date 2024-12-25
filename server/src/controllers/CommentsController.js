@@ -12,6 +12,7 @@ export class CommentsController extends BaseController {
             .post('', this.createComment)
             .delete('/:commentId', this.deleteComment)
             .post('/report', this.reportComment)
+            .get('/report/comments', this.getReportedComments)
     }
 
     async getPostComments(request, response, next) {
@@ -54,6 +55,16 @@ export class CommentsController extends BaseController {
             request.body.creatorId = userId
             const report = await commentsService.reportComment(request.body)
             response.send(report)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async getReportedComments(request, response, next) {
+        try {
+            const userId = request.userInfo.id
+            const reportedComments = await commentsService.getReportedComments(userId)
+            response.send(reportedComments)
         } catch (error) {
             next(error)
         }

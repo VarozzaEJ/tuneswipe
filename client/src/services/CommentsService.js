@@ -1,3 +1,4 @@
+import axios from "axios"
 import { AppState } from "../AppState.js"
 import { Comment } from "../models/Comment.js"
 import { CommentReport } from "../models/CommentReport.js"
@@ -27,6 +28,13 @@ class CommentsService {
         const report = new CommentReport(response.data)
         AppState.commentReports.push(report)
         return report
+    }
+
+    async findReportedComments() {
+        const response = await api.get("/api/comments/report/comments")
+        const mappedReports = response.data.map((reportPOJO) => new CommentReport(reportPOJO))
+        console.log(mappedReports)
+        return mappedReports
     }
 }
 

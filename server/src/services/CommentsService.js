@@ -4,6 +4,10 @@ import { Forbidden } from "../utils/Errors.js"
 
 
 class CommentsService {
+    async getReportedComments(creatorId) {
+        const reportedComments = await dbContext.CommentReports.find({ creatorId })
+        return reportedComments
+    }
     async reportComment(reportData) {
         const report = await dbContext.CommentReports.create(reportData)
         await report.populate('creator')

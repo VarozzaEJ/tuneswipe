@@ -4,7 +4,7 @@ export const CommentReportSchema = new Schema({
     creatorId: { type: Schema.ObjectId, ref: 'Account', required: true },
     type: { type: String, required: true },
     description: { type: String, required: true },
-    commentCreatorId: { type: String, required: true },
+    commentCreatorName: { type: String, required: true },
     commentId: { type: String, required: true },
 }, { timestamps: true, toJSON: { virtuals: true } })
 
