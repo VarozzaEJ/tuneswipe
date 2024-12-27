@@ -123,7 +123,7 @@ function AccountPage() {
           <kbd>{AppState.account.email}</kbd>
           <Sheet onOpenChange={setOpen} open={open}>
             <SheetTrigger asChild>
-              <Button variant={"secondary"} className={"w-full sm:w-80"}>
+              <Button variant={"secondary"} className={"w-full  sm:w-80"}>
                 Edit Profile
               </Button>
             </SheetTrigger>
@@ -158,10 +158,10 @@ function AccountPage() {
             <DrawerTrigger asChild>
                   <Button onClick={() => {
                     getYourReports()
-                  }} className="w-full bg-inherit" variant={"outline"}>See Reported Items</Button>
+                  }} className="w-full sm:w-80 bg-inherit" variant={"outline"}>See Reported Items</Button>
             </DrawerTrigger>
-            <DrawerContent className="bg-slate-800">
-              <div className="grid grid-cols-3 sticky items-center bg-inherit -mt-4 mb-4 top-0 ">
+            <DrawerContent className="bg-slate-800 rounded-t-[10px]">
+              <div className="grid grid-cols-3 items-center bg-inherit sticky mt-2 top-0 ">
                       <div className="col-span-1"></div>
                       <div className="col-span-1 h-10 ">
                         <DrawerTitle className="text-center text-2xl mt-1">

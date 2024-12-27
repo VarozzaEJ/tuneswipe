@@ -234,7 +234,9 @@ export default function PostsPage() {
                         />
                       </PopoverTrigger>
                       <PopoverContent
-                        className={"w-36 flex flex-col justify-center"}
+                        className={
+                          "w-36 flex flex-col bg-slate-800 border-none justify-center"
+                        }
                       >
                         {account?.id == post.creator.id && (
                           <AlertDialog>
@@ -283,8 +285,8 @@ export default function PostsPage() {
                           open={reportPostFormOpen}
                           onOpenChange={setReportPostFormOpen}
                         >
-                          <DialogTrigger>
-                            <Button asChild>
+                          <DialogTrigger asChild>
+                            <Button variant={"secondary"}>
                               <span>Report Post</span>
                             </Button>
                           </DialogTrigger>
@@ -460,7 +462,9 @@ export default function PostsPage() {
                                                 />
                                               </div>
                                               <div className="ms-2">
-                                                <span>Report</span>
+                                                <span className="hover:text-slate-400 delay-75 ease-in-out transition-all">
+                                                  Report
+                                                </span>
                                               </div>
                                             </div>
                                           </DialogTrigger>
@@ -499,7 +503,7 @@ export default function PostsPage() {
                                                   />
                                                 </div>
                                                 <div className="ms-2">
-                                                  <span className="text-destructive">
+                                                  <span className="text-destructive hover:text-red-700 transition-all ease-in-out delay-75">
                                                     Delete
                                                   </span>
                                                 </div>
