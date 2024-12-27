@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import React, { useEffect, useState } from "react";
 import { AppState } from "../AppState.js";
 import Icon from "@mdi/react";
-import { mdiAccount, mdiAccountOutline, mdiChatOutline, mdiChevronRight, mdiHomeOutline, mdiImage, mdiLoading, mdiPencilPlusOutline } from "@mdi/js";
+import { mdiAccount, mdiAccountOutline, mdiChatOutline, mdiChevronRight, mdiClose, mdiHomeOutline, mdiImage, mdiLoading, mdiPencilPlusOutline } from "@mdi/js";
 import Login from "../components/Login.jsx";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -65,6 +65,8 @@ function AccountPage() {
   const [profilePicture, setProfilePicture] = useState("");
   const [open, setOpen] = useState(false)
   const [reports, setReports] = useState([])
+  const [noReports, setNoReports] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if(!AppState.account) return
@@ -92,10 +94,12 @@ function AccountPage() {
 
   async function getYourReports() {
     setTimeout(async () => {
-      const reports = await musicPostsService.findReportedPosts()
+      const postReports = await musicPostsService.findReportedPosts()
       const commentReports = await commentsService.findReportedComments()
-      setReports(reports)
+      setReports(postReports)
       setReports((report) => [...report, ...commentReports])
+      setLoading(false)
+      if(postReports.length == 0 || commentReports.length == 0) setNoReports(true)
     }, 2000)
   }
 
@@ -157,14 +161,28 @@ function AccountPage() {
                   }} className="w-full bg-inherit" variant={"outline"}>See Reported Items</Button>
             </DrawerTrigger>
             <DrawerContent className="bg-slate-800">
-              <DrawerClose>
-
-              </DrawerClose>
-              <DrawerTitle className="mt-3 text-center">Reports</DrawerTitle>
+              <div className="grid grid-cols-3 sticky items-center bg-inherit -mt-4 mb-4 top-0 ">
+                      <div className="col-span-1"></div>
+                      <div className="col-span-1 h-10 ">
+                        <DrawerTitle className="text-center text-2xl mt-1">
+                          Reports
+                        </DrawerTitle>
+                      </div>
+                      <div className="col-span-1 h-10 flex justify-end items-center">
+                        <DrawerClose className="text-center">
+                          <Icon
+                            className="me-4"
+                            path={mdiClose}
+                            color="white"
+                            size={1}
+                          />
+                        </DrawerClose>
+                      </div>
+                    </div>
               <DrawerDescription></DrawerDescription>
               <div className="mt-3 flex flex-col items-center w-full overflow-y-scroll justify-center">
-                {reports.length !== 0 ? 
-                reports.map((report, index) => (
+                {reports.length !== 0 && 
+                reports.map((report) => (
                   
                 <Popover key={report.id}>
                   <PopoverTrigger asChild>
@@ -202,12 +220,13 @@ function AccountPage() {
                           </div>
                         </PopoverContent>
                 </Popover>
-                ))
-                :
-                <div>
+                ))}
+                {loading && <div>
                   <Icon path={mdiLoading} spin size={3}/>
-                </div>
-                }
+                </div>}
+                {noReports && <div className="my-10">
+                  <span className="text-slate-400">You haven't reported anything.</span>
+                  </div>}
               </div>
             </DrawerContent>
           </Drawer>

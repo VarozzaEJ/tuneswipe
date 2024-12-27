@@ -72,7 +72,7 @@ export default function SearchArtistsSheet({ accessToken, handler }) {
     <>
       <div className="m-2 h-full">
         <div className="flex justify-center">Search Artists</div>
-        <div className=" flex flex-col items-center justify-between">
+        <div className=" flex flex-col h-full items-center justify-between">
           <div className="w-80 mt-5 flex">
             <Input
               type={"search"}
@@ -82,7 +82,7 @@ export default function SearchArtistsSheet({ accessToken, handler }) {
               className={"text-black"}
             />
           </div>
-          <div className="w-screen flex flex-col items-center">
+          <div className="w-screen flex flex-col h-full justify-center items-center">
             {searchResults.map((artist) => (
               <div
                 key={artist.id}
