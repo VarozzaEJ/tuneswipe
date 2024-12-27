@@ -175,10 +175,12 @@ export default function ListenPage() {
     setCurrentSongIndex(currentSongIndex - 1);
     setLikeSongIndex(likeSongIndex - 1);
     updateCurrentIndex(newIndex);
-    await childRefs[newIndex].current.restoreCard();
     await addSongToQueue(lastSwipedURI);
+    await spotifyApi.setVolume(0);
     await skipToNext();
     await skipToNext();
+    await childRefs[newIndex].current.restoreCard();
+    await spotifyApi.setVolume(75);
     await addSongToQueue(recommendations[currentIndex].uri);
   };
 

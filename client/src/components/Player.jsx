@@ -136,6 +136,7 @@ const Playback = ({
   };
 
   const replay = async () => {
+    await spotifyApi.setVolume(0);
     await spotifyApi
       .addToQueue(`${recommendedTracks[likeSongIndex].uri}`)
       .then(function (err) {
@@ -156,6 +157,7 @@ const Playback = ({
         `${recommendedTracks[likeSongIndex + 2].uri}`
       );
     }
+    await spotifyApi.setVolume(75);
   };
 
   return (
