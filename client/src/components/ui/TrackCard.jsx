@@ -50,6 +50,7 @@ export default function TrackCard({
   accessToken,
   trackId,
   artistLink,
+  songLink,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [postion, setPosition] = useState(0);
@@ -197,7 +198,7 @@ export default function TrackCard({
                         />
                         Skip this Song
                         </span> */}
-                    <a href={artistLink}>
+                    <a href={songLink}>
                       <span className="flex mb-4 text-lg ms-2 cursor-pointer hover:text-slate-600 delay-75 transition-all ease-in-out">
                         <Icon
                           path={mdiOpenInNew}

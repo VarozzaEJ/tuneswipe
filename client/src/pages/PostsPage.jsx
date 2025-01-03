@@ -105,6 +105,8 @@ export default function PostsPage() {
   const [extraCommentOptionsDrawerOpen, setExtraCommentOptionsDrawerOpen] =
     useState(false);
   const [extraOptionsPopoverOpen, setExtraOptionsPopoverOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [zeroComments, setZeroComments] = useState(false);
 
   useEffect(() => {
     if (!AppState.account?.id) return;
@@ -160,12 +162,20 @@ export default function PostsPage() {
   const getPostComments = async (postId) => {
     try {
       const postComments = await commentsService.getAllComments(postId);
+
       console.log(postComments);
-      setPostComments(postComments);
+      setLoading(false);
+      setTimeout(() => {
+        setPostComments(postComments);
+      }, 500);
+      if (postComments.length == 0) {
+        setZeroComments(true);
+      }
     } catch (error) {
       toast.error(error);
     }
   };
+
   const deleteComment = async (commentId) => {
     try {
       await commentsService.deleteComment(commentId);
@@ -343,6 +353,8 @@ export default function PostsPage() {
                 <Drawer>
                   <DrawerTrigger
                     onClick={() => {
+                      setLoading(true);
+                      setZeroComments(false);
                       setPostComments([]);
                       setFocusedPostId(post.id);
                       getPostComments(post.id);
@@ -376,11 +388,17 @@ export default function PostsPage() {
                         </DrawerClose>
                       </div>
                     </div>
-                    {postComments.length === 0 ? (
+                    {zeroComments && (
                       <div className="flex flex-grow h-full justify-center items-center mt-3.5">
                         <span>No comments yet... Be the first!</span>
                       </div>
-                    ) : (
+                    )}
+                    {loading && (
+                      <div className="flex flex-grow h-full justify-center items-center mt-3.5">
+                        <Icon path={mdiLoading} spin size={2} />
+                      </div>
+                    )}
+                    {postComments.length !== 0 && (
                       <>
                         <div className="flex flex-col flex-grow">
                           {postComments.map((comment) => (

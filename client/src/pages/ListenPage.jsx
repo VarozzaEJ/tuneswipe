@@ -1,4 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import "@sjmc11/tourguidejs/src/scss/tour.scss"; // Styles
+import { TourGuideClient } from "@sjmc11/tourguidejs/src/Tour";
 import { Link, useLocation, useParams } from "react-router-dom";
 import SpotifyWebApi from "spotify-web-api-node";
 import useAuth from "../services/useAuth.js";
@@ -13,6 +15,7 @@ import {
   mdiDotsHorizontal,
   mdiFinance,
   mdiGraph,
+  mdiHelp,
   mdiHome,
   mdiPencilPlusOutline,
   mdiPlay,
@@ -67,6 +70,8 @@ const spotifyApi = new SpotifyWebApi({
 });
 
 const main = document.getElementById("main");
+
+const tg = new TourGuideClient();
 export default function ListenPage() {
   const [recommendedTracks, setRecommendedTracks] = useState([]);
   const [currentSongIndex, setCurrentSongIndex] = useState(2);
@@ -108,6 +113,14 @@ export default function ListenPage() {
   const handleCount = () => {
     setCount2(count2 + 1);
   };
+
+  useEffect(() => {
+    if (!localStorage.getItem("tourSeen")) tg.start();
+  }, []);
+
+  tg.onAfterExit(() => {
+    localStorage.setItem("tourSeen", "true");
+  });
 
   const childRefs = useMemo(
     () =>
@@ -433,7 +446,7 @@ export default function ListenPage() {
     const name = sessionStorage.getItem("artistName");
     const trackName = sessionStorage.getItem("artistTopSong");
     setArtistIds([name]);
-    lastFMReccommendations(name, trackName);
+    // lastFMReccommendations(name, trackName);
   }
   console.log("💛", currentIndex);
   console.log("💚", currentSongIndex);
@@ -506,7 +519,10 @@ export default function ListenPage() {
               onOpenChange={setRecommendedMusicOpen}
             >
               <SheetTrigger>
-                <div>
+                <div
+                  data-tg-tour="Choose an artist to get recommended tracks from"
+                  data-tg-title="Change Recommendations"
+                >
                   <Icon path={mdiFinance} color="white" size={1} />
                 </div>
               </SheetTrigger>
@@ -527,28 +543,49 @@ export default function ListenPage() {
           <div>
             <span className="text-3xl">For You</span>
           </div>
-          <Dialog
-            open={changeDeviceFormOpen}
-            onOpenChange={setChangeDeviceFormOpen}
-          >
-            <DialogTrigger>
-              <div>
-                <Icon path={mdiTabletCellphone} color="white" size={1} />
+          <Popover>
+            <PopoverTrigger asChild>
+              <div className="flex items-center cursor-pointer">
+                <Icon path={mdiDotsHorizontal} size={1} />
               </div>
-            </DialogTrigger>
-            <DialogContent className={"bg-primary w-5/6 rounded-sm"}>
-              <DialogHeader>
-                <DialogTitle className={"mb-3"}>
-                  Change Playback Device
-                </DialogTitle>
-                <DialogDescription></DialogDescription>
-                <ChangeDeviceForm
-                  setChangeDeviceFormOpen={setChangeDeviceFormOpen}
-                  accessToken={accessToken}
-                />
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
+            </PopoverTrigger>
+            <PopoverContent className={"bg-slate-800 w-20"}>
+              <Dialog
+                open={changeDeviceFormOpen}
+                onOpenChange={setChangeDeviceFormOpen}
+              >
+                <DialogTrigger asChild>
+                  <div
+                    data-tg-tour="Change the device that Spotify will play songs through"
+                    data-tg-title="Change device"
+                    className={"w-full flex justify-center cursor-pointer"}
+                  >
+                    <Icon path={mdiTabletCellphone} color="white" size={1} />
+                  </div>
+                </DialogTrigger>
+                <DialogContent className={"bg-primary w-5/6 rounded-sm"}>
+                  <DialogHeader>
+                    <DialogTitle className={"mb-3"}>
+                      Change Playback Device
+                    </DialogTitle>
+                    <DialogDescription></DialogDescription>
+                    <ChangeDeviceForm
+                      setChangeDeviceFormOpen={setChangeDeviceFormOpen}
+                      accessToken={accessToken}
+                    />
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
+              <div
+                onClick={() => {
+                  tg.start();
+                }}
+                className="w-full mt-2 flex justify-center cursor-pointer"
+              >
+                <Icon path={mdiHelp} size={1} color="white" />
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
       <div className="container overflow-y-hidden overflow-x-hidden overscroll-none h-screen w-screen flex-col flex justify-center">
@@ -576,6 +613,7 @@ export default function ListenPage() {
                   trackArtist={track.artists[0]?.name}
                   image={track.album.images[0]?.url}
                   artistLink={track.artists[0]?.external_urls.spotify}
+                  songLink={track.external_urls.spotify}
                 />
               </TinderCard>
             ))
@@ -611,20 +649,37 @@ export default function ListenPage() {
           )}
         </div>
         <div className="grid w-screen grid-cols-4 fixed bottom-0 h-10 left-0 items-center justify-items-center bg-slate-950">
-          <div className="">
+          <div
+            data-tg-tour="This takes you to the listen page"
+            data-tg-title="Pages"
+            className=""
+          >
             <Icon path={mdiHome} color="white" size={1} />
           </div>
           <Link to={"/posts"}>
-            <div className="">
+            <div
+              data-tg-tour="This takes you to the posts page"
+              data-tg-title="Pages"
+              className=""
+            >
               <Icon path={mdiChatOutline} color="white" size={1} />
             </div>
           </Link>
-          <div className="">
+          <div
+            data-tg-tour="This takes you to the create page"
+            data-tg-title="Pages"
+            className=""
+          >
             <Link to={"/create"}>
               <Icon path={mdiPencilPlusOutline} color="white" size={1} />
             </Link>
           </div>
-          <Login profilePic={AppState.account?.picture} />
+          <div
+            data-tg-tour="This takes you to the account page"
+            data-tg-title="Pages"
+          >
+            <Login profilePic={AppState.account?.picture} />
+          </div>
         </div>
       </div>
     </>

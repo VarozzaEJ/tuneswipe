@@ -248,7 +248,12 @@ export default function MusicPlayerCard({ trackIds }) {
                             alt={`${tracks[currentIndex].album.name}'s image'`}
                           />
                           <span>{tracks[currentIndex].name}</span>
-                          <a href={tracks[currentIndex].artists[0].href}>
+                          <a
+                            href={
+                              tracks[currentIndex].artists[0].external_urls
+                                .spotify
+                            }
+                          >
                             <span className="text-slate-500 cursor-pointer hover:text-slate-200 delay-75 transition-all ease-in-out">
                               {tracks[currentIndex].artists[0].name}
                             </span>
@@ -282,12 +287,7 @@ export default function MusicPlayerCard({ trackIds }) {
                         />
                         Skip this Song
                         </span> */}
-                        <a
-                          href={
-                            tracks[currentIndex].artists[0].external_urls
-                              .spotify
-                          }
-                        >
+                        <a href={tracks[currentIndex].external_urls.spotify}>
                           <span className="flex mb-4 text-lg ms-2 cursor-pointer hover:text-slate-600 delay-75 transition-all ease-in-out">
                             <Icon
                               path={mdiOpenInNew}

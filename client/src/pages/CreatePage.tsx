@@ -320,7 +320,7 @@ if(errors) console.log(errors)
               </div>
                 <div>
                   <div className="flex justify-center">
-            <Button type="submit" variant={"ghost"} className="w-1/4 mb-2">Submit</Button>
+            <Button type="submit" variant={"ghost"} className="w-1/4 border border-white mb-2">Submit</Button>
                   </div>
           <div className="grid grid-cols-3 mb-10 justify-items-center">
             <div className="col-span-1">
