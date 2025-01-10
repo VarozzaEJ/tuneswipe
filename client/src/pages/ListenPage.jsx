@@ -545,7 +545,11 @@ export default function ListenPage() {
           </div>
           <Popover>
             <PopoverTrigger asChild>
-              <div className="flex items-center cursor-pointer">
+              <div
+                data-tg-tour="Open this menu to change your active device or look at the tutorial again."
+                data-tg-title="Extra Options"
+                className="flex items-center cursor-pointer"
+              >
                 <Icon path={mdiDotsHorizontal} size={1} />
               </div>
             </PopoverTrigger>
@@ -555,12 +559,13 @@ export default function ListenPage() {
                 onOpenChange={setChangeDeviceFormOpen}
               >
                 <DialogTrigger asChild>
-                  <div
-                    data-tg-tour="Change the device that Spotify will play songs through"
-                    data-tg-title="Change device"
-                    className={"w-full flex justify-center cursor-pointer"}
-                  >
-                    <Icon path={mdiTabletCellphone} color="white" size={1} />
+                  <div className={"w-full flex justify-center cursor-pointer"}>
+                    <Icon
+                      path={mdiTabletCellphone}
+                      title="Change Device"
+                      color="white"
+                      size={1}
+                    />
                   </div>
                 </DialogTrigger>
                 <DialogContent className={"bg-primary w-5/6 rounded-sm"}>
@@ -582,7 +587,12 @@ export default function ListenPage() {
                 }}
                 className="w-full mt-2 flex justify-center cursor-pointer"
               >
-                <Icon path={mdiHelp} size={1} color="white" />
+                <Icon
+                  path={mdiHelp}
+                  size={1}
+                  title="Show tutorial"
+                  color="white"
+                />
               </div>
             </PopoverContent>
           </Popover>

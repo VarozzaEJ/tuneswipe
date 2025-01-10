@@ -187,11 +187,15 @@ export default function PostsPage() {
           (comment) => comment.id !== commentId
         );
         setPostComments(unDeletedComments);
+        if (unDeletedComments.length === 0) setZeroComments(true);
       }
+      setExtraCommentOptionsDrawerOpen(false);
     } catch (error) {
       toast.error(error);
     }
   };
+
+  console.log(zeroComments);
   return (
     <>
       <div className="">
@@ -554,6 +558,9 @@ export default function PostsPage() {
                                                   }
                                                   onClick={() => {
                                                     deleteComment(comment.id);
+                                                    // setTimeout(() => {
+                                                    //   getPostComments(post.id);
+                                                    // }, 500);
                                                   }}
                                                 >
                                                   Continue
@@ -580,6 +587,7 @@ export default function PostsPage() {
                           >
                             {render({
                               postId: focusedPostId,
+                              setZeroComments,
                             })}
                           </DrawerFooter>
                         ) : (
@@ -588,6 +596,7 @@ export default function PostsPage() {
                           >
                             {render({
                               postId: focusedPostId,
+                              setZeroComments,
                             })}
                           </DrawerFooter>
                         )}

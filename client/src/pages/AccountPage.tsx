@@ -99,7 +99,7 @@ function AccountPage() {
       setReports(postReports)
       setReports((report) => [...report, ...commentReports])
       setLoading(false)
-      if(postReports.length == 0 || commentReports.length == 0) setNoReports(true)
+      if(postReports.length == 0 && commentReports.length == 0) setNoReports(true)
     }, 2000)
   }
 

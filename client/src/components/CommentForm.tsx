@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z, ZodType } from "zod";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { toast } from "sonner";
 
 type FormData = {
   body: string;
@@ -33,8 +34,9 @@ const formSchema: ZodType<FormData> = z.object({
 export default function useCommentForm() {
   const [comment, setComment] = useState({});
   const [postId, setPostId] = useState("");
+  const [length, setLength] = useState("")
 
-  const { register, handleSubmit, reset } = useForm<FormData>({
+  const { register, handleSubmit, formState: {errors}, reset } = useForm<FormData>({
     resolver: zodResolver(formSchema),
   });
 
@@ -49,7 +51,7 @@ export default function useCommentForm() {
 
   return {
     comment,
-    render: ({ postId }) => (
+    render: ({ postId, setZeroComments }) => (
       <form className="flex" onSubmit={handleSubmit(submitForm)}>
           <>
             <Input
@@ -57,10 +59,15 @@ export default function useCommentForm() {
               {...register("body")}
               type="text"
               placeholder="Add a comment..."
+              onChange={(e) => {
+                setLength(e.target.value)
+              }}
             />
             <Button
-              onClick={() => {
+              onClick={(e) => {
                 setPostId(postId);
+                setZeroComments(false)
+                if(length.length < 5) toast.error(`Comment must be at least 5 characters.`)
               }}
               type="submit"
               className="rounded-full ms-2"
