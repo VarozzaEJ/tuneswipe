@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { mdiCheckCircle, mdiSpotify } from '@mdi/js'
+import { mdiCheckCircle, mdiDelete, mdiSpotify } from '@mdi/js'
 import Icon from '@mdi/react'
 
 
@@ -9,7 +9,7 @@ function AddedTopTrackCard({song}) {
   return (
     <>
     <div
-                        className="flex justify-between mb-4 cursor-pointer hover:bg-slate-700 transition-all ease-in-out rounded-sm"
+                        className="flex justify-between mb-4 cursor-pointer hover:bg-slate-700 transition-all ease-in-out rounded-sm showhim"
                       >
                         <div className="flex">
                           <img
@@ -25,8 +25,9 @@ function AddedTopTrackCard({song}) {
                             </span>
                           </div>
                         </div>
-                        <div className="flex flex-col justify-center">
-                          <Icon path={mdiCheckCircle} color={"green"} size={1}/>
+                        <div className="flex flex-col  me-2 justify-center">
+                          <Icon className='hideme' path={mdiCheckCircle} color={"green"} size={1}/>
+                          <Icon className='showme' size={1} path={mdiDelete} color={"red"}/>
                         </div>
                       </div>
     </>

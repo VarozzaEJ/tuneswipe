@@ -94,6 +94,9 @@
 .showhim:hover .showme {
   display: block;
 }
+.showhim:hover .hideme {
+  display: none !important;
+}
 
 html {
   background-color: (15 23 42 / var(--tw-bg-opacity));

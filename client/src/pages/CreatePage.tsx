@@ -136,6 +136,7 @@ export default function CreatePage() {
   const [isUsingPicture, setIsUsingPicture] = useState(false)
   const [pictureString, setPictureString] = useState("")
   const [commentString, setCommentString] = useState("")
+  const [colorString, setColorString] = useState("")
   const [userName, setUserName] = useState("")
   const [currentUsersPlaylists, setCurrentUsersPlaylists] = useState([])
   const [playlistTracks, setPlaylistTracks] = useState([])
@@ -244,7 +245,6 @@ const pictureValue = getValues().picture
   }, [pictureValue])
 
   
-if(errors) console.log(errors)
 
   const checkPictureValue = () => {
     const pictureValue = getValues()
@@ -279,6 +279,14 @@ if(errors) console.log(errors)
     });
     return () => (cancel = true);
   }, [search]);
+  
+  function checkIfSongAlreadyAdded() {
+    chosenSongCards.map((song) => {
+      const alreadyFound = likedSongs.find(likedSong => likedSong.id == song.id)
+      console.log('💘',alreadyFound)
+    })
+  }
+
   return (
     <>
       <div className="container h-full justify-between flex flex-col">
@@ -299,17 +307,31 @@ if(errors) console.log(errors)
                 maxLength={500}
                 minLength={5}
                 ></textarea>
-                <span>{commentString.length}/500</span>
+                <span className={`text-[${getValues("color")}]`}>{commentString.length}/500</span>
                 {pictureString?.length > 10 && 
                 <img src={pictureString} alt="Your chosen picture" className="w-full h-1/2 mt-3" />
               }
               {chosenSongCards.length !== 0 && 
               chosenSongCards.map(song => (
-                <div key={song.id} className="mt-3">
+                <div key={song.id} onClick={() => {addSongId(song.id)}} className="mt-3">
                 <AddedTopTrackCard  song={song} />
                 </div>
               ))
               }
+              {colorString.length !== 0 && 
+              
+                <div className="flex">
+                  <div className="flex items-center me-2">
+                    <span>
+                      Your chosen color:
+                    </span>
+                  </div>
+                  <div className={`w-10 h-10 rounded-sm`} style={{backgroundColor: colorString}}>
+
+                  </div>
+                </div>
+            }
+                
               {errors.color && <div>
                 <span className="text-destructive">
                 {errors.color.message}
@@ -320,7 +342,10 @@ if(errors) console.log(errors)
               </div>
                 <div>
                   <div className="flex justify-center">
-            <Button type="submit" variant={"ghost"} className="w-1/4 border border-white mb-2">Submit</Button>
+                    
+            <Button type="submit" variant={"ghost"} className={`w-1/4 border border-white mb-2`}>
+              Submit
+            </Button>
                   </div>
           <div className="grid grid-cols-3 mb-10 justify-items-center">
             <div className="col-span-1">
@@ -362,6 +387,7 @@ if(errors) console.log(errors)
                 <DrawerTrigger asChild>
                   <Button onClick={() => {
                     getUsersLikedSongs()
+                    checkIfSongAlreadyAdded()
                     getUsersPlaylists()
                     }} className="">
                     <div className="text-slate-400 hover:text-slate-300 transition-all ease-in-out">
@@ -390,7 +416,7 @@ if(errors) console.log(errors)
                             addSongId(song.id, song)
                             setIsUsingMix(true)
                           }} key={song.id}>
-                            <TopTrackCard song={song}/>
+                            <TopTrackCard chosenSongCards={chosenSongCards} song={song}/>
                           </div>
                          ))}
                   </div> : <div className="flex flex-col items-center mx-5">
@@ -502,12 +528,20 @@ if(errors) console.log(errors)
                     </div>
                   </Button>
                 </DialogTrigger>
-                <DialogTitle></DialogTitle>
-                <DialogDescription></DialogDescription>
-                <DialogContent className="bg-slate-800 w-40">
+                
+                  <DialogDescription></DialogDescription>
+                  <DialogTitle></DialogTitle>
+                <DialogContent className="bg-slate-800 rounded-sm w-40">
                   <div className="p-3 flex justify-center">
                   <Input className="w-10 p-0 cursor-pointer" {...register("color")} type="color" />
                   </div>
+                  <DialogClose asChild>
+                  <div className="w-full flex justify-center">
+                    <Button onClick={() => {
+                      setColorString(getValues("color"))
+                    }}>Save</Button>
+                  </div>
+                  </DialogClose>
                 </DialogContent>
               </Dialog>
             </div>
