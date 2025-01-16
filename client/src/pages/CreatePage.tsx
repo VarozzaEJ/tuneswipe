@@ -168,8 +168,11 @@ export default function CreatePage() {
     console.log(data.body)
     setUserName(data.body.id)
   }, function(err) {
-
     console.log('Something went wrong!', err);
+    if(err.message.includes("expired")) {
+      setIsExpired(true);
+      setExpiredTokenDialogOpen(true)
+    }
   });
   }, [accessToken]);
 
@@ -307,9 +310,12 @@ const pictureValue = getValues().picture
                 maxLength={500}
                 minLength={5}
                 ></textarea>
-                <span className={`text-[${getValues("color")}]`}>{commentString.length}/500</span>
-                {pictureString?.length > 10 && 
-                <img src={pictureString} alt="Your chosen picture" className="w-full h-1/2 mt-3" />
+                <span >{commentString.length}/500</span>
+                {pictureString?.length > 20 && 
+                <div style={{maxHeight: 400}} className="flex w-full justify-center">
+
+                <img src={pictureString} alt="Your chosen picture" style={{width: 400, maxHeight: 400}} className="mt-3" />
+                </div>
               }
               {chosenSongCards.length !== 0 && 
               chosenSongCards.map(song => (
@@ -533,7 +539,7 @@ const pictureValue = getValues().picture
                   <DialogTitle></DialogTitle>
                 <DialogContent className="bg-slate-800 rounded-sm w-40">
                   <div className="p-3 flex justify-center">
-                  <Input className="w-10 p-0 cursor-pointer" {...register("color")} type="color" />
+                  <Input onInput={() => {setColorString(getValues("color"))}} className="w-10 p-0 cursor-pointer" {...register("color")} type="color" />
                   </div>
                   <DialogClose asChild>
                   <div className="w-full flex justify-center">
@@ -546,7 +552,7 @@ const pictureValue = getValues().picture
               </Dialog>
             </div>
             <div className="col-span-1">
-              {isUsingMix ? <AlertDialog>
+              {chosenSongCards.length !== 0 ? <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button>
                     <div className="flex flex-col text-slate-400 hover:text-slate-300 transition-all ease-in-out justify-center items-center">
@@ -590,7 +596,10 @@ const pictureValue = getValues().picture
                   </Button>
                   
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-md w-5/6 bg-slate-800 rounded-lg">
+                <DialogContent onPointerDownOutside={() => {
+                  console.log("Working")
+                  checkPictureValue()
+                }} className="sm:max-w-md w-5/6 bg-slate-800 rounded-lg">
                   <DialogHeader>
                     <DialogTitle>Upload Photo</DialogTitle>
                     <DialogDescription></DialogDescription>
@@ -598,7 +607,7 @@ const pictureValue = getValues().picture
                   <div className="flex flex-col items-center ">
                     <div className="d-flex justify-content-center">
                       {pictureString !== undefined && pictureString?.includes(".") ? 
-                      <img className="rounded-lg h-52 w-52" src={pictureString}/>
+                      <img className="rounded-lg h-56 w-56" src={pictureString}/>
                       : 
                       <div className="bg-subtle rounded-lg h-52 w-52 flex justify-center items-center">
                         <Icon path={mdiImage} color="white" />
@@ -608,11 +617,9 @@ const pictureValue = getValues().picture
                     <div className="flex items-center w-full mt-5">
                       <div className="grid flex-1 gap-2">
                         <Input
-                          onClick={() => {
-                            setIsUsingPicture(true)
-                          }}
                           {...register("picture")}
-                          onChange={(e) => {
+                          onInput={(e) => {
+                            setIsUsingPicture(true)
                             setPictureString(e.target.value)
                           }}
                           id="link"

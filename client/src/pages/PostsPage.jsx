@@ -346,7 +346,11 @@ export default function PostsPage() {
                   />
                 )}
                 {post.picture && (
-                  <img src={post.picture} className="rounded-sm" />
+                  <img
+                    src={post.picture}
+                    className="rounded-sm w-full"
+                    style={{ maxHeight: 400 }}
+                  />
                 )}
               </CardContent>
             ) : (
