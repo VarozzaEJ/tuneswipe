@@ -346,11 +346,13 @@ export default function PostsPage() {
                   />
                 )}
                 {post.picture && (
-                  <img
-                    src={post.picture}
-                    className="rounded-sm w-full"
-                    style={{ maxHeight: 400 }}
-                  />
+                  <div className="w-full flex justify-center">
+                    <img
+                      src={post.picture}
+                      className="rounded-sm "
+                      style={{ maxHeight: 400 }}
+                    />
+                  </div>
                 )}
               </CardContent>
             ) : (

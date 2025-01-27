@@ -470,7 +470,7 @@ const pictureValue = getValues().picture
                                     addSongId(track.track.id, track.track)
                                     setIsUsingMix(true)
                                 }} key={track.track.id}>
-                                    <TopTrackCard  song={track.track} />
+                                    <TopTrackCard chosenSongCards={chosenSongCards}  song={track.track} />
                                 </div>
                               ))}
                               </div>
@@ -503,7 +503,7 @@ const pictureValue = getValues().picture
                                     setIsUsingMix(true)
                                 }} key={track.id} className="mx-5 mt-4" >
 
-                            <TopTrackCard song={track}/>
+                            <TopTrackCard chosenSongCards={chosenSongCards} song={track}/>
                             </div>
                           ))}
                          </div>
@@ -539,7 +539,8 @@ const pictureValue = getValues().picture
                   <DialogTitle></DialogTitle>
                 <DialogContent className="bg-slate-800 rounded-sm w-40">
                   <div className="p-3 flex justify-center">
-                  <Input onInput={() => {setColorString(getValues("color"))}} className="w-10 p-0 cursor-pointer" {...register("color")} type="color" />
+                  <Input onInput={(e) => {
+                    setColorString(e.target.value)}} className="w-10 p-0 cursor-pointer" {...register("color")} type="color" />
                   </div>
                   <DialogClose asChild>
                   <div className="w-full flex justify-center">
