@@ -193,7 +193,7 @@ export default function MusicPlayerCard({ trackIds }) {
                     )}
                   </div>
                   <div className="col-span-12">
-                    <div className="grid grid-cols-12 items-center gap-6 sm:gap-1">
+                    <div className="grid grid-cols-12 items-center gap-2 sm:gap-1">
                       <div className="col-span-1  text-slate-500 cursor-pointer hover:text-slate-200 delay-75 transition-all ease-in-out items-center justify-items-center">
                         <Icon path={mdiSpotify} color="white" size={1} />
                       </div>

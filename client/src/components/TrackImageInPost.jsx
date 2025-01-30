@@ -13,6 +13,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import ChangeDeviceForm from "./ChangeDeviceForm.jsx";
+import useNoActiveDeviceHook from "../services/useNoActiveDeviceHook.js";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: `${import.meta.env.VITE_CLIENT_ID}`,
@@ -20,6 +21,9 @@ const spotifyApi = new SpotifyWebApi({
 export default function TrackImageInPost({ img, trackURI, trackNumber }) {
   const [accessToken, setAccessToken] = useState("");
   const [changeDeviceFormOpen, setChangeDeviceFormOpen] = useState(false);
+  const [noActiveDeviceError, setNoActiveDeviceError] = useState(false);
+  const value = useNoActiveDeviceHook(noActiveDeviceError);
+
   useEffect(() => {
     //TODO make this happen in a higher component to skip the login process if the token already exists or has not expired
     const accessToken = localStorage.getItem("accessToken");
@@ -28,44 +32,19 @@ export default function TrackImageInPost({ img, trackURI, trackNumber }) {
 
   useEffect(() => {
     if (!accessToken) return;
-    //TODO if no access token found or if access token is expired, refressh the john
     spotifyApi.setAccessToken(accessToken);
   }, [accessToken]);
-  //TODO set up error handling for whens Spotify api can't connect to the active device.
+
+  useEffect(() => {
+    if (!value || undefined) return;
+    setChangeDeviceFormOpen(true);
+  }, [value]);
+
   const playSong = async () => {
     if (!accessToken) return;
     await spotifyApi.setShuffle(false).catch(async (err) => {
       if (err.message.includes("NO_ACTIVE_DEVICE")) {
-        const devices = await spotifyApi.getMyDevices();
-        const activeDevice = await devices.body.devices.filter((device) => {
-          device.is_active === true;
-        });
-        if (activeDevice.length == 0) {
-          //TODO playing music on Spotify might not be how this gets fixed. You might need to change the active device on the form.
-          toast.error(
-            "You do not have a currently active device, please start playing music on Spotify",
-            {
-              action: {
-                label: "Change Device",
-                onClick: () => {
-                  setChangeDeviceFormOpen(true);
-                },
-              },
-            }
-          );
-        } else if (activeDevice.length == 1) {
-          toast.error(
-            `Your current active device is: ${activeDevice[0].name}. Please start playing any song in Spotify on this device OR change your active device.`,
-            {
-              action: {
-                label: "Change Device",
-                onClick: () => {
-                  setChangeDeviceFormOpen(true);
-                },
-              },
-            }
-          );
-        }
+        setNoActiveDeviceError(true);
       }
     });
     const offset = trackNumber - 1;

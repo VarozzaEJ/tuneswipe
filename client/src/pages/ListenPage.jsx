@@ -64,6 +64,7 @@ import { Button } from "@/components/ui/button";
 import SearchArtistsSheet from "../components/SearchArtistsSheet.jsx";
 import { Skeleton } from "@/components/ui/skeleton";
 import ListenPageMusicCardLoading from "../components/ListenPageMusicCardLoading.tsx";
+import useNoActiveDeviceHook from "../services/useNoActiveDeviceHook.js";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: `${import.meta.env.VITE_CLIENT_ID}`,
@@ -101,7 +102,8 @@ export default function ListenPage() {
   const [recommendedMusicOpen, setRecommendedMusicOpen] = useState(false);
   const [changeDeviceFormOpen, setChangeDeviceFormOpen] = useState(false);
   const [noActiveDeviceError, setNoActiveDeviceError] = useState(false);
-  const [lastSwipedTrack, setLastSwipedTrack] = useState({});
+  const [extraOptionsPopupOpen, setExtraOptionsPopupOpen] = useState(false);
+  const value = useNoActiveDeviceHook(noActiveDeviceError);
 
   const [count2, setCount2] = useState(0);
 
@@ -197,6 +199,12 @@ export default function ListenPage() {
     await addSongToQueue(recommendations[currentIndex].uri);
   };
 
+  useEffect(() => {
+    if (!value || undefined) return;
+    setExtraOptionsPopupOpen(true);
+    setChangeDeviceFormOpen(true);
+  }, [value]);
+
   const initialSkipToNext = async () => {
     if (!accessToken) return;
     let isReady = true;
@@ -209,6 +217,9 @@ export default function ListenPage() {
       function (err) {
         isReady = false;
         console.error("Something went wrong!", err);
+        if (err.message.includes("NO_ACTIVE_DEVICE")) {
+          setNoActiveDeviceError(true);
+        }
         const isExpired = err.message.includes("expired");
         if (isExpired) {
           setIsExpired(true);
@@ -394,39 +405,6 @@ export default function ListenPage() {
     ) {
       return;
     }
-
-    // spotifyApi
-    //   .getRecommendations({ seed_artists: ["2P5sC9cVZDToPxyomzF1UH"] })
-    //   .then(function (data) {
-    //     console.log("💙", data);
-    //   });
-    // spotifyApi
-    //   .getRecommendations({
-    //     min_energy: 0.4,
-    //     //NOTE length of this array can only be <10 artists?
-    //     seed_artists: artistIds,
-    //     min_popularity: 50,
-    //   })
-    //   .then(
-    //     function (data) {
-    //       let recommendations = data.body;
-    //       const flippedArray = [...data.body.tracks].reverse();
-    //       console.log("👺", recommendations);
-    //       console.log("🧍‍♂️", flippedArray);
-    //       setRecommendations(data.body.tracks);
-    //       setRecommendedTracks(flippedArray);
-    //       setCurrentIndex(data.body.tracks.length - 1);
-    //       setIsReady(true);
-    //     },
-    //     function (err) {
-    //       console.log("Something Went Wrong!", err);
-    //       const isExpired = err.message.includes("expired");
-    //       if (isExpired) {
-    //         setIsExpired(true);
-    //         setExpiredTokenDialogOpen(true);
-    //       }
-    //     }
-    //   );
   }, [artistIds, accessToken, rightSongAdded, isOnRightSong]);
 
   function setIds() {
@@ -543,7 +521,10 @@ export default function ListenPage() {
           <div>
             <span className="text-3xl">For You</span>
           </div>
-          <Popover>
+          <Popover
+            open={extraOptionsPopupOpen}
+            onOpenChange={setExtraOptionsPopupOpen}
+          >
             <PopoverTrigger asChild>
               <div
                 data-tg-tour="Open this menu to change your active device or look at the tutorial again."
