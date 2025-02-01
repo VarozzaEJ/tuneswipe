@@ -178,7 +178,7 @@ export default function MusicPlayerCard({ trackIds }) {
               <div className=" mx-4 flex justify-between">
                 <div className="grid grid-cols-12">
                   <div className="col-span-12 overflow-scroll text-nowrap con">
-                    {tracks[currentIndex].name.length > 30 ? (
+                    {tracks[currentIndex].name.length > 25 ? (
                       <div className="link_animated">
                         <span className="text-2xl ">
                           {tracks[currentIndex].name}

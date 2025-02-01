@@ -97,7 +97,7 @@ function AccountPage() {
       const postReports = await musicPostsService.findReportedPosts()
       const commentReports = await commentsService.findReportedComments()
       setReports(postReports)
-      setReports((report) => [...report, ...commentReports])
+      setReports((reports) => [...reports, ...commentReports])
       setLoading(false)
       if(postReports.length == 0 && commentReports.length == 0) setNoReports(true)
     }, 2000)
@@ -119,7 +119,7 @@ function AccountPage() {
                                 </AvatarFallback>
                               </Avatar>
           )}
-          <p className="my-2">{AppState.account.name}</p>
+          <p className="text-2xl my-2">{AppState.account.name}</p>
           <kbd>{AppState.account.email}</kbd>
           <Sheet onOpenChange={setOpen} open={open}>
             <SheetTrigger asChild>

@@ -56,6 +56,7 @@ export default function ChangeDeviceForm({
     await spotifyApi.transferMyPlayback([`${deviceId}`]).then(
       function () {
         console.log("Transfering playback to " + deviceId);
+        localStorage.setItem("chosenDeviceId", deviceId);
       },
       function (err) {
         //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned

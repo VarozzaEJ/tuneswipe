@@ -9,6 +9,7 @@ import AccountPage from "./pages/AccountPage.tsx";
 import { accountService } from "./services/AccountService.js";
 import AuthGuard from "./utils/AuthGuard.jsx";
 import PostsPage from "./pages/PostsPage.jsx";
+import ProfilePage from "./pages/ProfilePage.jsx";
 
 export const router = createHashRouter([
   {
@@ -31,6 +32,10 @@ export const router = createHashRouter([
       {
         path: "/posts",
         element: <PostsPage />,
+      },
+      {
+        path: "/profiles/:profileId",
+        element: <ProfilePage />,
       },
       {
         path: "account",

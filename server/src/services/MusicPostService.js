@@ -3,6 +3,10 @@ import { Forbidden } from "../utils/Errors.js"
 
 
 class MusicPostService {
+    async getProfilePosts(creatorId) {
+        const profilePosts = await dbContext.MusicPosts.find({ creatorId }).populate("creator")
+        return profilePosts
+    }
     async getReportedPosts(creatorId) {
         const reportedPosts = await dbContext.PostReports.find({ creatorId })
         return reportedPosts

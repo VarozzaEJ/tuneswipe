@@ -213,14 +213,16 @@ export default function PostsPage() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex">
-                  <div className="flex items-center me-2">
-                    <Avatar>
-                      <AvatarImage src={post.creator.picture} />
-                      <AvatarFallback>
-                        <Icon path={mdiAccount} color="black" size={1} />
-                      </AvatarFallback>
-                    </Avatar>
-                  </div>
+                  <Link to={`/profiles/${post.creator.id}`}>
+                    <div className="flex items-center me-2">
+                      <Avatar>
+                        <AvatarImage src={post.creator.picture} />
+                        <AvatarFallback>
+                          <Icon path={mdiAccount} color="black" size={1} />
+                        </AvatarFallback>
+                      </Avatar>
+                    </div>
+                  </Link>
                   <div className="flex flex-col">
                     <span>{post.creator.name}</span>
                     <span>{post.fromNow}</span>

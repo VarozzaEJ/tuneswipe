@@ -8,11 +8,21 @@ export class MusicPostController extends BaseController {
         super("create")
         this.router
             .get('', this.getAllMusicPosts)
+            .get('/profiles/:profileId', this.getProfilePosts)
             .use(Auth0Provider.getAuthorizedUserInfo)
             .post('', this.createMusicPost)
             .delete('/:musicPostId', this.deletePost)
             .post('/report', this.reportPost)
             .get('/report', this.getReportedPosts)
+    }
+    async getProfilePosts(request, response, next) {
+        try {
+            const profileId = request.params.profileId
+            const profilePosts = await musicPostsService.getProfilePosts(profileId)
+            response.send(profilePosts)
+        } catch (error) {
+            next(error)
+        }
     }
 
     async createMusicPost(request, response, next) {
