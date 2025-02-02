@@ -30,7 +30,7 @@ export default function useNoActiveDeviceHook(noActiveDeviceError) {
         if (activeDevice.length == 0) {
             //TODO playing music on Spotify might not be how this gets fixed. You might need to change the active device on the form.
             toast.error(
-                "You do not have a currently active device, please change your active device",
+                "You do not have a currently active device, please change your active device and try again.",
                 {
                     action: {
                         label: "Change Device",

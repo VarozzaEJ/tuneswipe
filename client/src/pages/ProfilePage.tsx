@@ -19,8 +19,6 @@ import { profilesService } from "../services/ProfilesService.js";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import MusicPlayerCard from "../components/MusicPlayerCard.jsx";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import CommentForm from "../components/CommentForm.tsx";
 import {
   Popover,
   PopoverContent,
@@ -58,7 +56,6 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { useForm } from "react-hook-form";
 import {
   Dialog,
   DialogContent,
@@ -68,34 +65,57 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z, ZodType } from "zod";
 import { commentsService } from "../services/CommentsService.js";
-import useAuth from "../services/useAuth.js";
-import SpotifyLogin from "../components/ui/SpotifyLogin.jsx";
 import useCommentForm from "../components/CommentForm.tsx";
 import DisabledCommentForm from "../components/DisabledCommentForm.jsx";
 import { musicPostsService } from "../services/MusicPostsService.js";
 import { Separator } from "@/components/ui/separator";
+import { Account } from "../models/Account.js";
 
-const formSchema = z.object({
-  comment: z
-    .string()
-    .min(5, {
-      message: "Message must be at least 5 characters.",
-    })
-    .max(500),
-  postId: z.string(),
-});
+
+
+interface PostComment {
+  body: string;
+  creator: {
+    name: string;
+    id: string;
+    picture: string;
+  }
+  creatorId: number;
+  musicPostId: number;
+  fromNow: string;
+  id: string;
+}
+
+interface MusicPost {
+  id: string;
+  textComment: string;
+  picture: string;
+  trackIds: string[];
+  creator: {
+    name: string;
+    id: string;
+    picture: string;
+  };
+  fromNow: string;
+  color: string;
+}
+
+interface Account {
+  id: string;
+  email: string;
+  name: string;
+  picture: string;
+}
 
 export default function ProfilePage() {
   const params = useParams();
-  const [activeProfile, setActiveProfile] = useState({});
-  const [activeProfilePosts, setActiveProfilePosts] = useState([]);
+  const [activeProfile, setActiveProfile] = useState<Account>({id: "", email: "", name: "", picture: ""});
+  const [activeProfilePosts, setActiveProfilePosts] = useState<MusicPost[]>([]);
   const [focusedPostId, setFocusedPostId] = useState("");
-  const [postComments, setPostComments] = useState([]);
+  const [postComments, setPostComments] = useState<PostComment[]>([]);
   const [accountSet, setAccountSet] = useState(false);
-  const [account, setAccount] = useState({});
+  const [account, setAccount] = useState<Account>({id: "", email: "", name: "", picture: ""});
   const { render, comment } = useCommentForm();
   const [reportPostFormOpen, setReportPostFormOpen] = useState(false);
   const [reportCommentFormOpen, setReportCommentFormOpen] = useState(false);
@@ -104,7 +124,7 @@ export default function ProfilePage() {
   const [extraOptionsPopoverOpen, setExtraOptionsPopoverOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [zeroComments, setZeroComments] = useState(false);
-
+  console.log(activeProfile)
   useEffect(() => {
     if (!AppState.account?.id) return;
     setAccount(AppState.account);
@@ -163,10 +183,6 @@ export default function ProfilePage() {
     }
   };
 
-  const { register, handleSubmit } = useForm({
-    resolver: zodResolver(formSchema),
-  });
-
   const getPostComments = async (postId) => {
     try {
       const postComments = await commentsService.getAllComments(postId);
@@ -180,7 +196,7 @@ export default function ProfilePage() {
         setZeroComments(true);
       }
     } catch (error) {
-      toast.error(error);
+      toast.error("Error getting comments.");
     }
   };
 
@@ -199,15 +215,14 @@ export default function ProfilePage() {
       }
       setExtraCommentOptionsDrawerOpen(false);
     } catch (error) {
-      toast.error(error);
+      toast.error("Error deleting comments.");
     }
   };
-
   return (
     <>
       <div className="h-screen">
         <div className="h-[95%] flex flex-col justify-between">
-          {activeProfile.name && (
+          {activeProfile.name !== "" && (
             <div className="p-5 text-center flex flex-col justify-center items-center gap-y-4">
               <Avatar className={"h-40 w-40 static"}>
                 <AvatarImage className="" src={activeProfile.picture} />
@@ -223,7 +238,7 @@ export default function ProfilePage() {
           </div>
           <Separator className={"my-4"} />
           <section className="sm:flex sm:flex-col sm:items-center ">
-            {activeProfilePosts.map((post, index) => (
+            {activeProfilePosts.map((post) => (
               <Card
                 key={post.id}
                 className={`mx-4` + " " + `text-light sm:w-3/4 mb-4`}
@@ -252,7 +267,7 @@ export default function ProfilePage() {
                         setAccountSet(!accountSet);
                       }}
                     >
-                      {account.id ? (
+                      {account.id !== "" ? (
                         <Popover>
                           <PopoverTrigger
                             asChild
@@ -273,7 +288,7 @@ export default function ProfilePage() {
                               "w-36 flex flex-col bg-slate-800 border-none justify-center"
                             }
                           >
-                            {account?.id == post.creator.id && (
+                            {activeProfile?.id == post.creator.id && (
                               <AlertDialog>
                                 <AlertDialogTrigger asChild>
                                   <Button
