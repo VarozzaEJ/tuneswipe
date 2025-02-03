@@ -195,7 +195,6 @@ export default function PostsPage() {
     }
   };
 
-  console.log(zeroComments);
   return (
     <>
       <div className="">
@@ -204,7 +203,7 @@ export default function PostsPage() {
         </div>
       </div>
       <section className="sm:flex sm:flex-col sm:items-center ">
-        {musicPosts.map((post, index) => (
+        {musicPosts.map((post) => (
           <Card
             key={post.id}
             className={`mx-4` + " " + `text-light sm:w-3/4 mb-4`}
@@ -324,14 +323,28 @@ export default function PostsPage() {
                       </PopoverContent>
                     </Popover>
                   ) : (
-                    <div>
-                      <Icon
-                        path={mdiDotsHorizontal}
-                        size={1.4}
-                        color="white"
-                        className="cursor-pointer"
-                      />
-                    </div>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Icon
+                          title="Open Options Menu"
+                          path={mdiDotsHorizontal}
+                          size={1.4}
+                          color="white"
+                          className="cursor-pointer"
+                        />
+                      </PopoverTrigger>
+                      <PopoverContent
+                        className={
+                          "w-36 flex flex-col bg-slate-800 border-none justify-center"
+                        }
+                      >
+                        <div>
+                          <p className="text-sm text-white">
+                            Please Login To Report Posts
+                          </p>
+                        </div>
+                      </PopoverContent>
+                    </Popover>
                   )}
                 </div>
               </div>
