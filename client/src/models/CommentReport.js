@@ -9,6 +9,6 @@ export class CommentReport {
         this.description = data.description
         this.commentId = data.commentId
         this.creatorName = data.commentCreatorName
-        this.postOrComment = "Comment"
+        this.postOrComment = "comment"
     }
 }

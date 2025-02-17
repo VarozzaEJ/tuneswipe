@@ -3,29 +3,20 @@ import "@sjmc11/tourguidejs/src/scss/tour.scss"; // Styles
 import { TourGuideClient } from "@sjmc11/tourguidejs/src/Tour";
 import { Link, useLocation, useParams } from "react-router-dom";
 import SpotifyWebApi from "spotify-web-api-node";
-import useAuth from "../services/useAuth.js";
 import { useNavigate } from "react-router-dom";
 import TrackCard from "../components/ui/TrackCard.jsx";
 import {
   mdiChatOutline,
   mdiCheckCircle,
-  mdiCheckCircleOutline,
   mdiCloseCircle,
-  mdiCloseCircleOutline,
   mdiDotsHorizontal,
-  mdiFinance,
-  mdiGraph,
   mdiHelp,
   mdiHome,
+  mdiMagnify,
   mdiPencilPlusOutline,
-  mdiPlay,
-  mdiReplay,
-  mdiRewind,
   mdiSync,
   mdiTabletCellphone,
 } from "@mdi/js";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Sheet,
   SheetClose,
@@ -53,7 +44,6 @@ import {
 import Icon from "@mdi/react";
 import Player from "../components/Player.jsx";
 import axios from "axios";
-import PreBuiltPlayer from "../components/PreBuiltPlayer.jsx";
 import TinderCard from "react-tinder-card";
 import Login from "../components/Login.jsx";
 import { AppState } from "../AppState.js";
@@ -62,7 +52,6 @@ import { toast } from "sonner";
 import ExpiredTokenDialog from "../components/ExpiredTokenDialog.jsx";
 import { Button } from "@/components/ui/button";
 import SearchArtistsSheet from "../components/SearchArtistsSheet.jsx";
-import { Skeleton } from "@/components/ui/skeleton";
 import ListenPageMusicCardLoading from "../components/ListenPageMusicCardLoading.tsx";
 import useNoActiveDeviceHook from "../services/useNoActiveDeviceHook.js";
 
@@ -501,7 +490,12 @@ export default function ListenPage() {
                   data-tg-tour="Choose an artist to get recommended tracks from"
                   data-tg-title="Change Recommendations"
                 >
-                  <Icon path={mdiFinance} color="white" size={1} />
+                  <Icon
+                    path={mdiMagnify}
+                    title="Search for recommendations"
+                    color="white"
+                    size={1}
+                  />
                 </div>
               </SheetTrigger>
               <SheetContent

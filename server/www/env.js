@@ -1,7 +1,7 @@
 export const dev = window.location.origin.includes('localhost')
-export const baseURL = dev ? 'http://localhost:5173' : 'https://tower.evanvarozza.dev'
+export const baseURL = dev ? 'http://localhost:5173' : ''
 export const useSockets = false
 export const domain = 'dev-cucsliboqrmpiibf.us.auth0.com'
-export const clientId = '9IHCopOWsypgrZC9Nniolr8lpzQ6Xvig'
-export const audience = 'https://GregsList.com'
+export const clientId = '3Ama7v4wOxzk11qqAWAPmUofGOkafHXB'
+export const audience = 'https://tuneswipe.com'
 

@@ -103,6 +103,7 @@ function AccountPage() {
     }, 2000)
   }
 
+
   return (
     <div className="h-screen">
       <div className="h-[95%] flex flex-col justify-between">
@@ -127,7 +128,7 @@ function AccountPage() {
                 Edit Profile
               </Button>
             </SheetTrigger>
-            <SheetContent className={"bg-slate-950 border-none w-full"}>
+            <SheetContent className={"bg-slate-800 border-none w-full"}>
               <SheetTitle></SheetTitle>
               <SheetDescription></SheetDescription>
               <SheetHeader>
@@ -135,7 +136,7 @@ function AccountPage() {
               <form onSubmit={handleSubmit(submitForm)}>
               <div>
               <Label className="mt-3" htmlFor="name">Name</Label>
-              <Input {...register("name")}  id="name" className="text-black" />
+              <Input {...register("name")} onLoad={() => {blur}}  id="name" className="text-black" />
               </div>
               <div className="flex justify-center items-center mt-5">
                 {profilePicture !== "" ? 
@@ -149,7 +150,7 @@ function AccountPage() {
               <Input {...register("picture")} id="picture" className="text-black" />
               </div>
               <div className="flex w-full justify-end">
-                <Button className="mt-3" variant={"secondary"}>Submit</Button>
+                <Button  className="mt-3" variant={"secondary"}>Submit</Button>
               </div>
               </form>
             </SheetContent>
