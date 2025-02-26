@@ -115,7 +115,9 @@ export default function PostsPage() {
   const deletePost = async (musicPostId, musicPostFileUrl) => {
     try {
       await musicPostsService.deletePost(musicPostId);
-      await musicPostsService.deleteImageFromS3Bucket(musicPostFileUrl);
+      if (musicPostFileUrl) {
+        await musicPostsService.deleteImageFromS3Bucket(musicPostFileUrl);
+      }
       const foundMusicPost = musicPosts.find((post) => post.id == musicPostId);
       if (foundMusicPost) {
         const updatedPosts = musicPosts.filter(

@@ -92,8 +92,8 @@ const MAX_FILE_SIZE = 2000000
     ]
 
 const imageSchema = z.any().optional()
-.refine(file => file.length == 1 ? ACCEPTED_IMAGE_TYPES.includes(file?.[0]?.type) ? true : false : true, 'Invalid file. choose either JPEG or PNG image')
-.refine(file => file.length == 1 ? file[0]?.size <= MAX_FILE_SIZE ? true : false : true, 'Max file size allowed is 8MB.')
+// .refine(file => file.length == 1 ? ACCEPTED_IMAGE_TYPES.includes(file?.[0]?.type) ? true : false : true, 'Invalid file. choose either JPEG or PNG image')
+// .refine(file => file.length == 1 ? file[0]?.size <= MAX_FILE_SIZE ? true : false : true, 'Max file size allowed is 8MB.')
 
 const formSchema : ZodType<FormData> = z.object({
   textComment: z.string().min(5, {
@@ -131,6 +131,7 @@ export default function CreatePage() {
   const [playlistTracks, setPlaylistTracks] = useState([])
   const [searchResults, setSearchResults] = useState([]);
   const [search, setSearch] = useState("");
+  const [submitting, setSubmitting] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -197,18 +198,19 @@ export default function CreatePage() {
   const {register, handleSubmit, getValues, setValue, formState: {errors}, resetField} = useForm<FormData>({resolver: zodResolver(formSchema)})
 
   const submitForm = async (data: FormData) => {
-    if(data.file) {
-      const fileUrl = await musicPostsService.getFileUrl(data.file[0])
-      console.log('🌆', fileUrl)
-      data.file = fileUrl
-    } 
+    setSubmitting(true)
+    // if(data.file) {
+    //   const fileUrl = await musicPostsService.getFileUrl(data.file[0])
+    //   console.log('🌆', fileUrl)
+    //   data.file = fileUrl
+    // } 
     
-    if(!isUsingPicture) {
-      data.trackIds = chosenSongIds
-    }
-    await musicPostsService.createPost(data)
-    toast.success("Post Created")
-    navigate('/posts')
+    // if(!isUsingPicture) {
+    //   data.trackIds = chosenSongIds
+    // }
+    // await musicPostsService.createPost(data)
+    // toast.success("Post Created")
+    // navigate('/posts')
   }
 
    function addSongId(songId : string, songObject) {
@@ -276,6 +278,8 @@ export default function CreatePage() {
   );
   }
 
+  console.log(pictureString)
+
   useEffect(() => {
     if (!search) return setSearchResults([]);
 
@@ -314,7 +318,6 @@ export default function CreatePage() {
                 className="bg-slate-900 w-full h-20 focus:outline-none"
                 placeholder="Share a song or write a note..."
                 maxLength={500}
-                minLength={5}
                 ></textarea>
                 <span >{commentString.length}/500</span>
                 {pictureString?.length > 20 && 
@@ -350,14 +353,17 @@ export default function CreatePage() {
                 </span>
                 </div>
                 }
-              {errors.textComment && <div><span className="text-destructive">{errors.textComment.message}</span></div>}
+              {commentString.length >= 1 && commentString.length < 5 ? <div><span className="text-destructive">Message must be five characters or greater.</span></div> : null}
               </div>
                 <div>
                   <div className="flex justify-center">
-                    
+            {submitting ? <Button className="w-1/4 border cursor-default hover:bg-slate-50 border-white mb-2" variant={"secondary"}>
+              <Icon path ={mdiLoading} spin color={"black"} size={1.5}/>
+            </Button> :
             <Button type="submit" variant={"ghost"} className={`w-1/4 border border-white mb-2`}>
-              Submit
+                Submit
             </Button>
+            }
                   </div>
           <div className="grid grid-cols-3 mb-10 justify-items-center">
             <div className="col-span-1">
@@ -613,7 +619,7 @@ export default function CreatePage() {
                   </DialogHeader>
                   <div className="flex flex-col items-center ">
                     <div className="d-flex justify-content-center">
-                      {pictureString !== undefined && pictureString?.includes(".") ? 
+                      {pictureString.length > 15 ? 
                       <img className="rounded-lg h-56 w-56" src={pictureString}/>
                       : 
                       <div className="bg-subtle rounded-lg h-52 w-52 flex justify-center items-center">
@@ -626,10 +632,12 @@ export default function CreatePage() {
                         <Input
                           {...register("file")}
                           //FIXME
-                          onChange={selectFile}
+                          onChange={(e) => {
+                            selectFile(e)
+                          }}
                           accept="image/*"
                           type="file"
-                          className="bg-slate-800"
+                          className="bg-slate-800 file:text-slate-200 hover:border-slate-400 file:bg-slate-600 file:rounded-sm file:cursor-pointer delay-75 transition-all ease-in-out cursor-pointer"
                         />
                       </div>
                       <div className="ms-1">
