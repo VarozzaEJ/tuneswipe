@@ -1,7 +1,6 @@
 import {
   mdiArrowRight,
   mdiChatOutline,
-  mdiCheckCircle,
   mdiHomeOutline,
   mdiImage,
   mdiLoading,
@@ -9,15 +8,11 @@ import {
   mdiMusicNote,
   mdiPalette,
   mdiPencilPlus,
-  mdiPlus,
-  mdiSpotify,
 } from "@mdi/js";
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -38,38 +33,18 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z, ZodType } from "zod";
 import {accountService} from "../services/accountService.js"
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Dialog,
   DialogClose,
@@ -103,23 +78,37 @@ const spotifyApi = new SpotifyWebApi({
 type FormData = {
   textComment: string;
   trackIds: string[];
-  picture: string;
+  // picture: string;
   color: string;
+  file: null;
 }
+
+const MAX_FILE_SIZE = 2000000
+    const ACCEPTED_IMAGE_TYPES = [
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'image/webp',
+    ]
+
+const imageSchema = z.any().optional()
+.refine(file => file.length == 1 ? ACCEPTED_IMAGE_TYPES.includes(file?.[0]?.type) ? true : false : true, 'Invalid file. choose either JPEG or PNG image')
+.refine(file => file.length == 1 ? file[0]?.size <= MAX_FILE_SIZE ? true : false : true, 'Max file size allowed is 8MB.')
 
 const formSchema : ZodType<FormData> = z.object({
   textComment: z.string().min(5, {
     message: "Message must be at least 5 characters.",
   }).max(500),
   trackIds: z.array(z.string()).optional(),
-  picture: z.string().min(25, {
-    message: "Picture must be at least 25 characters.",
-  }).max(1000, {
-    message: "Character limit must not exceed 1000"
-  }).optional(),
+  // picture: z.string().min(25, {
+  //   message: "Picture must be at least 25 characters.",
+  // }).max(1000, {
+  //   message: "Character limit must not exceed 1000"
+  // }).optional(),
   color: z.string({message: "Color is required"}).min(2, {
     message: "Color is required"
-  })
+  }),
+  file: imageSchema,
 });
 
 export default function CreatePage() {
@@ -156,7 +145,6 @@ export default function CreatePage() {
     if(user == null || undefined) {
       AuthService.loginWithPopup()
     }
-    console.log(user)
   }
 
   useEffect(() => {
@@ -206,9 +194,15 @@ export default function CreatePage() {
   }
 
   //TODO make only tracks possible or pictures. A user shouldn't be able to use both in the same form submission
-  const {register, handleSubmit, getValues, formState: {errors}, resetField} = useForm<FormData>({resolver: zodResolver(formSchema)})
+  const {register, handleSubmit, getValues, setValue, formState: {errors}, resetField} = useForm<FormData>({resolver: zodResolver(formSchema)})
 
   const submitForm = async (data: FormData) => {
+    if(data.file) {
+      const fileUrl = await musicPostsService.getFileUrl(data.file[0])
+      console.log('🌆', fileUrl)
+      data.file = fileUrl
+    } 
+    
     if(!isUsingPicture) {
       data.trackIds = chosenSongIds
     }
@@ -240,20 +234,32 @@ export default function CreatePage() {
   function closeDialog() {
     setOpen(false)
   }
-const pictureValue = getValues().picture
+// const pictureValue = getValues().picture
 
-  useEffect(() => {
-    checkPictureValue()
-    setPictureString(pictureValue)
-  }, [pictureValue])
+  // useEffect(() => {
+  //   // checkPictureValue()
+  //   setPictureString(pictureValue)
+  // }, [pictureValue])
 
   
 
-  const checkPictureValue = () => {
-    const pictureValue = getValues()
-    if(pictureValue.picture !== undefined) setIsUsingPicture(true)
-    if(pictureValue.picture === undefined) setIsUsingPicture(false)
+  // const checkPictureValue = () => {
+  //   const formDataValues = getValues()
+  //   if(formDataValues.picture !== undefined) setIsUsingPicture(true)
+  //   if(formDataValues.picture === undefined) setIsUsingPicture(false)
+  // }
+
+  async function selectFile(event) {
+  try {
+    const file = event.target.files[0]
+    console.log(file)
+    setPictureString(URL.createObjectURL(file)) 
+    setIsUsingPicture(true)
   }
+  catch (error) {
+    console.error(error)
+  }
+}
 
   const getTracksInPlaylist = async (playlistId) => {
     await spotifyApi.getPlaylistTracks(`${playlistId}`, {
@@ -378,7 +384,7 @@ const pictureValue = getValues().picture
             <AlertDialogAction
             onClick={() => {
               setIsUsingPicture(false)
-              resetField("picture")
+              // resetField("picture")
             }}
               className={
                 "hover:bg-accent hover:text-accent-foreground bg-transparent border-none"
@@ -599,7 +605,7 @@ const pictureValue = getValues().picture
                 </DialogTrigger>
                 <DialogContent onPointerDownOutside={() => {
                   console.log("Working")
-                  checkPictureValue()
+                  // checkPictureValue()
                 }} className="sm:max-w-md w-5/6 bg-slate-800 rounded-lg">
                   <DialogHeader>
                     <DialogTitle>Upload Photo</DialogTitle>
@@ -618,21 +624,18 @@ const pictureValue = getValues().picture
                     <div className="flex items-center w-full mt-5">
                       <div className="grid flex-1 gap-2">
                         <Input
-                          {...register("picture")}
-                          onInput={(e) => {
-                            setIsUsingPicture(true)
-                            setPictureString(e.target.value)
-                          }}
-                          id="link"
-                          type="url"
-                          placeholder="Photo URL"
+                          {...register("file")}
+                          //FIXME
+                          onChange={selectFile}
+                          accept="image/*"
+                          type="file"
                           className="bg-slate-800"
                         />
                       </div>
                       <div className="ms-1">
                         <Button onClick={() => {
                           closeDialog()
-                          checkPictureValue()
+                          // checkPictureValue()
                         }}>Save</Button>
                       </div>
                     </div>

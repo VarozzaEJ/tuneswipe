@@ -10,10 +10,8 @@ import {
   mdiHomeOutline,
   mdiLoading,
   mdiPencilPlusOutline,
-  mdiPlus,
 } from "@mdi/js";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import SpotifyWebApi from "spotify-web-api-node";
 import Icon from "@mdi/react";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -21,8 +19,6 @@ import Login from "../components/Login.jsx";
 import { musicPostsService } from "../services/MusicPostsService.js";
 import MusicPlayerCard from "../components/MusicPlayerCard.jsx";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import CommentForm from "../components/CommentForm.tsx";
 import {
   Popover,
   PopoverContent,
@@ -31,10 +27,8 @@ import {
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import {
   AlertDialog,
@@ -57,41 +51,19 @@ import {
   DrawerContent,
   DrawerDescription,
   DrawerFooter,
-  DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { useForm } from "react-hook-form";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
-  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z, ZodType } from "zod";
 import { commentsService } from "../services/CommentsService.js";
-import useAuth from "../services/useAuth.js";
-import SpotifyLogin from "../components/ui/SpotifyLogin.jsx";
 import useCommentForm from "../components/CommentForm.tsx";
 import DisabledCommentForm from "../components/DisabledCommentForm.jsx";
-
-const spotifyApi = new SpotifyWebApi({
-  clientId: `${import.meta.env.VITE_CLIENT_ID}`,
-});
-
-const formSchema = z.object({
-  comment: z
-    .string()
-    .min(5, {
-      message: "Message must be at least 5 characters.",
-    })
-    .max(500),
-  postId: z.string(),
-});
 
 export default function PostsPage() {
   const [musicPosts, setMusicPosts] = useState([]);
@@ -140,9 +112,10 @@ export default function PostsPage() {
     setMusicPosts(musicPosts);
   };
 
-  const deletePost = async (musicPostId) => {
+  const deletePost = async (musicPostId, musicPostFileUrl) => {
     try {
       await musicPostsService.deletePost(musicPostId);
+      await musicPostsService.deleteImageFromS3Bucket(musicPostFileUrl);
       const foundMusicPost = musicPosts.find((post) => post.id == musicPostId);
       if (foundMusicPost) {
         const updatedPosts = musicPosts.filter(
@@ -152,12 +125,9 @@ export default function PostsPage() {
       }
     } catch (error) {
       toast.error("Error Deleting Post");
+      console.error(error);
     }
   };
-
-  const { register, handleSubmit } = useForm({
-    resolver: zodResolver(formSchema),
-  });
 
   const getPostComments = async (postId) => {
     try {
@@ -287,7 +257,7 @@ export default function PostsPage() {
                                     "bg-destructive hover:bg-destructive/80"
                                   }
                                   onClick={() => {
-                                    deletePost(post.id);
+                                    deletePost(post.id, post.file);
                                   }}
                                 >
                                   Continue
@@ -352,7 +322,7 @@ export default function PostsPage() {
                 <span className="text-xl">{post.textComment}</span>
               </div>
             </CardHeader>
-            {post.trackIds.length > 0 || post.picture ? (
+            {post.trackIds.length > 0 || post.picture || post.file ? (
               <CardContent>
                 {post.trackIds.length > 0 && (
                   <MusicPlayerCard
@@ -364,6 +334,15 @@ export default function PostsPage() {
                   <div className="w-full flex justify-center">
                     <img
                       src={post.picture}
+                      className="rounded-sm "
+                      style={{ maxHeight: 400 }}
+                    />
+                  </div>
+                )}
+                {post.file && (
+                  <div className="w-full flex justify-center">
+                    <img
+                      src={post.file}
                       className="rounded-sm "
                       style={{ maxHeight: 400 }}
                     />

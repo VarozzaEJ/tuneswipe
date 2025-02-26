@@ -7,6 +7,7 @@ export const MusicPostSchema = new Schema({
     textComment: { type: String, required: true },
     trackIds: [{ type: String }],
     picture: { type: String },
+    file: { type: String, minLength: 1, maxLength: 1000 },
     color: { type: String, required: true }
 }, { timestamps: true, toJSON: { virtuals: true } })
 

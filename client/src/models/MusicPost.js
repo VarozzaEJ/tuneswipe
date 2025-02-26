@@ -11,6 +11,7 @@ export class MusicPost {
         this.createdAt = new Date(data.createdAt)
         this.updatedAt = data.updatedAt
         this.color = data.color ? data.color : "#94A3B8"
+        this.file = data.file
     }
 
     get fromNow() {

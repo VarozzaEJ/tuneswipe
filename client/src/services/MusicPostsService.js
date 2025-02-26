@@ -1,9 +1,14 @@
+import axios from "axios";
 import { AppState } from "../AppState.js";
 import { MusicPost } from "../models/MusicPost.js";
 import { PostReport } from "../models/PostReport.js";
 import { api } from "./AxiosService.js";
 
 class MusicPostsService {
+  async deleteImageFromS3Bucket(musicPostFileUrl) {
+    const fileName = musicPostFileUrl.substring(51)
+    await api.delete(`http://localhost:3000/api/uploadImage/${fileName}`);
+  }
   async getAllPosts() {
     try {
       const response = await api.get("/create");
@@ -16,6 +21,13 @@ class MusicPostsService {
     } catch (error) {
       console.error(error);
     }
+  }
+
+  async getFileUrl(file) {
+    const payload = new FormData()
+    payload.append('image', file)
+    const response = await api.post('http://localhost:3000/api/uploadImage/sharp', payload)
+    return response.data
   }
 
   async createPost(postData) {
