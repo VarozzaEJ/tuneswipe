@@ -199,18 +199,18 @@ export default function CreatePage() {
 
   const submitForm = async (data: FormData) => {
     setSubmitting(true)
-    // if(data.file) {
-    //   const fileUrl = await musicPostsService.getFileUrl(data.file[0])
-    //   console.log('🌆', fileUrl)
-    //   data.file = fileUrl
-    // } 
+    if(data.file) {
+      const fileUrl = await musicPostsService.getFileUrl(data.file[0])
+      console.log('🌆', fileUrl)
+      data.file = fileUrl
+    } 
     
-    // if(!isUsingPicture) {
-    //   data.trackIds = chosenSongIds
-    // }
-    // await musicPostsService.createPost(data)
-    // toast.success("Post Created")
-    // navigate('/posts')
+    if(!isUsingPicture) {
+      data.trackIds = chosenSongIds
+    }
+    await musicPostsService.createPost(data)
+    toast.success("Post Created")
+    navigate('/posts')
   }
 
    function addSongId(songId : string, songObject) {

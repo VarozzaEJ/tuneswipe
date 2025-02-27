@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import React, { useEffect, useState } from "react";
 import { AppState } from "../AppState.js";
 import Icon from "@mdi/react";
-import { mdiAccount, mdiAccountOutline, mdiChatOutline, mdiChevronRight, mdiClose, mdiHomeOutline, mdiImage, mdiLoading, mdiPencilPlusOutline } from "@mdi/js";
+import { mdiAccount, mdiAccountOutline, mdiChatOutline, mdiChevronRight, mdiClose, mdiEmail, mdiHomeOutline, mdiImage, mdiLoading, mdiPencilPlusOutline, mdiRocketLaunch } from "@mdi/js";
 import Login from "../components/Login.jsx";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -41,6 +41,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AuthService } from "../services/AuthService.js";
 import {musicPostsService} from "../services/musicPostsService.js"
 import {commentsService} from "../services/commentsService.js"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import ReportBugForm from "@/components/ReportBugForm.js";
+import RequestFeatureForm from "@/components/RequestFeatureForm.js";
 
 type FormData = {
   name: string;
@@ -232,7 +243,66 @@ function AccountPage() {
             </DrawerContent>
           </Drawer>
         </div>
-        <div className="p-5 flex justify-center">
+        <div className="p-5 flex flex-col items-center justify-center">
+          <Drawer>
+            <DrawerTrigger asChild>
+              <Button className="w-full sm:w-80 mb-3" variant={"secondary"}>Help</Button>
+            </DrawerTrigger>
+            <DrawerContent className="bg-slate-800 h-1/4">
+              <DrawerTitle></DrawerTitle>
+              <DrawerDescription></DrawerDescription>
+                  <div className="p-3 ">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <div className="flex hover:text-slate-400 ease-in-out transition-all cursor-pointer mx-5 mb-5">
+                            <div>
+                                <Icon
+                                path={mdiEmail}
+                                color="white"
+                                size={1}
+                                />
+                            </div>
+                            <div className="ms-2">
+                            <span className="hover:text-slate-400 ease-in-out transition-all">
+                              Report a bug
+                              </span>
+                            </div>
+                          </div>
+                          </DialogTrigger>
+                          <DialogDescription></DialogDescription>
+                            <DialogTitle></DialogTitle>
+                          <DialogContent className="bg-slate-800 rounded-sm ">
+                            <h1 className="w-full text-center text-lg">Report a Bug</h1>
+                            <ReportBugForm/>
+                          </DialogContent>
+                        </Dialog>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <div className="flex hover:text-slate-400 ease-in-out transition-all cursor-pointer mx-5 mb-5">
+                            <div>
+                                <Icon
+                                path={mdiRocketLaunch}
+                                color="white"
+                                size={1}
+                                />
+                            </div>
+                            <div className="ms-2">
+                            <span className="hover:text-slate-400 ease-in-out transition-all">
+                              Request a feature
+                              </span>
+                            </div>
+                          </div>
+                          </DialogTrigger>
+                          <DialogDescription></DialogDescription>
+                            <DialogTitle></DialogTitle>
+                          <DialogContent className="bg-slate-800 rounded-sm ">
+                            <h1 className="w-full text-center text-lg">Request a Feature</h1>
+                            <RequestFeatureForm />
+                          </DialogContent>
+                        </Dialog>
+                      </div>
+            </DrawerContent>
+          </Drawer>
           <Button onClick={logout} className="w-full sm:w-80" variant={"destructive"}>
             Logout
           </Button>
