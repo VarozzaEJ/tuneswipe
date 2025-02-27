@@ -147,7 +147,7 @@ function AccountPage() {
               <form onSubmit={handleSubmit(submitForm)}>
               <div>
               <Label className="mt-3" htmlFor="name">Name</Label>
-              <Input {...register("name")} onLoad={() => {blur}}  id="name" className="text-black" />
+              <Input {...register("name")} onLoad={() => {blur}}  id="name" className="border-0 active:border-0 mt-1 bg-slate-950" />
               </div>
               <div className="flex justify-center items-center mt-5">
                 {profilePicture !== "" ? 
@@ -158,10 +158,10 @@ function AccountPage() {
               </div>
               <div className="mt-5">
               <Label className="mt-10" htmlFor="picture">Picture</Label>
-              <Input {...register("picture")} id="picture" className="text-black" />
+              <Input {...register("picture")} id="picture" className="border-0 active:border-0 mt-1 bg-slate-950" />
               </div>
               <div className="flex w-full justify-end">
-                <Button  className="mt-3" variant={"secondary"}>Submit</Button>
+                <Button  className="mt-3" >Submit</Button>
               </div>
               </form>
             </SheetContent>
@@ -271,7 +271,7 @@ function AccountPage() {
                           </DialogTrigger>
                           <DialogDescription></DialogDescription>
                             <DialogTitle></DialogTitle>
-                          <DialogContent className="bg-slate-800 rounded-sm ">
+                          <DialogContent className="bg-slate-800 w-11/12 md:w-full rounded-sm ">
                             <h1 className="w-full text-center text-lg">Report a Bug</h1>
                             <ReportBugForm/>
                           </DialogContent>
@@ -295,7 +295,7 @@ function AccountPage() {
                           </DialogTrigger>
                           <DialogDescription></DialogDescription>
                             <DialogTitle></DialogTitle>
-                          <DialogContent className="bg-slate-800 rounded-sm ">
+                          <DialogContent className="bg-slate-800 w-11/12 md:w-full rounded-sm ">
                             <h1 className="w-full text-center text-lg">Request a Feature</h1>
                             <RequestFeatureForm />
                           </DialogContent>
