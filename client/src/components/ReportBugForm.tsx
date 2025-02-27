@@ -15,8 +15,8 @@ export default function ReportBugForm() {
         <Input className='mb-3 border-0 focus-visible:ring-0 mt-1 bg-slate-950' id="description" type="text" placeholder='e.g. I am unable to login' />
 
         <Label htmlFor="reproduction">Steps to Reproduce</Label>
-        <p className={("text-sm text-muted-foreground mb-2")}>Be as detailed as possible</p>
-        <Textarea className='mb-3 border-0 focus-visible:ring-0 mt-1 bg-slate-950' id="reproduction"  placeholder='e.g. 1. Go to login page 2. Enter email and password 3. Click on login button' />
+        <p className={("text-sm text-slate-300 mb-2")}>Be as detailed as possible</p>
+        <Textarea className='mb-3 border-0 focus-visible:ring-0 h-20 mt-1 bg-slate-950' id="reproduction"  placeholder='e.g. 1. Go to login page 2. Enter email and password 3. Click on login button' />
 
         <Label htmlFor="screenshot">Screenshot of Issue</Label>
         
