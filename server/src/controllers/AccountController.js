@@ -9,6 +9,8 @@ export class AccountController extends BaseController {
       .use(Auth0Provider.getAuthorizedUserInfo)
       .get('', this.getUserAccount)
       .put('', this.editUserAccount)
+      .post('/request', this.requestFeature)
+      .post('/report', this.reportBug)
   }
 
   async getUserAccount(req, res, next) {
@@ -20,7 +22,7 @@ export class AccountController extends BaseController {
     }
   }
 
-   async editUserAccount(req, res, next) {
+  async editUserAccount(req, res, next) {
     try {
       const accountId = req.userInfo.id
       req.body.id = accountId
@@ -29,6 +31,29 @@ export class AccountController extends BaseController {
     } catch (error) {
       next(error)
     }
+
+
+
   }
-  
+  async requestFeature(req, res, next) {
+    try {
+      const featureData = req.body
+      const feature = await accountService.requestFeature(featureData)
+      res.send(feature)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async reportBug(req, res, next) {
+    try {
+      const bugData = req.body
+      const userId = req.userInfo.id
+      bugData.creatorId = userId
+      const bug = await accountService.reportBug(bugData)
+      res.send(bug)
+    } catch (error) {
+      next(error)
+    }
+  }
 }

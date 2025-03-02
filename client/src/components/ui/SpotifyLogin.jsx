@@ -11,12 +11,6 @@ export default function SpotifyLogin() {
             <AnimatedTitle text={"Tune Swipe"} />
           </h1>
         </div>
-        {/* <a
-        href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}
-        >
-        Login To Spotify
-        </a> */}
-
         <a
           href={`https://accounts.spotify.com/authorize?client_id=${
             import.meta.env.VITE_CLIENT_ID

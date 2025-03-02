@@ -46,6 +46,17 @@ function sanitizeBody(body) {
 }
 
 class AccountService {
+  async requestFeature(featureData) {
+    const featureRequest = await dbContext.FeatureRequests.create(featureData)
+    featureRequest.populate('creator')
+    return featureRequest
+  }
+
+  async reportBug(bugData) {
+    const bugReport = await dbContext.TuneswipeBugs.create(bugData)
+    bugReport.populate('creator')
+    return bugReport
+  }
   /**
    * Returns a user account from the Auth0 user object
    *

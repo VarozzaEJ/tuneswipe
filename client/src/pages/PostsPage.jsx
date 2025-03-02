@@ -24,6 +24,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Card,
   CardContent,
@@ -78,6 +79,7 @@ export default function PostsPage() {
     useState(false);
   const [extraOptionsPopoverOpen, setExtraOptionsPopoverOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [postLoading, setPostLoading] = useState(true);
   const [zeroComments, setZeroComments] = useState(false);
 
   useEffect(() => {
@@ -108,8 +110,11 @@ export default function PostsPage() {
   }, [comment]);
 
   const getAllPosts = async () => {
-    const musicPosts = await musicPostsService.getAllPosts();
-    setMusicPosts(musicPosts);
+    setTimeout(async () => {
+      const musicPosts = await musicPostsService.getAllPosts();
+      setMusicPosts(musicPosts);
+    }, 1000);
+    setPostLoading(false);
   };
 
   const deletePost = async (musicPostId, musicPostFileUrl) => {
@@ -352,7 +357,9 @@ export default function PostsPage() {
                 )}
               </CardContent>
             ) : (
-              <div></div>
+              <div>
+                <Skeleton className={"h-[400px] w-[400px] rounded-sm"} />
+              </div>
             )}
             <CardFooter>
               <div className="flex">

@@ -610,7 +610,6 @@ export default function CreatePage() {
                   
                 </DialogTrigger>
                 <DialogContent onPointerDownOutside={() => {
-                  console.log("Working")
                   // checkPictureValue()
                 }} className="sm:max-w-md w-5/6 bg-slate-800 rounded-lg">
                   <DialogHeader>

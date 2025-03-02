@@ -23,6 +23,16 @@ class AccountService {
     logger.log('UPDATING YOUR ACCOUNT', response.data)
     AppState.account = new Account(response.data)
   }
+
+  async requestFeature(featureData) {
+    const response = await api.post('/account/request', featureData)
+    console.log(response.data)
+  }
+
+  async reportBug(bugData) {
+    const response = await api.post('/account/report', bugData)
+    console.log(response.data)
+  }
 }
 
 export const accountService = new AccountService()

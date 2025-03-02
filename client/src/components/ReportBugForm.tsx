@@ -7,6 +7,14 @@ import { Button } from '@/components/ui/button'
 import { z, ZodType } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { accountService } from '../services/accountService.js'
+import {musicPostsService} from '../services/musicPostsService'
+import emailjs from '@emailjs/browser';
+import { toast } from 'sonner'
+
+const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID
+const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID
 
 type FormData = {
     email: string;
@@ -15,7 +23,10 @@ type FormData = {
     file: null;
 }
 
-export default function ReportBugForm() {
+console.log(publicKey)
+console.log(templateId)
+console.log(serviceId)
+export default function ReportBugForm({setReportBugDialogOpen}) {
     const [pictureString, setPictureString] = useState("")
 
     const formSchema : ZodType<FormData> = z.object({
@@ -28,7 +39,14 @@ export default function ReportBugForm() {
      const { register, handleSubmit, formState: { errors } } = useForm<FormData>({ resolver: zodResolver(formSchema) })
 
      const submitForm = async (data : FormData) => {
-        console.log(data)
+        if(data.file) {
+              const fileUrl = await musicPostsService.getFileUrl(data.file[0])
+              console.log('🌆', fileUrl)
+              data.file = fileUrl
+            } 
+        await accountService.reportBug(data)
+        emailjs.send(serviceId, templateId, {...data}, {publicKey: publicKey}).then(() => {toast.success("Thank you for helping us improve the TuneSwipe experience!")}).catch((err) => {console.log(err)})
+        setReportBugDialogOpen(false)
      }
 
     function selectFile(e) {
@@ -74,9 +92,13 @@ export default function ReportBugForm() {
                 <p className="text-xs text-gray-500 dark:text-gray-400">PNG, JPG or GIF (MAX. 800x400px)</p>
             </div>
             }
-            <input {...register("file")} onChange={(e) => {
+            <Input 
+            
+            {...register("file")}
+            onInput={(e) => {
                 selectFile(e)
-            }} id="dropzone-file" type="file" className="hidden" />
+            }}
+             id="dropzone-file" type="file"  accept="image/*" className="hidden" />
          </label>
         </div> 
         <div className='w-full mt-3 flex justify-end'>

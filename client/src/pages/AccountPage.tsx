@@ -78,6 +78,7 @@ function AccountPage() {
   const [reports, setReports] = useState([])
   const [noReports, setNoReports] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [reportBugDialogOpen, setReportBugDialogOpen] = useState(false)
 
   useEffect(() => {
     if(!AppState.account) return
@@ -147,7 +148,7 @@ function AccountPage() {
               <form onSubmit={handleSubmit(submitForm)}>
               <div>
               <Label className="mt-3" htmlFor="name">Name</Label>
-              <Input {...register("name")} onLoad={() => {blur}}  id="name" className="border-0 active:border-0 mt-1 bg-slate-950" />
+              <Input {...register("name")} id="name" className="border-0 active:border-0 mt-1 bg-slate-950" />
               </div>
               <div className="flex justify-center items-center mt-5">
                 {profilePicture !== "" ? 
@@ -252,7 +253,7 @@ function AccountPage() {
               <DrawerTitle></DrawerTitle>
               <DrawerDescription></DrawerDescription>
                   <div className="p-3 ">
-                    <Dialog>
+                    <Dialog onOpenChange={setReportBugDialogOpen} open={reportBugDialogOpen}>
                       <DialogTrigger asChild>
                         <div className="flex hover:text-slate-400 ease-in-out transition-all cursor-pointer mx-5 mb-5">
                             <div>
@@ -273,7 +274,7 @@ function AccountPage() {
                             <DialogTitle></DialogTitle>
                           <DialogContent className="bg-slate-800 w-11/12 md:w-full rounded-sm ">
                             <h1 className="w-full text-center text-lg">Report a Bug</h1>
-                            <ReportBugForm/>
+                            <ReportBugForm setReportBugDialogOpen={setReportBugDialogOpen}/>
                           </DialogContent>
                         </Dialog>
                     <Dialog>

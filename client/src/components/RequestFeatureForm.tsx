@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { z, ZodType } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { accountService } from '../services/accountService.js'
 
 type FormData = {
     firstName: string;
@@ -29,7 +30,7 @@ export default function RequestFeatureForm() {
      const { register, handleSubmit, formState: { errors } } = useForm<FormData>({ resolver: zodResolver(formSchema) })
 
      const submitForm = async (data : FormData) => {
-        console.log(data)
+        await accountService.requestFeature(data)
      }
     
 
