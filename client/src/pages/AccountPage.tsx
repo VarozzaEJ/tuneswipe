@@ -79,6 +79,7 @@ function AccountPage() {
   const [noReports, setNoReports] = useState(false)
   const [loading, setLoading] = useState(true)
   const [reportBugDialogOpen, setReportBugDialogOpen] = useState(false)
+  const [requestFeatureDialogOpen, setRequestFeatureDialogOpen] = useState(false)
 
   useEffect(() => {
     if(!AppState.account) return
@@ -277,7 +278,7 @@ function AccountPage() {
                             <ReportBugForm setReportBugDialogOpen={setReportBugDialogOpen}/>
                           </DialogContent>
                         </Dialog>
-                    <Dialog>
+                    <Dialog onOpenChange={setRequestFeatureDialogOpen} open={requestFeatureDialogOpen}>
                       <DialogTrigger asChild>
                         <div className="flex hover:text-slate-400 ease-in-out transition-all cursor-pointer mx-5 mb-5">
                             <div>
@@ -298,7 +299,7 @@ function AccountPage() {
                             <DialogTitle></DialogTitle>
                           <DialogContent className="bg-slate-800 w-11/12 md:w-full rounded-sm ">
                             <h1 className="w-full text-center text-lg">Request a Feature</h1>
-                            <RequestFeatureForm />
+                            <RequestFeatureForm setRequestFeatureDialogOpen={setRequestFeatureDialogOpen} />
                           </DialogContent>
                         </Dialog>
                       </div>

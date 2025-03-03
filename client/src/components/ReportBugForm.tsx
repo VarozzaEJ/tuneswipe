@@ -45,6 +45,7 @@ export default function ReportBugForm({setReportBugDialogOpen}) {
               data.file = fileUrl
             } 
         await accountService.reportBug(data)
+        console.log(data.file)
         emailjs.send(serviceId, templateId, {...data}, {publicKey: publicKey}).then(() => {toast.success("Thank you for helping us improve the TuneSwipe experience!")}).catch((err) => {console.log(err)})
         setReportBugDialogOpen(false)
      }

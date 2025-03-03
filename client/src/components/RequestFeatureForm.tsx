@@ -8,6 +8,8 @@ import { z, ZodType } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { accountService } from '../services/accountService.js'
+import { toast } from 'sonner'
+import emailjs from '@emailjs/browser';
 
 type FormData = {
     firstName: string;
@@ -17,7 +19,7 @@ type FormData = {
     reproduction: string;
 }
 
-export default function RequestFeatureForm() {
+export default function RequestFeatureForm({setRequestFeatureDialogOpen}) {
 
     const formSchema : ZodType<FormData> = z.object({
         firstName: z.string().min(2, "First name must be 2 characters").max(50, "First name can't exceed 50 characters"),
@@ -27,10 +29,16 @@ export default function RequestFeatureForm() {
         reproduction: z.string({message: "Explanation is required"}).min(15, "Explanation must be at least 15 characters long").max(500, "Explanation must be at most 500 characters long")
      })
 
+    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+    const templateId = import.meta.env.VITE_EMAILJS_FEATURE_REQUEST_TEMPLATE_ID
+    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID
+
      const { register, handleSubmit, formState: { errors } } = useForm<FormData>({ resolver: zodResolver(formSchema) })
 
      const submitForm = async (data : FormData) => {
         await accountService.requestFeature(data)
+        emailjs.send(serviceId, templateId, {...data}, {publicKey: publicKey}).then(() => {toast.success("Thank you for helping us improve the TuneSwipe experience!")}).catch((err) => {console.log(err)})
+        setRequestFeatureDialogOpen(false)
      }
     
 
