@@ -59,8 +59,6 @@ const spotifyApi = new SpotifyWebApi({
   clientId: `${import.meta.env.VITE_CLIENT_ID}`,
 });
 
-const main = document.getElementById("main");
-
 const tg = new TourGuideClient();
 export default function ListenPage() {
   const [recommendedTracks, setRecommendedTracks] = useState([]);

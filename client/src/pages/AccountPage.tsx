@@ -9,10 +9,8 @@ import { Button } from "@/components/ui/button";
 import {accountService} from "../services/accountservice.js"
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -22,8 +20,6 @@ import {
   DrawerClose,
   DrawerContent,
   DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer"
@@ -45,8 +41,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
-  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
@@ -56,6 +50,16 @@ import RequestFeatureForm from "@/components/RequestFeatureForm.js";
 type FormData = {
   name: string;
   picture: string;
+}
+
+type Report = {
+  id: string;
+  creatorName: string;
+  postOrComment: string;
+  type: string;
+  description: string;
+  createdAt: Date;
+  creatorPicture: string;
 }
 
 const formSchema: ZodType<FormData> = z.object({
@@ -75,7 +79,7 @@ const formSchema: ZodType<FormData> = z.object({
 function AccountPage() {
   const [profilePicture, setProfilePicture] = useState("");
   const [open, setOpen] = useState(false)
-  const [reports, setReports] = useState([])
+  const [reports, setReports] = useState<Report[]>([])
   const [noReports, setNoReports] = useState(false)
   const [loading, setLoading] = useState(true)
   const [reportBugDialogOpen, setReportBugDialogOpen] = useState(false)
@@ -91,7 +95,7 @@ function AccountPage() {
     setProfilePicture(AppState.account?.picture);
   }, [AppState.account, AppState.user]);
 
-  const {handleSubmit, register, resetField, setValue, getValues} = useForm<FormData>({resolver: zodResolver(formSchema)})
+  const {handleSubmit, register, setValue} = useForm<FormData>({resolver: zodResolver(formSchema)})
 
   const submitForm = async (data: FormData) => {
       await accountService.updateAccount(data)
@@ -174,7 +178,7 @@ function AccountPage() {
                     getYourReports()
                   }} className="w-full sm:w-80 bg-inherit" variant={"outline"}>See Reported Items</Button>
             </DrawerTrigger>
-            <DrawerContent className="bg-slate-800 rounded-t-[10px]">
+            <DrawerContent className="bg-slate-800 max-h-[600px] rounded-t-[10px]">
               <div className="grid grid-cols-3 items-center bg-inherit sticky mt-2 top-0 ">
                       <div className="col-span-1"></div>
                       <div className="col-span-1 h-10 ">
@@ -194,19 +198,23 @@ function AccountPage() {
                       </div>
                     </div>
               <DrawerDescription></DrawerDescription>
-              <div className="mt-3 flex flex-col items-center w-full overflow-y-scroll justify-center">
+              <div className=" pt-5 flex flex-col items-center w-full overflow-y-scroll justify-center">
                 {reports.length !== 0 && 
                 reports.map((report) => (
                   
                 <Popover key={report.id}>
-                  <PopoverTrigger asChild>
+                  <PopoverTrigger className="w-11/12">
 
-                  <div className="w-11/12 border cursor-pointer ease-in-out transition-all hover:border-slate-200 border-t-0 border-s-0 border-e-0 mb-3 border-slate-400 h-20">
+                  <div role="button" className="w-11/12 border cursor-pointer ease-in-out transition-all hover:border-slate-200 border-t-0 border-s-0 border-e-0 mb-3 border-slate-400 h-20">
                   <div className="flex items-center justify-between h-20">
                     <div className="flex">
 
-                    <div className="flex justify-center border border-slate-400 w-10 h-10 items-center">
-                      <Icon path={mdiAccountOutline} color="white"/>
+                    <div className="flex justify-center border border-slate-400 w-12 h-12 items-center">
+                      {report.creatorPicture == "" ?
+                      <Icon path={mdiAccountOutline} color="white" size={1}/>
+                      :
+                      <img src={report.creatorPicture} className={"w-12 h-12"}/>
+                      }
                     </div>
                     <div className="ms-2">
 

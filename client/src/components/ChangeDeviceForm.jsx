@@ -72,6 +72,7 @@ export default function ChangeDeviceForm({
     localStorage.setItem("chosenDeviceId", e);
     toast.success("Device Changed Successfully");
     setChangeDeviceFormOpen(false);
+    spotifyApi.setVolume(75);
   }
 
   return (

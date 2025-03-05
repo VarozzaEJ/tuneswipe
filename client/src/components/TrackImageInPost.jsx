@@ -48,6 +48,7 @@ export default function TrackImageInPost({ img, trackURI, trackNumber }) {
       }
     });
     const offset = trackNumber - 1;
+    await spotifyApi.setVolume(75);
     await spotifyApi.play({
       context_uri: `${trackURI}`,
       offset: {

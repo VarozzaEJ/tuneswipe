@@ -152,27 +152,35 @@ export default function MusicPlayerCard({ trackIds }) {
         <ExpiredTokenDialog open={open} />
       ) : (
         <div className="bg-slate-800 rounded-sm shadow-sm">
-          <div className="flex flex-col h-60 md:h-80 justify-center items-center">
-            {tracks.map((track, index) => (
-              <TinderCard
-                ref={childRefs[index]}
-                className="absolute w-1/2 flex justify-center items-center"
-                key={track.name}
-                flickOnSwipe
-                swipeRequirementType="position"
-                swipeThreshold={50}
-                preventSwipe={["down", "up"]}
-                onSwipe={(dir) => swiped(dir, track.uri, index)}
-                onCardLeftScreen={() => outOfFrame(track.name, index)}
-              >
-                <TrackImageInPost
-                  img={track.album.images[0].url}
-                  trackURI={track.album.uri}
-                  trackNumber={track.track_number}
-                />
-              </TinderCard>
-            ))}
-          </div>
+          {tracks[0] ? (
+            <>
+              <div className="flex flex-col h-60 md:h-80 justify-center items-center">
+                {tracks.map((track, index) => (
+                  <TinderCard
+                    ref={childRefs[index]}
+                    className="absolute w-1/2 flex justify-center items-center"
+                    key={track.name}
+                    flickOnSwipe
+                    swipeRequirementType="position"
+                    swipeThreshold={50}
+                    preventSwipe={["down", "up"]}
+                    onSwipe={(dir) => swiped(dir, track.uri, index)}
+                    onCardLeftScreen={() => outOfFrame(track.name, index)}
+                  >
+                    <TrackImageInPost
+                      img={track.album.images[0].url}
+                      trackURI={track.album.uri}
+                      trackNumber={track.track_number}
+                    />
+                  </TinderCard>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="flex flex-col h-60 md:h-80 justify-center items-center">
+              <Skeleton className=" w-3/4 md:w-1/2 h-56 md:h-72" />
+            </div>
+          )}
           {tracks[0] && currentIndex >= 0 ? (
             <div className="h-20 flex flex-col justify-center bg-slate-800 rounded-sm shadow-sm">
               <div className=" mx-4 flex justify-between">

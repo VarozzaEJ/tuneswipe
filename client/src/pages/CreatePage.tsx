@@ -236,20 +236,20 @@ export default function CreatePage() {
   function closeDialog() {
     setOpen(false)
   }
-// const pictureValue = getValues().picture
+const pictureValue = getValues().file
 
-  // useEffect(() => {
-  //   // checkPictureValue()
-  //   setPictureString(pictureValue)
-  // }, [pictureValue])
+  useEffect(() => {
+    checkPictureValue()
+  }, [pictureValue])
 
   
 
-  // const checkPictureValue = () => {
-  //   const formDataValues = getValues()
-  //   if(formDataValues.picture !== undefined) setIsUsingPicture(true)
-  //   if(formDataValues.picture === undefined) setIsUsingPicture(false)
-  // }
+  const checkPictureValue = () => {
+    const formDataValues = getValues()
+    console.log(formDataValues.file)
+    if(formDataValues.file?.length > 0) setIsUsingPicture(true)
+    if(formDataValues.file === undefined) setIsUsingPicture(false)
+  }
 
   async function selectFile(event) {
   try {
@@ -278,7 +278,6 @@ export default function CreatePage() {
   );
   }
 
-  console.log(pictureString)
 
   useEffect(() => {
     if (!search) return setSearchResults([]);
@@ -390,7 +389,8 @@ export default function CreatePage() {
             <AlertDialogAction
             onClick={() => {
               setIsUsingPicture(false)
-              // resetField("picture")
+              resetField("file")
+              setPictureString("")
             }}
               className={
                 "hover:bg-accent hover:text-accent-foreground bg-transparent border-none"

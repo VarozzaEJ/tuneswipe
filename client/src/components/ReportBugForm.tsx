@@ -23,9 +23,6 @@ type FormData = {
     file: null;
 }
 
-console.log(publicKey)
-console.log(templateId)
-console.log(serviceId)
 export default function ReportBugForm({setReportBugDialogOpen}) {
     const [pictureString, setPictureString] = useState("")
 

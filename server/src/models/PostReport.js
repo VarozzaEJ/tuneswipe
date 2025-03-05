@@ -6,6 +6,7 @@ export const PostReportSchema = new Schema({
     description: { type: String, required: true },
     postCreatorName: { type: String, required: true },
     postId: { type: String, required: true },
+    postCreatorPicture: { type: String, required: true },
 }, { timestamps: true, toJSON: { virtuals: true } })
 
 PostReportSchema.virtual('creator', {
