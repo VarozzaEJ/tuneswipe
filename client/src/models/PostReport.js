@@ -11,6 +11,7 @@ export class PostReport {
         this.createdAt = new Date(data.createdAt)
         this.postOrComment = "post"
         this.creatorPicture = data.postCreatorPicture ? data.postCreatorPicture : ""
+        this.creator = data.creator ? new Account(data.creator) : null
     }
 
 

@@ -16,6 +16,7 @@ import {
 import { toast } from 'sonner';
 import { Textarea } from "@/components/ui/textarea"
 import {musicPostsService} from "../services/MusicPostsService.js"
+import emailjs from '@emailjs/browser';
 
 
 type FormData = {
@@ -24,6 +25,13 @@ type FormData = {
     postId: string;
     postCreatorName: string;
     postCreatorPicture: string;
+    firstName: string;
+    email: string;
+    bugOrPost: string;
+    descriptionString: string;
+    postIdString: string;
+    postCreatorNameString: string;
+    typeString: string;
 }
 
 const formSchema : ZodType<FormData> = z.object({
@@ -32,10 +40,17 @@ const formSchema : ZodType<FormData> = z.object({
   }).max(500, {
     message: "Description must not exceed 500 characters"
   }),
- type: z.enum(["vulgar language", "nudity", "harrassment", "other"]),
+ type: z.enum(["vulgar language", "nudity", "harassment", "other"]),
  postId: z.string().optional(),
  postCreatorName: z.string().optional(),
- postCreatorPicture: z.string().optional()
+ postCreatorPicture: z.string().optional(),
+ firstName: z.string().optional(),
+ email: z.string().email().optional(),
+ bugOrPost: z.string().optional(),
+ descriptionString: z.string().optional(),
+ postIdString: z.string().optional(),
+ postCreatorNameString: z.string().optional(),
+ typeString: z.string().optional(),
 });
 
 export default function ReportPostForm({postId, postCreator, handler, handler2, postCreatorPicture}) {
@@ -45,21 +60,25 @@ export default function ReportPostForm({postId, postCreator, handler, handler2, 
   })
 
 
-    // const submitForm = async (data: FormData) => {
-    // //   await accountService.submitReport(data)
-    // console.log(data)
-    // }
 
     async function onSubmit(data: z.infer<typeof formSchema>) {
         data.postId = postId
         data.postCreatorName = postCreator
         data.postCreatorPicture = postCreatorPicture
+        data.bugOrPost = "Post"
         console.log(data)
         const report = await musicPostsService.reportPost(data)
         if(report) {
             toast.success("Report Recieved!")
+            data.firstName = report.creator.name
+            data.email = report.creator.email
+            data.descriptionString = "Description: "
+            data.postIdString = "Post Id: "
+            data.postCreatorNameString = "Post Creator: "
+            data.typeString = "Type: "
             handler()
             handler2()
+            emailjs.send(import.meta.env.VITE_EMAILJS_SERVICE_ID, import.meta.env.VITE_EMAILJS_TEMPLATE_ID, {...data}, {publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY}).then(() => {}).catch((err) => {console.log(err)})
         } else {
             toast.error("Error!")
         }
@@ -94,7 +113,7 @@ export default function ReportPostForm({postId, postCreator, handler, handler2, 
                       <RadioGroupItem value="harrassment" />
                     </FormControl>
                     <FormLabel className="font-normal">
-                      Harrassment
+                      Harassment
                     </FormLabel>
                   </FormItem>
                   <FormItem className="flex items-center space-x-3 space-y-0">

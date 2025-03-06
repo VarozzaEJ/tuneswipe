@@ -21,6 +21,9 @@ type FormData = {
     description: string;
     reproduction: string;
     file: null;
+    stepsToReproduce: string;
+    screenShotURL: string;
+    bugOrPost: string;
 }
 
 export default function ReportBugForm({setReportBugDialogOpen}) {
@@ -30,7 +33,10 @@ export default function ReportBugForm({setReportBugDialogOpen}) {
         email: z.string().email("Invalid email address"),
         description: z.string({message: "Description is required"}).min(15, "Description must be at least 15 characters long").max(250, "Description must be at most 250 characters long"),
         reproduction: z.string({message: "Steps to reproduce is required"}).min(15, "Reproduction steps must be at least 15 characters long").max(500, "Reproduction steps must be at most 500 characters long"),
-        file: z.any().optional()
+        file: z.any().optional(),
+        stepsToReproduce: z.string().optional(),
+        screenShotURL: z.string().optional(),
+        bugOrPost: z.string().optional(),
      })
 
      const { register, handleSubmit, formState: { errors } } = useForm<FormData>({ resolver: zodResolver(formSchema) })
@@ -42,7 +48,9 @@ export default function ReportBugForm({setReportBugDialogOpen}) {
               data.file = fileUrl
             } 
         await accountService.reportBug(data)
-        console.log(data.file)
+        data.stepsToReproduce = "Steps to Reproduce: "
+        data.screenShotURL = "Screenshot URL: "
+        data.bugOrPost = "Bug"
         emailjs.send(serviceId, templateId, {...data}, {publicKey: publicKey}).then(() => {toast.success("Thank you for helping us improve the TuneSwipe experience!")}).catch((err) => {console.log(err)})
         setReportBugDialogOpen(false)
      }
