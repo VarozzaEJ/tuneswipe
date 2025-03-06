@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import React, { useEffect, useState } from "react";
 import { AppState } from "../AppState.js";
 import Icon from "@mdi/react";
-import { mdiAccount, mdiAccountOutline, mdiChatOutline, mdiChevronRight, mdiClose, mdiEmail, mdiHomeOutline, mdiImage, mdiLoading, mdiPencilPlusOutline, mdiRocketLaunch } from "@mdi/js";
+import { mdiAccount, mdiAccountOutline, mdiChatOutline, mdiChevronRight, mdiClose,  mdiEmailOutline, mdiHomeOutline, mdiImage, mdiLoading, mdiPencilPlusOutline, mdiRocketLaunchOutline } from "@mdi/js";
 import Login from "../components/Login.jsx";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+
 import {
   Drawer,
   DrawerClose,
@@ -258,25 +259,29 @@ function AccountPage() {
             <DrawerTrigger asChild>
               <Button className="w-full sm:w-80 mb-3" variant={"secondary"}>Help</Button>
             </DrawerTrigger>
-            <DrawerContent className="bg-slate-800 h-1/4">
+            <DrawerContent className="bg-slate-800">
               <DrawerTitle></DrawerTitle>
               <DrawerDescription></DrawerDescription>
                   <div className="p-3 ">
                     <Dialog onOpenChange={setReportBugDialogOpen} open={reportBugDialogOpen}>
                       <DialogTrigger asChild>
-                        <div className="flex hover:text-slate-400 ease-in-out transition-all cursor-pointer mx-5 mb-5">
-                            <div>
-                                <Icon
-                                path={mdiEmail}
-                                color="white"
-                                size={1}
-                                />
-                            </div>
-                            <div className="ms-2">
-                            <span className="hover:text-slate-400 ease-in-out transition-all">
-                              Report a bug
-                              </span>
-                            </div>
+                        <div className="hover:text-slate-600 delay-75 transition-all ease-in-out flex cursor-pointer mb-4 pt-1 justify-between border border-slate-300 border-e-0 border-t-0 border-s-0">
+
+                        <span className="flex text-lg  ">
+                        <Icon
+                          path={mdiEmailOutline}
+                          color="white"
+                          className="me-4"
+                          size={1}
+                          />
+                        Report a Bug
+                        </span>
+                        <span>
+                        <Icon path={mdiChevronRight}
+                          color="white"
+                          className=""
+                          size={1}/>
+                            </span>
                           </div>
                           </DialogTrigger>
                           <DialogDescription></DialogDescription>
@@ -288,19 +293,23 @@ function AccountPage() {
                         </Dialog>
                     <Dialog onOpenChange={setRequestFeatureDialogOpen} open={requestFeatureDialogOpen}>
                       <DialogTrigger asChild>
-                        <div className="flex hover:text-slate-400 ease-in-out transition-all cursor-pointer mx-5 mb-5">
-                            <div>
-                                <Icon
-                                path={mdiRocketLaunch}
-                                color="white"
-                                size={1}
-                                />
-                            </div>
-                            <div className="ms-2">
-                            <span className="hover:text-slate-400 ease-in-out transition-all">
-                              Request a feature
-                              </span>
-                            </div>
+                        <div className="flex hover:text-slate-600 delay-75 transition-all ease-in-out cursor-pointer pb-1 justify-between border border-slate-300 border-e-0 border-t-0 border-s-0">
+
+                        <span className="flex text-lg">
+                        <Icon
+                          path={mdiRocketLaunchOutline}
+                          color="white"
+                          className="me-4"
+                          size={1}
+                          />
+                        Request a Feature
+                      </span>
+                      <span>
+                        <Icon path={mdiChevronRight}
+                          color="white"
+                          className=""
+                          size={1}/>
+                      </span>
                           </div>
                           </DialogTrigger>
                           <DialogDescription></DialogDescription>

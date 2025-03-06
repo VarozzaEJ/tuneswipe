@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/select";
 import Icon from "@mdi/react";
 import {
+  mdiChevronRight,
   mdiClose,
   mdiDiameterVariant,
   mdiDotsHorizontal,
@@ -142,20 +143,12 @@ export default function TrackCard({
                 >
                   <DrawerTitle></DrawerTitle>
                   <DrawerDescription></DrawerDescription>
-                  <div className="flex justify-end me-4">
-                    <DrawerClose asChild className={""}>
-                      <Button
-                        className={"w-16 bg-transparent hover:bg-transparent"}
-                      >
-                        <Icon path={mdiClose} color="white" size={1} />
-                      </Button>
-                    </DrawerClose>
-                  </div>
+
                   <DrawerTitle></DrawerTitle>
                   <DrawerDescription></DrawerDescription>
                   <div
                     aria-describedby="Options for this song"
-                    className="w-full mx-auto flex flex-col "
+                    className="w-full mx-auto flex flex-col p-3"
                   >
                     <div className="flex flex-col justify-center items-center mt-3">
                       <img
@@ -170,20 +163,30 @@ export default function TrackCard({
                         </span>
                       </a>
                     </div>
-                    <span
-                      onClick={() => {
-                        addSongToYourMusic();
-                      }}
-                      className="flex my-4 text-lg ms-2 cursor-pointer hover:text-slate-600 delay-75 transition-all ease-in-out"
-                    >
-                      <Icon
-                        path={mdiPlusCircleOutline}
-                        color="white"
-                        className="me-4"
-                        size={1}
-                      />
-                      Save Song
-                    </span>
+                    <div className="hover:text-slate-600 delay-75 transition-all ease-in-out flex mb-4 pt-1 cursor-pointer justify-between border border-slate-300 border-e-0 border-t-0 border-s-0">
+                      <span
+                        onClick={() => {
+                          addSongToYourMusic();
+                        }}
+                        className="flex text-lg "
+                      >
+                        <Icon
+                          path={mdiPlusCircleOutline}
+                          color="white"
+                          className="me-4"
+                          size={1}
+                        />
+                        Save Song
+                      </span>
+                      <span>
+                        <Icon
+                          path={mdiChevronRight}
+                          color="white"
+                          className=""
+                          size={1}
+                        />
+                      </span>
+                    </div>
                     {/* <span
                       onClick={() => {
                         skipToNext();
@@ -199,15 +202,25 @@ export default function TrackCard({
                         Skip this Song
                         </span> */}
                     <a href={songLink}>
-                      <span className="flex mb-4 text-lg ms-2 cursor-pointer hover:text-slate-600 delay-75 transition-all ease-in-out">
-                        <Icon
-                          path={mdiOpenInNew}
-                          color="white"
-                          className="me-4"
-                          size={1}
-                        />
-                        Open on Spotify
-                      </span>
+                      <div className="hover:text-slate-600 delay-75 transition-all ease-in-out flex pb-1 justify-between cursor-pointer border border-slate-300 border-e-0 border-t-0 border-s-0">
+                        <span className="flex text-lg">
+                          <Icon
+                            path={mdiOpenInNew}
+                            color="white"
+                            className="me-4"
+                            size={1}
+                          />
+                          Open on Spotify
+                        </span>
+                        <span>
+                          <Icon
+                            path={mdiChevronRight}
+                            color="white"
+                            className=""
+                            size={1}
+                          />
+                        </span>
+                      </div>
                     </a>
                   </div>
                 </DrawerContent>
