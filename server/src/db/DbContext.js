@@ -7,6 +7,7 @@ import { PostReportSchema } from '../models/PostReport.js';
 import { CommentReportSchema } from '../models/CommentReport.js';
 import { TuneSwipeBugSchema } from '../models/TuneSwipeBug.js';
 import { FeatureRequestSchema } from '../models/FeatureRequest.js';
+import { MusicPostLikeSchema } from '../models/Like.js';
 
 class DbContext {
   Values = mongoose.model('Value', ValueSchema);
@@ -23,6 +24,8 @@ class DbContext {
   FeatureRequests = mongoose.model('FeatureRequest', FeatureRequestSchema)
 
   CommentReports = mongoose.model('CommentReport', CommentReportSchema)
+
+  MusicPostLikes = mongoose.model('Like', MusicPostLikeSchema)
 }
 
 export const dbContext = new DbContext()

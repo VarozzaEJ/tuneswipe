@@ -12,6 +12,8 @@ export class MusicPost {
         this.updatedAt = data.updatedAt
         this.color = data.color ? data.color : "#94A3B8"
         this.file = data.file
+        this.likeCount = data.likeCount
+        this.isLiked = data.isLiked
     }
 
     get fromNow() {

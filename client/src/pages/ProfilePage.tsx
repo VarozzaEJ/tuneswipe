@@ -6,6 +6,7 @@ import {
   mdiDeleteOutline,
   mdiDotsHorizontal,
   mdiFlagOutline,
+  mdiHeartOutline,
   mdiHomeOutline,
   mdiLoading,
   mdiPencilPlusOutline,
@@ -230,11 +231,12 @@ export default function ProfilePage() {
                   <Icon path={mdiAccount} color="black" size={4} />
                 </AvatarFallback>
               </Avatar>
-              <p className="text-2xl my-2">{activeProfile.name}</p>
+              <p className="text-2xl my-1 font-bold ">{activeProfile.name}</p>
             </div>
           )}
-          <div className="flex text-slate-400 justify-center items-center text-lg">
-            Profile Posts
+          <div className="flex flex-col justify-center items-center text-lg">
+            <span className="text-slate-200">{activeProfilePosts.length != 0 && activeProfilePosts.length}</span>
+            <span className="text-slate-300">Posts</span>
           </div>
           <Separator className={"my-4"} />
           <section className="sm:flex sm:flex-col sm:items-center ">
@@ -352,6 +354,7 @@ export default function ProfilePage() {
                                   Provide details of this report.
                                 </DialogDescription>
                                 <ReportPostForm
+                                  postCreatorPicture={post.creator.picture}
                                   postId={post.id}
                                   handler={handleCount}
                                   handler2={handleCount4}
@@ -399,7 +402,7 @@ export default function ProfilePage() {
                   <div></div>
                 )}
                 <CardFooter>
-                  <div className="flex">
+                  <div className="flex justify-between w-full">
                     <Drawer>
                       <DrawerTrigger
                         onClick={() => {
@@ -677,6 +680,10 @@ export default function ProfilePage() {
                         )}
                       </DrawerContent>
                     </Drawer>
+                    <div className="flex">
+                    <Icon path={mdiHeartOutline} color={"white"} size={1}/>
+                      <span className="text-white ps-1">2</span>
+                    </div>
                   </div>
                 </CardFooter>
               </Card>

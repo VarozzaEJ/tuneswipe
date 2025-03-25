@@ -5,6 +5,18 @@ import { PostReport } from "../models/PostReport.js";
 import { api } from "./AxiosService.js";
 
 class MusicPostsService {
+  async unLikePost(likeId, postId) {
+    try {
+      const response = await api.delete(`api/likes/${likeId}`)
+      console.log(response.data)
+      return true
+    } catch (error) {
+      console.error(error)
+    }
+    //TODO splice the like in the posts array to automatically update the dom.
+    // const deletedLike = response.data
+
+  }
   async deleteImageFromS3Bucket(musicPostFileUrl) {
     const fileName = musicPostFileUrl.substring(51)
     await api.delete(`http://localhost:3000/api/uploadImage/${fileName}`);
@@ -20,6 +32,16 @@ class MusicPostsService {
       return musicPosts;
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  async likePost(likeData) {
+    try {
+      await api.post('api/likes', likeData)
+      return true
+    } catch (error) {
+      console.error(error)
+      return false
     }
   }
 

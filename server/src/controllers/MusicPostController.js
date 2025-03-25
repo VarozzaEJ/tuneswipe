@@ -1,6 +1,7 @@
 import { Auth0Provider } from "@bcwdev/auth0provider";
 import BaseController from "../utils/BaseController.js";
 import { musicPostsService } from "../services/MusicPostService.js";
+import { likesService } from "../services/LikesService.js";
 
 
 export class MusicPostController extends BaseController {
@@ -9,11 +10,23 @@ export class MusicPostController extends BaseController {
         this.router
             .get('', this.getAllMusicPosts)
             .get('/profiles/:profileId', this.getProfilePosts)
+            .get('/likes/:musicPostId', this.getPostLikes)
             .use(Auth0Provider.getAuthorizedUserInfo)
             .post('', this.createMusicPost)
             .delete('/:musicPostId', this.deletePost)
             .post('/report', this.reportPost)
             .get('/report', this.getReportedPosts)
+    }
+
+    async getPostLikes(request, response, next) {
+        try {
+            const musicPostId = request.params.musicPostId
+            const postLikers = await likesService.getPostLikes(musicPostId)
+            response.send(postLikers)
+            console.log(postLikers)
+        } catch (error) {
+            next(error)
+        }
     }
     async getProfilePosts(request, response, next) {
         try {

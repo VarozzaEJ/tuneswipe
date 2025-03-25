@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import React, { useEffect, useState } from "react";
 import { AppState } from "../AppState.js";
 import Icon from "@mdi/react";
-import { mdiAccount, mdiAccountOutline, mdiChatOutline, mdiChevronRight, mdiClose,  mdiEmailOutline, mdiHomeOutline, mdiImage, mdiLoading, mdiPencilPlusOutline, mdiRocketLaunchOutline } from "@mdi/js";
+import { mdiAccount, mdiAccountOutline, mdiChatOutline, mdiChevronRight, mdiClose,  mdiCogOutline,  mdiEmailOutline, mdiFlagOutline, mdiHelpCircleOutline, mdiHomeOutline, mdiImage, mdiLoading, mdiLogout, mdiPencilPlusOutline, mdiRocketLaunchOutline } from "@mdi/js";
 import Login from "../components/Login.jsx";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -47,6 +47,7 @@ import {
 } from "@/components/ui/dialog"
 import ReportBugForm from "@/components/ReportBugForm.js";
 import RequestFeatureForm from "@/components/RequestFeatureForm.js";
+import { Separator } from "@/components/ui/separator.js";
 
 type FormData = {
   name: string;
@@ -124,8 +125,8 @@ function AccountPage() {
 
   return (
     <div className="h-screen">
-      <div className="h-[95%] flex flex-col justify-between">
-        <div className="p-5 text-center flex flex-col justify-center items-center gap-y-4">
+      <div className="h-[95%] flex flex-col justify-around">
+        <div className="p-5 md:gap-x-2 text-center flex max-md:flex-col justify-center items-center">
           {profilePicture !== "" && (
             <Avatar className={"h-40 w-40 static"}>
                                 <AvatarImage className="" src={profilePicture} />
@@ -138,12 +139,21 @@ function AccountPage() {
                                 </AvatarFallback>
                               </Avatar>
           )}
-          <p className="text-2xl my-2">{AppState.account.name}</p>
-          <kbd>{AppState.account.email}</kbd>
+          <div>
+
+          <p className="text-2xl my-1 font-bold">{AppState.account.name}</p>
+          {/* <Badge className="bg-slate-800 text-slate-200">Member Since: {AppState.account.memberSince}</Badge> */}
+          <span className="flex"><Icon className="pe-1" path={mdiEmailOutline} size={1}/>{AppState.account.email}</span>
+                </div>
+        </div>
+          <div className="flex sm:justify-around flex-col justify-center items-center gap-y-3">
+            <div className="flex w-full justify-center items-center max-sm:gap-y-2 max-sm:flex-col gap-x-2">
+
+
           <Sheet onOpenChange={setOpen} open={open}>
             <SheetTrigger asChild>
-              <Button variant={"secondary"} className={"w-full  sm:w-80"}>
-                Edit Profile
+              <Button variant={"secondary"} className={"w-3/4  sm:w-80"}>
+                <Icon path={mdiCogOutline} size={1} className="pe-1"/>Edit Profile
               </Button>
             </SheetTrigger>
             <SheetContent className={"bg-slate-800 border-none w-full"}>
@@ -158,14 +168,14 @@ function AccountPage() {
               </div>
               <div className="flex justify-center items-center mt-5">
                 {profilePicture !== "" ? 
-                <img src={profilePicture} className="w-52 h-52 rounded-sm" alt="" /> :
+                  <img src={profilePicture} className="w-52 h-52 rounded-sm" alt="" /> :
                   <div className="bg-subtle rounded-lg h-52 w-52 flex justify-center items-center">
                     <Icon path={mdiImage} color="white" />
                   </div> }
               </div>
               <div className="mt-5">
-              <Label className="mt-10" htmlFor="picture">Picture</Label>
-              <Input {...register("picture")} id="picture" className="border-0 active:border-0 mt-1 bg-slate-950" />
+                <Label className="mt-10" htmlFor="picture">Picture</Label>
+                <Input {...register("picture")} id="picture" className="border-0 active:border-0 mt-1 bg-slate-950" />
               </div>
               <div className="flex w-full justify-end">
                 <Button  className="mt-3" >Submit</Button>
@@ -177,7 +187,7 @@ function AccountPage() {
             <DrawerTrigger asChild>
                   <Button onClick={() => {
                     getYourReports()
-                  }} className="w-full sm:w-80 bg-inherit" variant={"outline"}>See Reported Items</Button>
+                  }} className="w-3/4 sm:w-80 bg-inherit" variant={"outline"}><Icon path={mdiFlagOutline} size={1} className="pe-1"/>See Reported Items</Button>
             </DrawerTrigger>
             <DrawerContent className="bg-slate-800 max-h-[600px] rounded-t-[10px]">
               <div className="grid grid-cols-3 items-center bg-inherit sticky mt-2 top-0 ">
@@ -194,19 +204,19 @@ function AccountPage() {
                             path={mdiClose}
                             color="white"
                             size={1}
-                          />
+                            />
                         </DrawerClose>
                       </div>
-                    </div>
+                </div>
               <DrawerDescription></DrawerDescription>
-              <div className=" pt-5 flex flex-col items-center w-full overflow-y-scroll justify-center">
+              <div className=" pt-5 flex flex-col items-center w-full overflow-y-auto justify-center">
                 {reports.length !== 0 && 
                 reports.map((report) => (
                   
-                <Popover key={report.id}>
+                  <Popover key={report.id}>
                   <PopoverTrigger className="w-11/12">
 
-                  <div role="button" className="w-11/12 border cursor-pointer ease-in-out transition-all hover:border-slate-200 border-t-0 border-s-0 border-e-0 mb-3 border-slate-400 h-20">
+                  <div role="button" className="w-full border cursor-pointer ease-in-out transition-all hover:border-slate-200 border-t-0 border-s-0 border-e-0 mb-3 border-slate-400 h-20">
                   <div className="flex items-center justify-between h-20">
                     <div className="flex">
 
@@ -215,7 +225,7 @@ function AccountPage() {
                       <Icon path={mdiAccountOutline} color="white" size={1}/>
                       :
                       <img src={report.creatorPicture} className={"w-12 h-12"}/>
-                      }
+                    }
                     </div>
                     <div className="ms-2">
 
@@ -253,11 +263,13 @@ function AccountPage() {
               </div>
             </DrawerContent>
           </Drawer>
-        </div>
-        <div className="p-5 flex flex-col items-center justify-center">
+            </div>
+              <Separator className="w-3/4 sm:w-4/6 md:w-1/2"/>
+
+        <div className=" flex w-full justify-center items-center max-sm:gap-y-2 max-sm:flex-col gap-x-2">
           <Drawer>
             <DrawerTrigger asChild>
-              <Button className="w-full sm:w-80 mb-3" variant={"secondary"}>Help</Button>
+              <Button className="w-3/4 sm:w-80" variant={"secondary"}><Icon path={mdiHelpCircleOutline} size={1} className="pe-1"/>Help</Button>
             </DrawerTrigger>
             <DrawerContent className="bg-slate-800">
               <DrawerTitle></DrawerTitle>
@@ -322,9 +334,13 @@ function AccountPage() {
                       </div>
             </DrawerContent>
           </Drawer>
-          <Button onClick={logout} className="w-full sm:w-80" variant={"destructive"}>
-            Logout
+          <Button onClick={logout} className="w-3/4 sm:w-80" variant={"destructive"}>
+            <Icon path={mdiLogout} className="pe-1" size={1}/>Logout
           </Button>
+          </div>
+          <div>
+          <p className="font-thin text-xs pt-1">App Version 1.0.0</p>
+          </div>
         </div>
         <div className="grid w-full grid-cols-4 fixed bottom-0 h-10 left-0 items-center justify-items-center bg-slate-950">
           <Link to={`/listen`}>

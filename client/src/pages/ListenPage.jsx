@@ -526,20 +526,22 @@ export default function ListenPage() {
                 <Icon path={mdiDotsHorizontal} size={1} />
               </div>
             </PopoverTrigger>
-            <PopoverContent className={"bg-slate-800 w-20"}>
+            <PopoverContent className={"bg-slate-800 me-1 sm:me-2 md:me-3"}>
               <Dialog
                 open={changeDeviceFormOpen}
                 onOpenChange={setChangeDeviceFormOpen}
               >
                 <DialogTrigger asChild>
-                  <div className={"w-full flex justify-center cursor-pointer"}>
+                  <Button variant="secondary" className="w-full">
                     <Icon
                       path={mdiTabletCellphone}
                       title="Change Device"
-                      color="white"
+                      color="black"
+                      className="pe-1"
                       size={1}
                     />
-                  </div>
+                    Change Device
+                  </Button>
                 </DialogTrigger>
                 <DialogContent className={"bg-primary w-5/6 rounded-sm"}>
                   <DialogHeader>
@@ -554,19 +556,22 @@ export default function ListenPage() {
                   </DialogHeader>
                 </DialogContent>
               </Dialog>
-              <div
+              <Button
+                variant="secondary"
                 onClick={() => {
                   tg.start();
                 }}
-                className="w-full mt-2 flex justify-center cursor-pointer"
+                className="w-full mt-2 "
               >
                 <Icon
                   path={mdiHelp}
                   size={1}
                   title="Show tutorial"
-                  color="white"
+                  className="pe-1"
+                  color="black"
                 />
-              </div>
+                Show tutorial
+              </Button>
             </PopoverContent>
           </Popover>
         </div>
@@ -580,7 +585,7 @@ export default function ListenPage() {
             recommendations.map((track, index) => (
               <TinderCard
                 ref={childRefs[index]}
-                className="absolute w-[260px] sm:w-[350px] h-[375px] "
+                className="absolute w-[260px] sm:w-[350px] h-[375px] cursor-grab"
                 key={track.uri}
                 flickOnSwipe
                 swipeRequirementType="position"

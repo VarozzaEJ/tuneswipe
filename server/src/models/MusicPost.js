@@ -8,7 +8,8 @@ export const MusicPostSchema = new Schema({
     trackIds: [{ type: String }],
     picture: { type: String },
     file: { type: String, minLength: 1, maxLength: 1000 },
-    color: { type: String, required: true }
+    color: { type: String, required: true },
+    isLiked: { type: Boolean, default: false },
 }, { timestamps: true, toJSON: { virtuals: true } })
 
 MusicPostSchema.virtual('creator', {
@@ -16,4 +17,10 @@ MusicPostSchema.virtual('creator', {
     ref: 'Account',
     foreignField: '_id',
     justOne: true
+})
+
+MusicPostSchema.virtual('likeCount', {
+    localField: '_id',
+    ref: 'Like',
+    foreignField: 'postId',
 })

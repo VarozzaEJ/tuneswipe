@@ -352,7 +352,7 @@ const pictureValue = getValues().file
                 </span>
                 </div>
                 }
-              {commentString.length >= 1 && commentString.length < 5 ? <div><span className="text-destructive">Message must be five characters or greater.</span></div> : null}
+              {commentString.length >= 1 && commentString.length < 5 ? <div><span className="text-destructive">Message must be five characters or greater</span></div> : null}
               </div>
                 <div>
                   <div className="flex justify-center">
@@ -533,16 +533,7 @@ const pictureValue = getValues().file
                 <DialogTrigger asChild>
                   <Button className="">
                     <div className="flex flex-col text-slate-400 hover:text-slate-300 transition-all ease-in-out justify-center items-center">
-                      
-                      {errors.color ? 
-                      <>
-                      <Icon path={mdiPalette} color="red" size={1} />  <span className="text-destructive mt-1">Color</span> 
-                      </>
-                      : <>
                       <Icon path={mdiPalette} color="white" size={1} /> <span className=" mt-1">Color</span>
-                      </>
-                      }
-                     
                     </div>
                   </Button>
                 </DialogTrigger>

@@ -208,7 +208,7 @@ export default function MusicPlayerCard({ trackIds }) {
                       </div>
                       <div className="col-span-10">
                         <a href={tracks[currentIndex].external_urls.spotify}>
-                          <span className="text-xl  text-slate-500 cursor-pointer hover:text-slate-200 delay-75 transition-all ease-in-out ">
+                          <span className="text-xl  text-slate-300 cursor-pointer hover:text-slate-200 delay-75 transition-all ease-in-out ">
                             {tracks[currentIndex].artists[0].name}
                           </span>
                         </a>

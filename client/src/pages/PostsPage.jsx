@@ -7,6 +7,8 @@ import {
   mdiDeleteOutline,
   mdiDotsHorizontal,
   mdiFlagOutline,
+  mdiHeart,
+  mdiHeartOutline,
   mdiHomeOutline,
   mdiLoading,
   mdiPencilPlusOutline,
@@ -64,6 +66,8 @@ import {
 } from "@/components/ui/dialog";
 import useCommentForm from "../components/CommentForm.tsx";
 import DisabledCommentForm from "../components/DisabledCommentForm.jsx";
+import { commentsService } from "../services/CommentsService.js";
+import LikeButton from "../components/LikeButton.jsx";
 
 export default function PostsPage() {
   const [musicPosts, setMusicPosts] = useState([]);
@@ -111,6 +115,7 @@ export default function PostsPage() {
   const getAllPosts = async () => {
     setTimeout(async () => {
       const musicPosts = await musicPostsService.getAllPosts();
+      console.log(musicPosts);
       setMusicPosts(musicPosts);
       if (musicPosts.length === 0) return;
     }, 1);
@@ -172,6 +177,46 @@ export default function PostsPage() {
     }
   };
 
+  async function unLikePost(postId) {
+    const postLikerData = { postId: postId };
+    const likeId = musicPosts
+      .find((post) => post.id == postId)
+      .likeCount.find((like) => like.accountId == account?.id).id;
+    debugger;
+    const successful = await musicPostsService.unLikePost(
+      likeId,
+      postLikerData
+    );
+    if (successful) {
+      const updatedPosts = musicPosts.map((post) => {
+        if (post.id == postId) {
+          post.isLiked = false;
+          post.likeCount--;
+        }
+        const foundPost = musicPosts.find((post) => post.id == postId);
+        const foundLike = foundPost.likes.findIndex(
+          (like) => like.id == likeId
+        );
+        foundPost.likes.splice(foundLike, 1);
+      });
+      setMusicPosts(updatedPosts);
+    }
+  }
+  async function likePost(postId) {
+    const postLikerData = { postId: postId };
+    const successful = await musicPostsService.likePost(postLikerData);
+    if (successful) {
+      const updatedPosts = musicPosts.map((post) => {
+        if (post.id == postId) {
+          post.isLiked = true;
+          post.likeCount++;
+        }
+        return post;
+      });
+      setMusicPosts(updatedPosts);
+    }
+  }
+
   return (
     <>
       <div className="">
@@ -191,10 +236,16 @@ export default function PostsPage() {
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div className="flex">
-                      <Link to={`/profiles/${post.creator.id}`}>
+                      <Link
+                        title={`Go to ${post.creator.name}'s page`}
+                        to={`/profiles/${post.creator.id}`}
+                      >
                         <div className="flex items-center me-2">
                           <Avatar>
-                            <AvatarImage src={post.creator.picture} />
+                            <AvatarImage
+                              alt="Profile picture"
+                              src={post.creator.picture}
+                            />
                             <AvatarFallback>
                               <Icon path={mdiAccount} color="black" size={1} />
                             </AvatarFallback>
@@ -224,6 +275,9 @@ export default function PostsPage() {
                               path={mdiDotsHorizontal}
                               size={1.4}
                               color="white"
+                              aria-controls="popover-content"
+                              aria-label="Options Menu"
+                              aria-details="Opens a menu with additional options for this post"
                               className="cursor-pointer"
                             />
                           </PopoverTrigger>
@@ -364,7 +418,7 @@ export default function PostsPage() {
                 </CardContent>
 
                 <CardFooter>
-                  <div className="flex">
+                  <div className="flex w-full justify-between">
                     <Drawer>
                       <DrawerTrigger
                         onClick={() => {
@@ -376,7 +430,12 @@ export default function PostsPage() {
                           setAccountSet(!accountSet);
                         }}
                       >
-                        <Icon path={mdiChatOutline} color="white" size={1} />
+                        <Icon
+                          aria-label="See comments"
+                          path={mdiChatOutline}
+                          color="white"
+                          size={1}
+                        />
                       </DrawerTrigger>
                       <DrawerContent
                         className={
@@ -642,6 +701,7 @@ export default function PostsPage() {
                         )}
                       </DrawerContent>
                     </Drawer>
+                    <LikeButton post={post} />
                   </div>
                 </CardFooter>
               </Card>

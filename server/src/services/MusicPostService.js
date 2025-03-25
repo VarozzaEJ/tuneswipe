@@ -4,7 +4,7 @@ import { Forbidden } from "../utils/Errors.js"
 
 class MusicPostService {
     async getProfilePosts(creatorId) {
-        const profilePosts = await dbContext.MusicPosts.find({ creatorId }).populate("creator")
+        const profilePosts = await dbContext.MusicPosts.find({ creatorId }).populate("creator likeCount")
         return profilePosts
     }
     async getReportedPosts(creatorId) {
@@ -13,7 +13,7 @@ class MusicPostService {
     }
     async reportPost(reportData) {
         const report = await dbContext.PostReports.create(reportData)
-        await report.populate('creator')
+        await report.populate('creator likeCount')
         return report
     }
     async deletePost(userId, musicPostId) {
@@ -22,12 +22,12 @@ class MusicPostService {
         await dbContext.MusicPosts.findByIdAndDelete(musicPostId)
     }
     async getAllMusicPosts() {
-        const musicPosts = await dbContext.MusicPosts.find().populate('creator')
+        const musicPosts = await dbContext.MusicPosts.find().populate('creator likeCount')
         return musicPosts
     }
     async createMusicPost(musicPostData) {
         const musicPost = await dbContext.MusicPosts.create(musicPostData)
-        await musicPost.populate('creator')
+        await musicPost.populate('creator likeCount')
         return musicPost
     }
 
