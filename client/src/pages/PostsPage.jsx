@@ -177,46 +177,6 @@ export default function PostsPage() {
     }
   };
 
-  async function unLikePost(postId) {
-    const postLikerData = { postId: postId };
-    const likeId = musicPosts
-      .find((post) => post.id == postId)
-      .likeCount.find((like) => like.accountId == account?.id).id;
-    debugger;
-    const successful = await musicPostsService.unLikePost(
-      likeId,
-      postLikerData
-    );
-    if (successful) {
-      const updatedPosts = musicPosts.map((post) => {
-        if (post.id == postId) {
-          post.isLiked = false;
-          post.likeCount--;
-        }
-        const foundPost = musicPosts.find((post) => post.id == postId);
-        const foundLike = foundPost.likes.findIndex(
-          (like) => like.id == likeId
-        );
-        foundPost.likes.splice(foundLike, 1);
-      });
-      setMusicPosts(updatedPosts);
-    }
-  }
-  async function likePost(postId) {
-    const postLikerData = { postId: postId };
-    const successful = await musicPostsService.likePost(postLikerData);
-    if (successful) {
-      const updatedPosts = musicPosts.map((post) => {
-        if (post.id == postId) {
-          post.isLiked = true;
-          post.likeCount++;
-        }
-        return post;
-      });
-      setMusicPosts(updatedPosts);
-    }
-  }
-
   return (
     <>
       <div className="">
@@ -701,7 +661,11 @@ export default function PostsPage() {
                         )}
                       </DrawerContent>
                     </Drawer>
-                    <LikeButton post={post} />
+                    <LikeButton
+                      post={post}
+                      musicPosts={musicPosts}
+                      setMusicPosts={setMusicPosts}
+                    />
                   </div>
                 </CardFooter>
               </Card>

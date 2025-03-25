@@ -3,6 +3,7 @@ import { AppState } from "../AppState.js";
 import { MusicPost } from "../models/MusicPost.js";
 import { PostReport } from "../models/PostReport.js";
 import { api } from "./AxiosService.js";
+import { Like } from "../models/Like.js";
 
 class MusicPostsService {
   async unLikePost(likeId, postId) {
@@ -13,9 +14,6 @@ class MusicPostsService {
     } catch (error) {
       console.error(error)
     }
-    //TODO splice the like in the posts array to automatically update the dom.
-    // const deletedLike = response.data
-
   }
   async deleteImageFromS3Bucket(musicPostFileUrl) {
     const fileName = musicPostFileUrl.substring(51)
@@ -37,8 +35,9 @@ class MusicPostsService {
 
   async likePost(likeData) {
     try {
-      await api.post('api/likes', likeData)
-      return true
+      const response = await api.post('api/likes', likeData)
+      const newLike = new Like(response.data)
+      return newLike
     } catch (error) {
       console.error(error)
       return false
