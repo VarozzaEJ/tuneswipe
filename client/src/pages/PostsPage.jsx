@@ -84,6 +84,7 @@ export default function PostsPage() {
   const [loading, setLoading] = useState(true);
   const [postLoading, setPostLoading] = useState(true);
   const [zeroComments, setZeroComments] = useState(false);
+  // const [iconsWhite, setIconsWhite] = useState(true);
 
   useEffect(() => {
     if (!AppState.account?.id) return;
@@ -177,6 +178,22 @@ export default function PostsPage() {
     }
   };
 
+  const setTextColor = (color) => {
+    const card = document.getElementById("musicPost");
+    let rgb = color;
+    var r = parseInt(rgb.substring(1, 3), 16);
+    var g = parseInt(rgb.substring(3, 5), 16);
+    var b = parseInt(rgb.substring(5, 7), 16);
+    var yiq = (r * 299 + g * 587 + b * 114) / 1000;
+    console.log(yiq);
+    if (yiq > 125) {
+      card.style.color = "black";
+      setIconsWhite(false);
+    } else {
+      card.style.color = "white";
+    }
+  };
+
   return (
     <>
       <div className="">
@@ -189,8 +206,14 @@ export default function PostsPage() {
           <div className="sm:flex sm:flex-col sm:items-center ">
             {musicPosts.map((post) => (
               <Card
+                // onLoad={() => {
+                //   setTextColor(post.color);
+                // }}
                 key={post.id}
-                className={`mx-4` + " " + `text-light sm:w-3/4 mb-4`}
+                id={"musicPost"}
+                className={
+                  `mx-4` + " " + `text-${post.isTextWhite} sm:w-3/4 mb-4`
+                }
                 style={{ backgroundColor: post.color }}
               >
                 <CardHeader>
@@ -230,16 +253,29 @@ export default function PostsPage() {
                               setAccountSet(!accountSet);
                             }}
                           >
-                            <Icon
-                              title="Open Options Menu"
-                              path={mdiDotsHorizontal}
-                              size={1.4}
-                              color="white"
-                              aria-controls="popover-content"
-                              aria-label="Options Menu"
-                              aria-details="Opens a menu with additional options for this post"
-                              className="cursor-pointer"
-                            />
+                            {post.areIconsWhite ? (
+                              <Icon
+                                title="Open Options Menu"
+                                path={mdiDotsHorizontal}
+                                size={1.4}
+                                color="white"
+                                aria-controls="popover-content"
+                                aria-label="Options Menu"
+                                aria-details="Opens a menu with additional options for this post"
+                                className="cursor-pointer"
+                              />
+                            ) : (
+                              <Icon
+                                title="Open Options Menu"
+                                path={mdiDotsHorizontal}
+                                size={1.4}
+                                color="black"
+                                aria-controls="popover-content"
+                                aria-label="Options Menu"
+                                aria-details="Opens a menu with additional options for this post"
+                                className="cursor-pointer"
+                              />
+                            )}
                           </PopoverTrigger>
                           <PopoverContent
                             className={
@@ -323,13 +359,23 @@ export default function PostsPage() {
                       ) : (
                         <Popover>
                           <PopoverTrigger asChild>
-                            <Icon
-                              title="Open Options Menu"
-                              path={mdiDotsHorizontal}
-                              size={1.4}
-                              color="white"
-                              className="cursor-pointer"
-                            />
+                            {post.areIconsWhite ? (
+                              <Icon
+                                title="Open Options Menu"
+                                path={mdiDotsHorizontal}
+                                size={1.4}
+                                color="white"
+                                className="cursor-pointer"
+                              />
+                            ) : (
+                              <Icon
+                                title="Open Options Menu"
+                                path={mdiDotsHorizontal}
+                                size={1.4}
+                                color="black"
+                                className="cursor-pointer"
+                              />
+                            )}
                           </PopoverTrigger>
                           <PopoverContent
                             className={
@@ -390,12 +436,23 @@ export default function PostsPage() {
                           setAccountSet(!accountSet);
                         }}
                       >
-                        <Icon
-                          aria-label="See comments"
-                          path={mdiChatOutline}
-                          color="white"
-                          size={1}
-                        />
+                        {post.areIconsWhite ? (
+                          <Icon
+                            aria-label="See comments"
+                            title="See comments"
+                            path={mdiChatOutline}
+                            color="white"
+                            size={1}
+                          />
+                        ) : (
+                          <Icon
+                            aria-label="See comments"
+                            title="See comments"
+                            path={mdiChatOutline}
+                            color="black"
+                            size={1}
+                          />
+                        )}
                       </DrawerTrigger>
                       <DrawerContent
                         className={
@@ -662,6 +719,7 @@ export default function PostsPage() {
                       </DrawerContent>
                     </Drawer>
                     <LikeButton
+                      iconsWhite={post.areIconsWhite}
                       post={post}
                       musicPosts={musicPosts}
                       setMusicPosts={setMusicPosts}

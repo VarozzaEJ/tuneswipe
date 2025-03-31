@@ -229,7 +229,7 @@ function AccountPage() {
                     </div>
                     <div className="ms-2">
 
-                      <div>
+                      <div className="flex justify-start">
                         <span className="text-slate-400 capitalize">{report.postOrComment} - {report.createdAt.toLocaleDateString()}</span>
                       </div>
                       <div>

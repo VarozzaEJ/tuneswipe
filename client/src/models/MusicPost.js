@@ -20,5 +20,31 @@ export class MusicPost {
         return moment(this.createdAt).fromNow()
     }
 
+    get areIconsWhite() {
+        let rgb = this.color;
+        var r = parseInt(rgb.substring(1, 3), 16);
+        var g = parseInt(rgb.substring(3, 5), 16);
+        var b = parseInt(rgb.substring(5, 7), 16);
+        var yiq = (r * 299 + g * 587 + b * 114) / 1000;
+        if (yiq > 125) {
+            return false
+        } else {
+            return true
+        }
+    }
+
+    get isTextWhite() {
+        let rgb = this.color;
+        var r = parseInt(rgb.substring(1, 3), 16);
+        var g = parseInt(rgb.substring(3, 5), 16);
+        var b = parseInt(rgb.substring(5, 7), 16);
+        var yiq = (r * 299 + g * 587 + b * 114) / 1000;
+        if (yiq > 125) {
+            return "black"
+        } else {
+            return "white"
+        }
+    }
+
 
 }

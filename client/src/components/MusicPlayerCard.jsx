@@ -189,13 +189,13 @@ export default function MusicPlayerCard({ trackIds }) {
                   <div className="col-span-12 overflow-scroll text-nowrap con">
                     {tracks[currentIndex].name.length > 25 ? (
                       <div className="link_animated">
-                        <span className="text-2xl ">
+                        <span className="text-2xl text-white">
                           {tracks[currentIndex].name}
                         </span>
                       </div>
                     ) : (
                       <div>
-                        <span className="text-2xl ">
+                        <span className="text-2xl text-white">
                           {tracks[currentIndex].name}
                         </span>
                       </div>

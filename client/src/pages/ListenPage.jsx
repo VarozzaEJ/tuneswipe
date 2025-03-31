@@ -59,7 +59,7 @@ const spotifyApi = new SpotifyWebApi({
   clientId: `${import.meta.env.VITE_CLIENT_ID}`,
 });
 
-const tg = new TourGuideClient();
+var tg = new TourGuideClient();
 export default function ListenPage() {
   const [recommendedTracks, setRecommendedTracks] = useState([]);
   const [currentSongIndex, setCurrentSongIndex] = useState(2);
@@ -94,9 +94,6 @@ export default function ListenPage() {
 
   const [count2, setCount2] = useState(0);
 
-  const navigate = useNavigate();
-
-  console.log("🎤", lastSwipedURI);
   const currentIndexRef = useRef(currentIndex);
 
   const handleCount = () => {
@@ -518,12 +515,13 @@ export default function ListenPage() {
             onOpenChange={setExtraOptionsPopupOpen}
           >
             <PopoverTrigger asChild>
-              <div
-                data-tg-tour="Open this menu to change your active device or look at the tutorial again."
-                data-tg-title="Extra Options"
-                className="flex items-center cursor-pointer"
-              >
-                <Icon path={mdiDotsHorizontal} size={1} />
+              <div className="flex items-center cursor-pointer">
+                <Icon
+                  data-tg-tour="Open this menu to change your active device or look at the tutorial again."
+                  data-tg-title="Extra Options"
+                  path={mdiDotsHorizontal}
+                  size={1}
+                />
               </div>
             </PopoverTrigger>
             <PopoverContent className={"bg-slate-800 me-1 sm:me-2 md:me-3"}>
@@ -640,6 +638,7 @@ export default function ListenPage() {
           <div
             data-tg-tour="This takes you to the listen page"
             data-tg-title="Pages"
+            data-tg-description="Click here to return to the listen page"
             className=""
           >
             <Icon path={mdiHome} color="white" size={1} />
