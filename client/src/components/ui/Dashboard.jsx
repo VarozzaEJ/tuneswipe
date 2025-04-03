@@ -97,7 +97,7 @@ export default function Dashboard({ code }) {
     setArtistTopSong(topSongs.body.tracks[0].name);
   }
 
-  function getReccomendationsBasedOnArtists() {
+  function getRecommendationsBasedOnArtists() {
     if (!accessToken) return;
     if (artistName.length == 0) {
       toast.error("Choose at least one artist.");
@@ -166,10 +166,10 @@ export default function Dashboard({ code }) {
             <div>
               {artistName.length > 0 ? (
                 <Button
-                  onClick={getReccomendationsBasedOnArtists}
+                  onClick={getRecommendationsBasedOnArtists}
                   className={"me-5"}
                 >
-                  Get Reccomendations{" "}
+                  Get Recommendations{" "}
                 </Button>
               ) : (
                 <Button className={"me-5"} variant={"destructive"}>

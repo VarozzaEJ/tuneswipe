@@ -163,13 +163,13 @@ export default function TrackCard({
                         </span>
                       </a>
                     </div>
-                    <div className="hover:text-slate-600 delay-75 transition-all ease-in-out flex mb-4 pt-1 cursor-pointer justify-between border border-slate-300 border-e-0 border-t-0 border-s-0">
-                      <span
-                        onClick={() => {
-                          addSongToYourMusic();
-                        }}
-                        className="flex text-lg "
-                      >
+                    <div
+                      onClick={() => {
+                        addSongToYourMusic();
+                      }}
+                      className="hover:text-slate-600 delay-75 transition-all ease-in-out flex mb-4 pt-1 cursor-pointer justify-between border border-slate-300 border-e-0 border-t-0 border-s-0"
+                    >
+                      <span className="flex text-lg ">
                         <Icon
                           path={mdiPlusCircleOutline}
                           color="white"

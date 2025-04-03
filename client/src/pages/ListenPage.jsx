@@ -482,6 +482,9 @@ export default function ListenPage() {
             >
               <SheetTrigger>
                 <div
+                  onClick={() => {
+                    // setIsOnRightSong(true);
+                  }}
                   data-tg-tour="Choose an artist to get recommended tracks from"
                   data-tg-title="Change Recommendations"
                 >
@@ -501,6 +504,7 @@ export default function ListenPage() {
                 <SheetTitle></SheetTitle>
                 <SheetDescription></SheetDescription>
                 <SearchArtistsSheet
+                  setIsOnRightSong={setIsOnRightSong}
                   handler={handleCount}
                   accessToken={accessToken}
                 />
