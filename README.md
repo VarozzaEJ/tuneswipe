@@ -107,5 +107,5 @@ Project Link: [https://github.com/VarozzaEJ/tuneswipe](https://github.com/Varozz
 
 <div align="center">
   <p>Made with ❤️ by the TuneSwipe Team</p>
-  <img src="https://api.logo.com/api/v2/images?design=lg_g7CrzoNNAA2DEV9XKW&format=webp&width=2000&background=transparent&fit=contain&quality=100&u=fe5f56d3ce36536541ae9dc43db66c7c9121ceab7a3e5a2c94df7464454b4d4f" alt="TuneSwipe Footer Logo" width="2000" height="500" />
+  <img src="https://api.logo.com/api/v2/images?design=lg_g7CrzoNNAA2DEV9XKW&format=webp&width=2000&background=transparent&fit=contain&quality=100&u=fe5f56d3ce36536541ae9dc43db66c7c9121ceab7a3e5a2c94df7464454b4d4f" alt="TuneSwipe Footer Logo" width="1500" height="500" />
 </div>
