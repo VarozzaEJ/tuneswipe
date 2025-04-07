@@ -1,7 +1,7 @@
 # TuneSwipe
 
 <div align="center">
-  <img src="https://api.logo.com/api/v2/images?design=lg_g7CrzoNNAA2DEV9XKW&u=fe5f56d3ce36536541ae9dc43db66c7c9121ceab7a3e5a2c94df7464454b4d4f&width=800&height=400&margins=100&fit=contain&format=webp&quality=60&tightBounds=true" alt="TuneSwipe Logo" width="800" />
+  <img src="https://api.logo.com/api/v2/images?design=lg_g7CrzoNNAA2DEV9XKW&u=fe5f56d3ce36536541ae9dc43db66c7c9121ceab7a3e5a2c94df7464454b4d4f&width=700&height=300&margins=100&fit=contain&format=webp&quality=100&tightBounds=true" alt="TuneSwipe Logo" width="700" />
 </div>
 
 ## 📖 Overview
