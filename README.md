@@ -1,7 +1,7 @@
 # TuneSwipe
 
 <div align="center">
-  <img src="https://path-to-your-logo/tuneswipe-logo.png" alt="TuneSwipe Logo" width="200" />
+  <img src="https://api.logo.com/api/v2/images?design=lg_g7CrzoNNAA2DEV9XKW&u=fe5f56d3ce36536541ae9dc43db66c7c9121ceab7a3e5a2c94df7464454b4d4f&width=500&height=400&margins=100&fit=contain&format=webp&quality=60&tightBounds=true" alt="TuneSwipe Logo" width="200" />
   <p><strong>Discover new music with a swipe.</strong></p>
 </div>
 
@@ -108,5 +108,5 @@ Project Link: [https://github.com/yourusername/tuneswipe](https://github.com/Var
 
 <div align="center">
   <p>Made with ❤️ by the TuneSwipe Team</p>
-  <img src="https://path-to-your-logo/tuneswipe-small.png" alt="TuneSwipe Footer Logo" width="150" />
+  <img src="https://api.logo.com/api/v2/images?design=lg_g7CrzoNNAA2DEV9XKW&u=fe5f56d3ce36536541ae9dc43db66c7c9121ceab7a3e5a2c94df7464454b4d4f&width=500&height=400&margins=100&fit=contain&format=webp&quality=60&tightBounds=true" alt="TuneSwipe Footer Logo" width="150" />
 </div>
