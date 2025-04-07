@@ -78,12 +78,13 @@ export default function ChangeDeviceForm({
   return (
     <>
       <div className="mb-10 md:mb-0">
-        {availableDevices.devices ? (
+        {availableDevices.devices.length > 0 ? (
           <Select onValueChange={handleChange}>
             <SelectTrigger className={"text-black"}>
               <SelectValue placeholder="Choose Your Playback Device" />
             </SelectTrigger>
             <SelectContent>
+              {}
               <SelectGroup>
                 {availableDevices.devices.map((device, index) => (
                   <div key={index}>
@@ -102,7 +103,7 @@ export default function ChangeDeviceForm({
             </SelectContent>
           </Select>
         ) : (
-          <Skeleton className="h-10 w-full" />
+          <span>Open Spotify on any of your devices.</span>
         )}
       </div>
     </>

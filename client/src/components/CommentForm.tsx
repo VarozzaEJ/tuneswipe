@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z, ZodType } from "zod";
 import { Button } from "@/components/ui/button";
@@ -7,17 +7,11 @@ import { Input } from "@/components/ui/input";
 import Icon from "@mdi/react";
 import { mdiPlus } from "@mdi/js";
 import { commentsService } from "../services/commentsservice";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { toast } from "sonner";
 
 type FormData = {
-  body: string;
-  postId: string;
+  body?: string | undefined;
+  postId?: string | undefined;
 };
 //TODO show after the input when a comment must be five characters
 const formSchema: ZodType<FormData> = z.object({
@@ -28,7 +22,7 @@ const formSchema: ZodType<FormData> = z.object({
     })
     .max(500)
     .default(""),
-  postId: z.string().optional(),
+    postId: z.string().optional(),
 });
 
 export default function useCommentForm() {
@@ -36,7 +30,7 @@ export default function useCommentForm() {
   const [postId, setPostId] = useState("");
   const [length, setLength] = useState("")
 
-  const { register, handleSubmit, formState: {errors}, reset } = useForm<FormData>({
+  const { register, handleSubmit, reset } = useForm<FormData>({
     resolver: zodResolver(formSchema),
   });
 
@@ -64,7 +58,7 @@ export default function useCommentForm() {
               }}
             />
             <Button
-              onClick={(e) => {
+              onClick={() => {
                 setPostId(postId);
                 setZeroComments(false)
                 if(length.length < 5) toast.error(`Comment must be at least 5 characters.`)

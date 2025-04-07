@@ -80,7 +80,7 @@ export default function ListenPage() {
   const [count, setCount] = useState(0);
   const [isOnRightSong, setIsOnRightSong] = useState(false);
   const [queueLength, setQueueLength] = useState(0);
-  const [rainSoundId, setRainSoundId] = useState("3Ec830TpI83UCdYDHkBScO");
+  const rainSoundId = "3Ec830TpI83UCdYDHkBScO";
   const [currentlyPlayingId, setCurrentlyPlayingId] = useState("");
   const [rightSongAdded, setRightSongAdded] = useState(false);
   const [isExpired, setIsExpired] = useState(false);
@@ -400,15 +400,10 @@ export default function ListenPage() {
       toast.error("Please Choose Recommendations");
       return;
     }
-    // const ids = sessionStorage
-    //   .getItem("artistIds")
-    //   .split(",")
-    //   .map((item) => item.trim())
-    //   .filter((item) => item !== "");
     const name = sessionStorage.getItem("artistName");
     const trackName = sessionStorage.getItem("artistTopSong");
     setArtistIds([name]);
-    // lastFMReccommendations(name, trackName);
+    lastFMReccommendations(name, trackName);
   }
   console.log("💛", currentIndex);
   console.log("💚", currentSongIndex);
@@ -444,15 +439,13 @@ export default function ListenPage() {
   useEffect(() => {
     if (recommendations.length !== 20) return;
     const flippedArray = [...recommendations].reverse();
-    console.log("👺", recommendations);
-    console.log("🧍‍♂️", flippedArray);
+    // console.log("👺", recommendations);
+    // console.log("🧍‍♂️", flippedArray);
     setRecommendedTracks(flippedArray);
   }, [recommendations]);
 
   useEffect(() => {
     if (!accessToken) return;
-    // if (count2 == 0) return;
-    //FIXME Not sure why this line was here?
     setRecommendations([]);
     setCurrentSongIndex(2);
     setCurrentIndex(0);
@@ -461,7 +454,6 @@ export default function ListenPage() {
     spotifyApi.setVolume(0);
     skipToNext();
     skipToNext();
-    spotifyApi.setVolume(0);
     if (sessionStorage.getItem("artistTopSong")) setRecommendedMusicOpen(false);
   }, [count2, accessToken]);
 
@@ -482,9 +474,6 @@ export default function ListenPage() {
             >
               <SheetTrigger>
                 <div
-                  onClick={() => {
-                    // setIsOnRightSong(true);
-                  }}
                   data-tg-tour="Choose an artist to get recommended tracks from"
                   data-tg-title="Change Recommendations"
                 >

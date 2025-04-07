@@ -260,25 +260,6 @@ export default function SearchArtistsSheet({
               </div>
             ))}
           </div>
-          <div className="w-full fixed bottom-4 flex justify-end mt-5">
-            {/* <div>
-              {artistName.length > 0 ? (
-                <Button
-                  onClick={() => {
-                    getRecommendationsBasedOnArtists();
-                    handler();
-                  }}
-                  className={"me-5"}
-                >
-                  Get Recommendations{" "}
-                </Button>
-              ) : (
-                <Button className={"me-5"} variant={"destructive"}>
-                  Choose an Artist{" "}
-                </Button>
-              )}
-            </div> */}
-          </div>
         </div>
       </div>
     </>

@@ -1,5 +1,3 @@
-import React from 'react'
-import PropTypes from 'prop-types'
 import { mdiCheckCircle, mdiDelete, mdiSpotify } from '@mdi/js'
 import Icon from '@mdi/react'
 

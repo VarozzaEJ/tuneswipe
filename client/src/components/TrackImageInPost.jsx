@@ -90,7 +90,6 @@ export default function TrackImageInPost({ img, trackURI, trackNumber }) {
         <img
           draggable="false"
           src={img}
-          fetchpriority="high"
           className="w-full max-w-[225px] md:max-w-[300px] rounded-sm"
           alt=""
         />
