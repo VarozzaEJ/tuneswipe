@@ -1,17 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import SpotifyWebApi from "spotify-web-api-node";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import ArtistSearchResult from "./ui/ArtistSearchResult.jsx";
-import { useParams } from "react-router-dom";
 import {
   mdiGuitarAcoustic,
   mdiGuitarElectric,
-  mdiKeyboard,
   mdiMicrophone,
   mdiPiano,
   mdiSpeaker,

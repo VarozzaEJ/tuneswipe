@@ -7,18 +7,22 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
+  // @ts-expect-error Shadcn/ui imports may cause type errors, but they are safe to ignore.
 } from "@/components/ui/select";
+// @ts-expect-error Shadcn/ui imports may cause type errors, but they are safe to ignore.
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import SpotifyWebApi from "spotify-web-api-node";
 
 const spotifyApi = new SpotifyWebApi({
+  // @ts-expect-error Explains meta.env does not exist, but it does.
   clientId: `${import.meta.env.VITE_CLIENT_ID}`,
 });
 
 export default function ChangeDeviceForm({
   accessToken,
   setChangeDeviceFormOpen,
+  setFormSubmitted,
 }) {
   const [availableDevices, setAvailableDevices] = useState([]);
 
@@ -29,8 +33,6 @@ export default function ChangeDeviceForm({
   }, [accessToken]);
 
   const getAvailableDevices = async () => {
-    if (!accessToken) return;
-
     try {
       const response = await fetch(
         "https://api.spotify.com/v1/me/player/devices",
@@ -45,7 +47,7 @@ export default function ChangeDeviceForm({
 
       const data = await response.json();
       console.log("Available devices:", data.devices);
-      setAvailableDevices(data);
+      setAvailableDevices(data.devices);
       return data.devices;
     } catch (error) {
       console.error("Error fetching devices:", error);
@@ -71,39 +73,48 @@ export default function ChangeDeviceForm({
     transferPlayback(e);
     localStorage.setItem("chosenDeviceId", e);
     toast.success("Device Changed Successfully");
-    setChangeDeviceFormOpen(false);
+    setFormSubmitted(true);
     spotifyApi.setVolume(75);
   }
+
+  console.log(availableDevices);
 
   return (
     <>
       <div className="mb-10 md:mb-0">
-        {availableDevices.devices.length > 0 ? (
+        {availableDevices.length !== 0 ? (
           <Select onValueChange={handleChange}>
             <SelectTrigger className={"text-black"}>
               <SelectValue placeholder="Choose Your Playback Device" />
             </SelectTrigger>
             <SelectContent>
-              {}
-              <SelectGroup>
-                {availableDevices.devices.map((device, index) => (
-                  <div key={index}>
-                    <SelectItem
-                      // onClick={() => {
-                      //   chooseThisDevice(device.id);
-                      // }}
+              {availableDevices.length > 0 ? (
+                <SelectGroup>
+                  {availableDevices.map((device, index) => (
+                    <div key={index}>
+                      <SelectItem
+                        // onClick={() => {
+                        //   chooseThisDevice(device.id);
+                        // }}
 
-                      value={device.id}
-                    >
-                      {device.name}
-                    </SelectItem>
-                  </div>
-                ))}
-              </SelectGroup>
+                        value={device.id}
+                      >
+                        {device.name}
+                      </SelectItem>
+                    </div>
+                  ))}
+                </SelectGroup>
+              ) : (
+                <SelectGroup>
+                  <SelectLabel className="text-destructive pl-1">
+                    Open Spotify on any of your devices.
+                  </SelectLabel>
+                </SelectGroup>
+              )}
             </SelectContent>
           </Select>
         ) : (
-          <span>Open Spotify on any of your devices.</span>
+          <Skeleton className="h-10 w-full" />
         )}
       </div>
     </>

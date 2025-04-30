@@ -1,40 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import Icon from "@mdi/react";
 import {
   mdiChevronRight,
-  mdiClose,
-  mdiDiameterVariant,
   mdiDotsHorizontal,
   mdiOpenInNew,
-  mdiPlusCircle,
   mdiPlusCircleOutline,
   mdiSpotify,
 } from "@mdi/js";
@@ -54,30 +31,16 @@ export default function TrackCard({
   songLink,
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [postion, setPosition] = useState(0);
 
   useEffect(() => {
     if (!accessToken) return;
     spotifyApi.setAccessToken(accessToken);
   }, [accessToken]);
 
-  const skipToNext = async () => {
-    await spotifyApi.skipToNext().then(
-      function () {
-        console.log("Skip to next");
-        setIsOpen(false);
-      },
-      function (err) {
-        //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
-        console.log("Something went wrong!", err);
-      }
-    );
-  };
-
   const addSongToYourMusic = async () => {
     try {
       spotifyApi.addToMySavedTracks([`${trackId}`]).then(
-        function (data) {
+        function () {
           console.log("Added track!");
           toast.success("Added Track!");
           setIsOpen(false);

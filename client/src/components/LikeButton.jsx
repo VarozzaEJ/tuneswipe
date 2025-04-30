@@ -4,6 +4,7 @@ import { observer } from "mobx-react";
 import React from "react";
 import { AppState } from "../AppState.js";
 import { musicPostsService } from "../services/MusicPostsService.js";
+import { toast } from "sonner";
 
 function LikeButton({ post, musicPosts, setMusicPosts, iconsWhite }) {
   async function unLikePost(postId) {
@@ -90,7 +91,12 @@ function LikeButton({ post, musicPosts, setMusicPosts, iconsWhite }) {
 
   const notAuthenticated = (
     <div className="flex">
-      <div className="cursor-not-allowed">
+      <div
+        className="cursor-not-allowed"
+        onClick={() => {
+          toast.error("Please login to like posts.");
+        }}
+      >
         {iconsWhite ? (
           <Icon
             path={mdiHeartOutline}

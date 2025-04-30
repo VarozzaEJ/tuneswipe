@@ -72,6 +72,8 @@ import DisabledCommentForm from "../components/DisabledCommentForm.jsx";
 import { musicPostsService } from "../services/MusicPostsService.js";
 import { Separator } from "@/components/ui/separator";
 import { Account } from "../models/Account.js";
+  import LikeButton from "../components/LikeButton.jsx";
+
 
 
 
@@ -98,6 +100,8 @@ interface MusicPost {
     id: string;
     picture: string;
   };
+  areIconsWhite: boolean;
+  isTextWhite: string;
   fromNow: string;
   color: string;
 }
@@ -125,7 +129,7 @@ export default function ProfilePage() {
   const [extraOptionsPopoverOpen, setExtraOptionsPopoverOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [zeroComments, setZeroComments] = useState(false);
-  console.log(activeProfile)
+  
   useEffect(() => {
     if (!AppState.account?.id) return;
     setAccount(AppState.account);
@@ -234,7 +238,7 @@ export default function ProfilePage() {
               <p className="text-2xl my-1 font-bold ">{activeProfile.name}</p>
             </div>
           )}
-          <div className="flex flex-col justify-center items-center text-lg">
+          <div className="flex gap-2 justify-center items-center text-lg">
             <span className="text-slate-200">{activeProfilePosts.length != 0 && activeProfilePosts.length}</span>
             <span className="text-slate-300">Posts</span>
           </div>
@@ -243,7 +247,7 @@ export default function ProfilePage() {
             {activeProfilePosts.map((post) => (
               <Card
                 key={post.id}
-                className={`mx-4` + " " + `text-light sm:w-3/4 mb-4`}
+                className={`mx-4` + " " + `text-${post.isTextWhite} sm:w-3/4 mb-4`}
                 style={{ backgroundColor: post.color }}
               >
                 <CardHeader>
@@ -277,13 +281,29 @@ export default function ProfilePage() {
                               setAccountSet(!accountSet);
                             }}
                           >
-                            <Icon
-                              title="Open Options Menu"
-                              path={mdiDotsHorizontal}
-                              size={1.4}
-                              color="white"
-                              className="cursor-pointer"
-                            />
+                            {post.areIconsWhite ? (
+                                <Icon
+                                  title="Open Options Menu"
+                                  path={mdiDotsHorizontal}
+                                  size={1.4}
+                                  color="white"
+                                  aria-controls="popover-content"
+                                  aria-label="Options Menu"
+                                  aria-details="Opens a menu with additional options for this post"
+                                  className="cursor-pointer"
+                                />
+                              ) : (
+                              <Icon
+                                title="Open Options Menu"
+                                path={mdiDotsHorizontal}
+                                size={1.4}
+                                color="black"
+                                aria-controls="popover-content"
+                                aria-label="Options Menu"
+                                aria-details="Opens a menu with additional options for this post"
+                                className="cursor-pointer"
+                              />
+                            )}
                           </PopoverTrigger>
                           <PopoverContent
                             className={
@@ -414,7 +434,11 @@ export default function ProfilePage() {
                           setAccountSet(!accountSet);
                         }}
                       >
+                        {post.areIconsWhite ? (
                         <Icon path={mdiChatOutline} color="white" size={1} />
+                        ): (
+                        <Icon path={mdiChatOutline} color="black" size={1}/>
+                        )}
                       </DrawerTrigger>
                       <DrawerContent
                         className={
@@ -680,10 +704,12 @@ export default function ProfilePage() {
                         )}
                       </DrawerContent>
                     </Drawer>
-                    <div className="flex">
-                    <Icon path={mdiHeartOutline} color={"white"} size={1}/>
-                      <span className="text-white ps-1">2</span>
-                    </div>
+                    <LikeButton
+                      iconsWhite={post.areIconsWhite}
+                      post={post}
+                      musicPosts={activeProfilePosts}
+                      setMusicPosts={setActiveProfilePosts}
+                    />
                   </div>
                 </CardFooter>
               </Card>

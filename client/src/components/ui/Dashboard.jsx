@@ -20,6 +20,7 @@ import Icon from "@mdi/react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import SearchArtistsSheet from "../SearchArtistsSheet.jsx";
+import ChangeDeviceForm from "../ChangeDeviceForm.jsx";
 
 const spotifyApi = new SpotifyWebApi({
   clientId: `${import.meta.env.VITE_CLIENT_ID}`,
@@ -71,6 +72,8 @@ export default function Dashboard({ code }) {
     setFormSubmitted(true);
     toast.success("Device Changed Successfully");
   }
+
+  console.log(formSubmitted);
 
   // function addArtistId(artist) {
   //   const isAdded = artistName.find((name) => name == artist);
@@ -143,37 +146,15 @@ export default function Dashboard({ code }) {
           />
         </div>
       ) : (
-        <div className="w-screen h-screen flex flex-col items-center md:justify-center justify-end ">
-          <div className="mb-10 md:mb-0">
-            {availableDevices.devices && (
-              <Select onValueChange={handleChange}>
-                <SelectTrigger className={"text-black"}>
-                  <SelectValue placeholder="Choose Your Playback Device" />
-                </SelectTrigger>
-                <SelectContent
-                  onClick={() => {
-                    console.log("Working");
-                  }}
-                >
-                  <SelectGroup>
-                    {availableDevices.devices.map((device, index) => (
-                      <div key={index}>
-                        <SelectItem
-                          // onClick={() => {
-                          //   chooseThisDevice(device.id);
-                          // }}
-
-                          value={device.id}
-                        >
-                          {device.name}
-                        </SelectItem>
-                      </div>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            )}
-          </div>
+        <div className="w-full flex justify-center items-end h-full">
+          {/* FIXME submitting the change device form does not remove the form and bring up the search artist sheet. */}
+          {accessToken && (
+            <ChangeDeviceForm
+              accessToken={accessToken}
+              setChangeDeviceFormOpen={setFormSubmitted}
+              setFormSubmitted={setFormSubmitted}
+            />
+          )}
         </div>
       )}
     </>

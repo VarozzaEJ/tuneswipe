@@ -1,9 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "@sjmc11/tourguidejs/src/scss/tour.scss"; // Styles
 import { TourGuideClient } from "@sjmc11/tourguidejs/src/Tour";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import SpotifyWebApi from "spotify-web-api-node";
-import { useNavigate } from "react-router-dom";
 import TrackCard from "../components/ui/TrackCard.jsx";
 import {
   mdiChatOutline,
@@ -19,27 +18,26 @@ import {
 } from "@mdi/js";
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetDescription,
-  SheetFooter,
-  SheetHeader,
   SheetTitle,
   SheetTrigger,
+  // @ts-expect-error Shadcn/ui imports may cause type errors, but they are safe to ignore.
 } from "@/components/ui/sheet";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  // @ts-expect-error Shadcn/ui imports may cause type errors, but they are safe to ignore.
 } from "@/components/ui/popover";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  // @ts-expect-error Shadcn/ui imports may cause type errors, but they are safe to ignore.
 } from "@/components/ui/dialog";
 import Icon from "@mdi/react";
 import Player from "../components/Player.jsx";
@@ -50,12 +48,14 @@ import { AppState } from "../AppState.js";
 import ChangeDeviceForm from "../components/ChangeDeviceForm.jsx";
 import { toast } from "sonner";
 import ExpiredTokenDialog from "../components/ExpiredTokenDialog.jsx";
+// @ts-expect-error Shadcn/ui imports may cause type errors, but they are safe to ignore.
 import { Button } from "@/components/ui/button";
 import SearchArtistsSheet from "../components/SearchArtistsSheet.jsx";
 import ListenPageMusicCardLoading from "../components/ListenPageMusicCardLoading.tsx";
 import useNoActiveDeviceHook from "../services/useNoActiveDeviceHook.js";
 
 const spotifyApi = new SpotifyWebApi({
+  // @ts-expect-error Explains meta.env does not exist, but it does.
   clientId: `${import.meta.env.VITE_CLIENT_ID}`,
 });
 
@@ -68,7 +68,6 @@ export default function ListenPage() {
   const [recommendations, setRecommendations] = useState([]);
   const [chosenDeviceId, setChosenDeviceId] = useState("");
   const [artistIds, setArtistIds] = useState([]);
-  const searchParams = useParams();
   //NOTE this grabbing an array that could not exist possibly could mess things up
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lastDirection, setLastDirection] = useState();
@@ -159,12 +158,12 @@ export default function ListenPage() {
     // during latest swipes. Only the last outOfFrame event should be considered valid
   };
 
-  const swipe = async (dir) => {
-    // if (canSwipe && currentIndex < recommendations.length) {
-    //   await childRefs[currentIndex].current.swipe(dir); // Swipe the card!
-    // }
-    console.log("working?");
-  };
+  // const swipe = async (dir) => {
+  //   // if (canSwipe && currentIndex < recommendations.length) {
+  //   //   await childRefs[currentIndex].current.swipe(dir); // Swipe the card!
+  //   // }
+  //   console.log("working?");
+  // };
 
   // increase current index and show card
   const goBack = async () => {
@@ -305,7 +304,7 @@ export default function ListenPage() {
   const addSongToYourMusic = async (songId) => {
     try {
       spotifyApi.addToMySavedTracks([`${songId}`]).then(
-        function (data) {
+        function () {
           console.log("Added track!");
         },
         function (err) {
@@ -403,7 +402,7 @@ export default function ListenPage() {
     const name = sessionStorage.getItem("artistName");
     const trackName = sessionStorage.getItem("artistTopSong");
     setArtistIds([name]);
-    lastFMReccommendations(name, trackName);
+    // lastFMReccommendations(name, trackName);
   }
   console.log("💛", currentIndex);
   console.log("💚", currentSongIndex);
