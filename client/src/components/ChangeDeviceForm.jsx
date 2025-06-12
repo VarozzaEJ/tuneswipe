@@ -48,6 +48,10 @@ export default function ChangeDeviceForm({
       const data = await response.json();
       console.log("Available devices:", data.devices);
       setAvailableDevices(data.devices);
+      if (data.devices.length == 0)
+        toast.error(
+          "Error! No available devices found... Open Spotify on any device and refresh."
+        );
       return data.devices;
     } catch (error) {
       console.error("Error fetching devices:", error);
@@ -58,7 +62,14 @@ export default function ChangeDeviceForm({
     await spotifyApi.transferMyPlayback([`${deviceId}`]).then(
       function () {
         console.log("Transfering playback to " + deviceId);
-        localStorage.setItem("chosenDeviceId", deviceId);
+        sessionStorage.setItem("chosenDeviceId", deviceId);
+        availableDevices.forEach((device) => {
+          if (device.supports_volume == false) {
+            sessionStorage.setItem("supports_volume", "false");
+          } else if (device.supports_volume == true) {
+            sessionStorage.setItem("supports_volume", "true");
+          }
+        });
       },
       function (err) {
         //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
@@ -68,20 +79,23 @@ export default function ChangeDeviceForm({
   };
 
   function handleChange(e) {
-    localStorage.removeItem("chosenDeviceId");
+    console.log(e);
+    sessionStorage.removeItem("chosenDeviceId");
     console.log("device selected", e);
     transferPlayback(e);
-    localStorage.setItem("chosenDeviceId", e);
+    sessionStorage.setItem("chosenDeviceId", e);
     toast.success("Device Changed Successfully");
     setFormSubmitted(true);
-    spotifyApi.setVolume(75);
+    if (sessionStorage.getItem("supports_volume") == "true") {
+      spotifyApi.setVolume(75);
+    }
   }
 
   console.log(availableDevices);
 
   return (
     <>
-      <div className="mb-10 md:mb-0">
+      <div className="mb-10 md:mb-3">
         {availableDevices.length !== 0 ? (
           <Select onValueChange={handleChange}>
             <SelectTrigger className={"text-black"}>

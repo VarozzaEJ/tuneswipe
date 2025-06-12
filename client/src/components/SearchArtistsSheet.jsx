@@ -213,7 +213,9 @@ export default function SearchArtistsSheet({
               </div>
               {loading ? (
                 <>
-                  <Skeleton className={"w-full h-[1000px] my-1"} />
+                  <Skeleton className={"w-full h-[96px] my-1"} />
+                  <Skeleton className={"w-full h-[96px] my-1"} />
+                  <Skeleton className={"w-full h-[96px] my-1"} />
                 </>
               ) : (
                 <div className="w-full">

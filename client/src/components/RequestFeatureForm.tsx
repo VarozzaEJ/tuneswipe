@@ -45,12 +45,12 @@ export default function RequestFeatureForm({setRequestFeatureDialogOpen}) {
   return (
     <form onSubmit={handleSubmit(submitForm)}>
         <div className="md:flex md:justify-between">
-            <div>
+            <div className=''>
                 <Label  htmlFor="firstName">First Name</Label>
                 { errors.firstName && <p className='text-destructive text-sm'>{errors.firstName.message}</p>}
                 <Input {...register("firstName")} className='mb-3 border-0 active:border-0 mt-1 bg-slate-950 w-full' id="firstName" type="firstName" placeholder='e.g. John' />
             </div>
-            <div>
+            <div className=''>
                 <Label  htmlFor="lastName">Last Name</Label>
                 { errors.lastName && <p className='text-destructive text-sm'>{errors.lastName.message}</p>}
                 <Input {...register("lastName")} className='mb-3 border-0 active:border-0 mt-1 bg-slate-950 w-full' id="lastName" type="lastName" placeholder='e.g. Smith' />

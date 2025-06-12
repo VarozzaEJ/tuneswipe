@@ -64,15 +64,6 @@ export default function Dashboard({ code }) {
     getAvailableDevices();
   }, [accessToken]);
 
-  function handleChange(e) {
-    localStorage.removeItem("chosenDeviceId");
-    console.log("device selected", e);
-    setChosenDeviceId(e);
-    localStorage.setItem("chosenDeviceId", e);
-    setFormSubmitted(true);
-    toast.success("Device Changed Successfully");
-  }
-
   console.log(formSubmitted);
 
   // function addArtistId(artist) {
@@ -147,7 +138,6 @@ export default function Dashboard({ code }) {
         </div>
       ) : (
         <div className="w-full flex justify-center items-end h-full">
-          {/* FIXME submitting the change device form does not remove the form and bring up the search artist sheet. */}
           {accessToken && (
             <ChangeDeviceForm
               accessToken={accessToken}

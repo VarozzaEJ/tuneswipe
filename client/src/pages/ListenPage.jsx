@@ -174,11 +174,15 @@ export default function ListenPage() {
     setLikeSongIndex(likeSongIndex - 1);
     updateCurrentIndex(newIndex);
     await addSongToQueue(lastSwipedURI);
-    await spotifyApi.setVolume(0);
+    if (sessionStorage.getItem("supports_volume") == "true") {
+      await spotifyApi.setVolume(0);
+    }
     await skipToNext();
     await skipToNext();
     await childRefs[newIndex].current.restoreCard();
-    await spotifyApi.setVolume(75);
+    if (sessionStorage.getItem("supports_volume") == "true") {
+      await spotifyApi.setVolume(75);
+    }
     await addSongToQueue(recommendations[currentIndex].uri);
   };
 
@@ -329,7 +333,9 @@ export default function ListenPage() {
     const timeout = setTimeout(() => {
       addSongToQueue("spotify:track:3Ec830TpI83UCdYDHkBScO");
     }, 1000);
-    await spotifyApi.setVolume(0);
+    if (sessionStorage.getItem("supports_volume") == "true") {
+      await spotifyApi.setVolume(0);
+    }
     setRightSongAdded(true);
     return () => clearTimeout(timeout);
   };
@@ -342,6 +348,7 @@ export default function ListenPage() {
       await getUsersQueue();
     }
   };
+  console.log("Ready???", isOnRightSong);
 
   useEffect(() => {
     if (!accessToken) return;
@@ -402,7 +409,8 @@ export default function ListenPage() {
     const name = sessionStorage.getItem("artistName");
     const trackName = sessionStorage.getItem("artistTopSong");
     setArtistIds([name]);
-    // lastFMReccommendations(name, trackName);
+    lastFMReccommendations(name, trackName);
+    //FIXME Listen page does not work when the device is set to my iphone. Look into this as this could render this whole app useless.
   }
   console.log("💛", currentIndex);
   console.log("💚", currentSongIndex);
@@ -450,14 +458,16 @@ export default function ListenPage() {
     setCurrentIndex(0);
     setLikeSongIndex(0);
     setIds();
-    spotifyApi.setVolume(0);
+    if (sessionStorage.getItem("supports_volume") == "true") {
+      spotifyApi.setVolume(0);
+    }
     skipToNext();
     skipToNext();
     if (sessionStorage.getItem("artistTopSong")) setRecommendedMusicOpen(false);
   }, [count2, accessToken]);
 
   function setDeviceId() {
-    const deviceId = localStorage.getItem("chosenDeviceId");
+    const deviceId = sessionStorage.getItem("chosenDeviceId");
     setChosenDeviceId(deviceId);
   }
 
@@ -540,6 +550,7 @@ export default function ListenPage() {
                     </DialogTitle>
                     <DialogDescription></DialogDescription>
                     <ChangeDeviceForm
+                      setFormSubmitted={() => {}}
                       setChangeDeviceFormOpen={setChangeDeviceFormOpen}
                       accessToken={accessToken}
                     />
@@ -576,7 +587,7 @@ export default function ListenPage() {
               <TinderCard
                 ref={childRefs[index]}
                 className="absolute w-[260px] sm:w-[350px] h-[375px] cursor-grab"
-                key={track.uri}
+                key={track.id}
                 flickOnSwipe
                 swipeRequirementType="position"
                 swipeThreshold={50}

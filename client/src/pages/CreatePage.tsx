@@ -595,7 +595,7 @@ const pictureValue = getValues().file
                   <Button>
                     <div className="flex flex-col text-slate-400 hover:text-slate-300 transition-all ease-in-out justify-center items-center">
                       <Icon path={mdiImage} color="white" size={1} />
-                      <span className="">Photo</span>
+                      <span className="mt-1">Photo</span>
                     </div>
                   </Button>
                   

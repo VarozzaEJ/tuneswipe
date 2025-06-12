@@ -74,7 +74,9 @@ const Playback = ({
     )
       return;
     const runRequiredFunctions = async () => {
-      spotifyApi.setVolume(75);
+      if (sessionStorage.getItem("supports_volume") == "true") {
+        spotifyApi.setVolume(75);
+      }
       await addSongToQueue(recommendedTracks[0].uri);
       playSong();
       setPlay(true);
@@ -136,7 +138,9 @@ const Playback = ({
   };
 
   const replay = async () => {
-    await spotifyApi.setVolume(0);
+    if (sessionStorage.getItem("supports_volume") == "true") {
+      await spotifyApi.setVolume(0);
+    }
     await spotifyApi
       .addToQueue(`${recommendedTracks[likeSongIndex].uri}`)
       .then(function (err) {
@@ -157,7 +161,9 @@ const Playback = ({
         `${recommendedTracks[likeSongIndex + 2].uri}`
       );
     }
-    await spotifyApi.setVolume(75);
+    if (sessionStorage.getItem("supports_volume") == "true") {
+      await spotifyApi.setVolume(75);
+    }
   };
 
   return (

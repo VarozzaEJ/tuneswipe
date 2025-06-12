@@ -106,7 +106,6 @@ function AccountPage() {
 
     function logout() {
     localStorage.removeItem("user-token");
-    //FIXME Logout does not work, redirects to port 8080 for an unknown reason.
     AuthService.logout({});
     window.location.assign('#')
   }
