@@ -483,6 +483,7 @@ export default function ListenPage() {
             >
               <SheetTrigger>
                 <div
+                  // FIXME Tour does not work when there are songs playing. The tour only works when I have the lastFMRecommendations function commented out.
                   data-tg-tour="Choose an artist to get recommended tracks from"
                   data-tg-title="Change Recommendations"
                 >
@@ -560,6 +561,7 @@ export default function ListenPage() {
               <Button
                 variant="secondary"
                 onClick={() => {
+                  tg.refresh();
                   tg.start();
                 }}
                 className="w-full mt-2 "
@@ -587,7 +589,6 @@ export default function ListenPage() {
               <TinderCard
                 ref={childRefs[index]}
                 className="absolute w-[260px] sm:w-[350px] h-[375px] cursor-grab"
-                key={track.id}
                 flickOnSwipe
                 swipeRequirementType="position"
                 swipeThreshold={50}

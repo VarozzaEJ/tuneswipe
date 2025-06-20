@@ -64,10 +64,12 @@ export default function ChangeDeviceForm({
         console.log("Transfering playback to " + deviceId);
         sessionStorage.setItem("chosenDeviceId", deviceId);
         availableDevices.forEach((device) => {
-          if (device.supports_volume == false) {
-            sessionStorage.setItem("supports_volume", "false");
-          } else if (device.supports_volume == true) {
-            sessionStorage.setItem("supports_volume", "true");
+          if (device.id === deviceId) {
+            if (device.supports_volume === false) {
+              sessionStorage.setItem("supports_volume", "false");
+            } else if (device.supports_volume === true) {
+              sessionStorage.setItem("supports_volume", "true");
+            }
           }
         });
       },
@@ -83,7 +85,6 @@ export default function ChangeDeviceForm({
     sessionStorage.removeItem("chosenDeviceId");
     console.log("device selected", e);
     transferPlayback(e);
-    sessionStorage.setItem("chosenDeviceId", e);
     toast.success("Device Changed Successfully");
     setFormSubmitted(true);
     if (sessionStorage.getItem("supports_volume") == "true") {
