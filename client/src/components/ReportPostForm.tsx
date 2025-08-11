@@ -1,9 +1,7 @@
-import React, { useState } from 'react'
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z, ZodType } from "zod";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -20,18 +18,18 @@ import emailjs from '@emailjs/browser';
 
 
 type FormData = {
-    description: string;
-    type: string;
-    postId: string;
-    postCreatorName: string;
-    postCreatorPicture: string;
-    firstName: string;
-    email: string;
-    bugOrPost: string;
-    descriptionString: string;
-    postIdString: string;
-    postCreatorNameString: string;
-    typeString: string;
+    description?: string;
+    type?: string;
+    postId?: string;
+    postCreatorName?: string;
+    postCreatorPicture?: string;
+    firstName?: string;
+    email?: string;
+    bugOrPost?: string;
+    descriptionString?: string;
+    postIdString?: string;
+    postCreatorNameString?: string;
+    typeString?: string;
 }
 
 const formSchema : ZodType<FormData> = z.object({

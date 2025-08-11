@@ -1,7 +1,7 @@
 import { mdiCheckCircle, mdiPlus, mdiSpotify } from '@mdi/js'
 import Icon from '@mdi/react'
 
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function TopTrackCard({song, chosenSongCards}) {
     const [show, setShow] = useState(false)

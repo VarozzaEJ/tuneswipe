@@ -1,9 +1,7 @@
-import React from 'react'
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z, ZodType } from "zod";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -20,8 +18,8 @@ import {commentsService} from "../services/commentsservice.js"
 type FormData = {
 description: string;
 type: string;
-commentId: string;
-commentCreatorName: string;
+commentId?: string;
+commentCreatorName?: string;
 }
 
 const formSchema : ZodType<FormData> = z.object({

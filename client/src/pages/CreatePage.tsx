@@ -76,20 +76,31 @@ const spotifyApi = new SpotifyWebApi({
 });
 
 type FormData = {
-  textComment: string;
-  trackIds: string[];
+  textComment?: string;
+  trackIds?: string[];
   // picture: string;
-  color: string;
-  file: null;
+  color?: string;
+  file?: null;
 }
 
-const MAX_FILE_SIZE = 2000000
-    const ACCEPTED_IMAGE_TYPES = [
-        'image/jpeg',
-        'image/jpg',
-        'image/png',
-        'image/webp',
-    ]
+type Song = {
+  id: string
+}
+interface TrackInterface {
+  id: string
+}
+type Track = {
+  track: TrackInterface
+}
+
+type Playlist = {
+  id: string
+  name: string
+  images: Array<{
+    url: string;
+  }>
+}
+
 
 const imageSchema = z.any().optional()
 // .refine(file => file.length == 1 ? ACCEPTED_IMAGE_TYPES.includes(file?.[0]?.type) ? true : false : true, 'Invalid file. choose either JPEG or PNG image')
@@ -112,12 +123,11 @@ const formSchema : ZodType<FormData> = z.object({
 });
 
 export default function CreatePage() {
-  const [accountId, setAccountId] = useState("")
   const [accessToken, setAccessToken] = useState("");
   const [musicCardsReady, setMusicCardsReady] = useState(false);
-  const [likedSongs, setLikedSongs] = useState([]);
-  const [chosenSongIds, setChosenSongIds] = useState([])
-  const [chosenSongCards, setChosenSongCards] = useState([])
+  const [likedSongs, setLikedSongs] = useState<Song[]>([]);
+  const [chosenSongIds, setChosenSongIds] = useState<string[]>([])
+  const [chosenSongCards, setChosenSongCards] = useState<Song[]>([])
   const [open, setOpen] = useState(false)
   const [isExpired, setIsExpired] = useState(false)
   const [expiredTokenDialogOpen, setExpiredTokenDialogOpen] = useState(false)
@@ -127,9 +137,9 @@ export default function CreatePage() {
   const [commentString, setCommentString] = useState("")
   const [colorString, setColorString] = useState("")
   const [userName, setUserName] = useState("")
-  const [currentUsersPlaylists, setCurrentUsersPlaylists] = useState([])
-  const [playlistTracks, setPlaylistTracks] = useState([])
-  const [searchResults, setSearchResults] = useState([]);
+  const [currentUsersPlaylists, setCurrentUsersPlaylists] = useState<Playlist[]>([])
+  const [playlistTracks, setPlaylistTracks] = useState<Track[]>([])
+  const [searchResults, setSearchResults] = useState<Song[]>([]);
   const [search, setSearch] = useState("");
   const [submitting, setSubmitting] = useState(false)
   const navigate = useNavigate()
@@ -137,8 +147,11 @@ export default function CreatePage() {
   useEffect(() => {
     //TODO make this happen in a higher component to skip the login process if the token already exists or has not expired
     const accessToken = localStorage.getItem("accessToken");
-    setAccessToken(accessToken);
+    if(accessToken !== null) {
+      setAccessToken(accessToken);
+    }
     checkUser()
+    if(isUsingMix) console.log("using mix")
   }, []);
   
   const checkUser = async () => {
@@ -195,7 +208,7 @@ export default function CreatePage() {
   }
 
   //TODO make only tracks possible or pictures. A user shouldn't be able to use both in the same form submission
-  const {register, handleSubmit, getValues, setValue, formState: {errors}, resetField} = useForm<FormData>({resolver: zodResolver(formSchema)})
+  const {register, handleSubmit, getValues, formState: {errors}, resetField} = useForm<FormData>({resolver: zodResolver(formSchema)})
 
   const submitForm = async (data: FormData) => {
     setSubmitting(true)
@@ -219,6 +232,7 @@ export default function CreatePage() {
     }
     const isAdded = chosenSongIds.find((id) => id == songId);
     const foundArtistId = chosenSongIds.findIndex((id) => id == songId);
+    if(foundArtistId) console.log('found artist id')
     if (isAdded) {
 
       const correctSongIds = chosenSongIds.filter(song => song !== songId);
@@ -246,8 +260,8 @@ const pictureValue = getValues().file
 
   const checkPictureValue = () => {
     const formDataValues = getValues()
-    console.log(formDataValues.file)
-    if(formDataValues.file?.length > 0) setIsUsingPicture(true)
+    console.log(formDataValues)
+    if(formDataValues.file !== undefined) setIsUsingPicture(true)
     if(formDataValues.file === undefined) setIsUsingPicture(false)
   }
 
@@ -282,22 +296,23 @@ const pictureValue = getValues().file
   useEffect(() => {
     if (!search) return setSearchResults([]);
 
-    let cancel = false;
+    // let cancel = false;
     spotifyApi.searchTracks(search, { limit: 6 }).then((res) => {
-      if (cancel) return;
+      // if (cancel) return;
       setSearchResults(
         res.body.tracks.items
       );
     });
-    return () => (cancel = true);
+    // return () => (cancel = true);
   }, [search]);
-  
+  console.log(likedSongs)
   function checkIfSongAlreadyAdded() {
     chosenSongCards.map((song) => {
       const alreadyFound = likedSongs.find(likedSong => likedSong.id == song.id)
       console.log('💘',alreadyFound)
     })
   }
+  console.log(playlistTracks)
 
   return (
     <>
@@ -327,7 +342,7 @@ const pictureValue = getValues().file
               }
               {chosenSongCards.length !== 0 && 
               chosenSongCards.map(song => (
-                <div key={song.id} onClick={() => {addSongId(song.id)}} className="mt-3">
+                <div key={song.id} onClick={() => {addSongId(song.id, song)}} className="mt-3">
                 <AddedTopTrackCard  song={song} />
                 </div>
               ))
@@ -429,7 +444,7 @@ const pictureValue = getValues().file
                         <DrawerTitle className="text-center text-3xl mb-3"></DrawerTitle>
                         <DrawerDescription></DrawerDescription>
                         {musicCardsReady ? <div className="flex-col flex mx-5">
-                        {likedSongs.map((song, index) => (
+                        {likedSongs.map((song) => (
                           <div onClick={() => {
                             addSongId(song.id, song)
                             setIsUsingMix(true)
@@ -542,13 +557,15 @@ const pictureValue = getValues().file
                   <DialogTitle></DialogTitle>
                 <DialogContent className="bg-slate-800 rounded-sm w-40">
                   <div className="p-3 flex justify-center">
-                  <Input onInput={(e) => {
+                  <Input onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setColorString(e.target.value)}} className="w-10 p-0 cursor-pointer" {...register("color")} type="color" />
                   </div>
                   <DialogClose asChild>
                   <div className="w-full flex justify-center">
                     <Button onClick={() => {
-                      setColorString(getValues("color"))
+                      const color = getValues("color")
+                      if(color !== undefined)
+                      setColorString(color)
                     }}>Save</Button>
                   </div>
                   </DialogClose>

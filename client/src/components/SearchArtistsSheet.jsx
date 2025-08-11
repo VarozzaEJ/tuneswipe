@@ -218,7 +218,7 @@ export default function SearchArtistsSheet({
                   <Skeleton className={"w-full h-[96px] my-1"} />
                 </>
               ) : (
-                <div className="w-full">
+                <div className="w-full mt-5">
                   {popularArtists.map((artist) => (
                     <div
                       key={artist.id}
@@ -240,7 +240,7 @@ export default function SearchArtistsSheet({
               )}
             </>
           )}
-          <div className="w-full flex flex-col h-full justify-center items-center">
+          <div className="w-full flex flex-col h-full justify-center mt-5 items-center">
             {searchResults.map((artist) => (
               <div
                 key={artist.id}

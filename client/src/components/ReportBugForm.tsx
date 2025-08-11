@@ -1,8 +1,7 @@
-import React, { useState } from 'react'
+import  { useState } from 'react'
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from '@/components/ui/textarea'
-import { FormDescription } from '@/components/ui/form'
 import { Button } from '@/components/ui/button'
 import { z, ZodType } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -20,7 +19,7 @@ type FormData = {
     email: string;
     description: string;
     reproduction: string;
-    file: null;
+    file?: null;
     stepsToReproduce: string;
     screenShotURL: string;
     bugOrPost: string;
@@ -34,9 +33,9 @@ export default function ReportBugForm({setReportBugDialogOpen}) {
         description: z.string({message: "Description is required"}).min(15, "Description must be at least 15 characters long").max(250, "Description must be at most 250 characters long"),
         reproduction: z.string({message: "Steps to reproduce is required"}).min(15, "Reproduction steps must be at least 15 characters long").max(500, "Reproduction steps must be at most 500 characters long"),
         file: z.any().optional(),
-        stepsToReproduce: z.string().optional(),
-        screenShotURL: z.string().optional(),
-        bugOrPost: z.string().optional(),
+        stepsToReproduce: z.string(),
+        screenShotURL: z.string(),
+        bugOrPost: z.string(),
      })
 
      const { register, handleSubmit, formState: { errors } } = useForm<FormData>({ resolver: zodResolver(formSchema) })

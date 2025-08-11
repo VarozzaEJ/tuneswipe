@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AppState } from "../AppState.js";
 import Icon from "@mdi/react";
 import { mdiAccount, mdiAccountOutline, mdiChatOutline, mdiChevronRight, mdiClose,  mdiCogOutline,  mdiEmailOutline, mdiFlagOutline, mdiHelpCircleOutline, mdiHomeOutline, mdiImage, mdiLoading, mdiLogout, mdiPencilPlusOutline, mdiRocketLaunchOutline } from "@mdi/js";
@@ -50,8 +50,8 @@ import RequestFeatureForm from "@/components/RequestFeatureForm.js";
 import { Separator } from "@/components/ui/separator.js";
 
 type FormData = {
-  name: string;
-  picture: string;
+  name?: string;
+  picture?: string;
 }
 
 type Report = {
@@ -87,10 +87,13 @@ function AccountPage() {
   const [reportBugDialogOpen, setReportBugDialogOpen] = useState(false)
   const [requestFeatureDialogOpen, setRequestFeatureDialogOpen] = useState(false)
 
-  useEffect(() => {
-    if(!AppState.account) return
+  const setValues = () => {
     setValue("name", AppState.account.name)
     setValue("picture", AppState.account.picture)
+  }
+  useEffect(() => {
+    if(!AppState.account) return
+    setValues()
   },[AppState.account])
 
   useEffect(() => {

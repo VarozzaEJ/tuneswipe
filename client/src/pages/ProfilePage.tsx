@@ -6,12 +6,11 @@ import {
   mdiDeleteOutline,
   mdiDotsHorizontal,
   mdiFlagOutline,
-  mdiHeartOutline,
   mdiHomeOutline,
   mdiLoading,
   mdiPencilPlusOutline,
 } from "@mdi/js";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AppState } from "../AppState.js";
 import Icon from "@mdi/react";
 import { Link, useParams } from "react-router-dom";
@@ -28,10 +27,8 @@ import {
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import {
   AlertDialog,
@@ -53,7 +50,6 @@ import {
   DrawerContent,
   DrawerDescription,
   DrawerFooter,
-  DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
@@ -61,8 +57,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
-  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
@@ -112,6 +106,8 @@ interface Account {
   name: string;
   picture: string;
 }
+
+
 
 export default function ProfilePage() {
   const params = useParams();

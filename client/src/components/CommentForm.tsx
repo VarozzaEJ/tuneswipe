@@ -25,8 +25,20 @@ const formSchema: ZodType<FormData> = z.object({
     postId: z.string().optional(),
 });
 
+interface PostComment {
+  body: string;
+  creator: {
+    name: string;
+    id: string;
+    picture: string;
+  }
+  creatorId: number;
+  musicPostId: number;
+  fromNow: string;
+  id: string;
+}
 export default function useCommentForm() {
-  const [comment, setComment] = useState({});
+  const [comment, setComment] = useState<PostComment>({body: "", musicPostId: 0, creator: {name: "", id: "", picture: ""}, creatorId: 0, fromNow: "", id: ""});
   const [postId, setPostId] = useState("");
   const [length, setLength] = useState("")
 
